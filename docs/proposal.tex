@@ -2,14 +2,16 @@
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsmath,amssymb,booktabs,array,longtable}
+\usepackage{amsmath,amssymb,booktabs,array,longtable,tabularx}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,shapes.geometric}
 \setlist[itemize]{leftmargin=1.5em,itemsep=0.2em,topsep=0.3em}
 \setlist[enumerate]{leftmargin=1.7em,itemsep=0.25em,topsep=0.3em}
 \setlength{\emergencystretch}{1.5em}
 
-\title{TriAlign: An Agentic Tool for Clinically Meaningful Eligibility-Criterion Retrieval and Comparison}
+\title{TriAlign Engineering Plan\\\large System Design for Clinically Meaningful Eligibility-Criterion Retrieval and Comparison}
 \author{Jonathan Ma, Jiatong Gao}
 \date{}
 
@@ -60,7 +62,7 @@ For example, Modern AutoCrit should turn ``participants must be at least 18 year
 
 This project begins after extraction. We want to compare criteria from different protocols and train an embedding model that understands clinically important differences.
 
-\section{The Project in Plain Language}
+\section{Product Goal}
 
 Current sentence-embedding models often reward similar wording. That is not always clinically correct:
 
@@ -91,7 +93,98 @@ The system will be a usable clinical data-science tool rather than only a model-
     \item Does the agentic workflow improve labeling quality, calibration, and reviewer efficiency while appropriately abstaining or escalating uncertain cases?
 \end{enumerate}
 
-\section{What We Are Trying to Learn}
+\section{High-Level Architecture}
+
+TriAlign separates reviewed source data, offline model development, and the runtime comparison application. Model weights never change during a user request; new labels enter a versioned offline training run only after review.
+
+\begin{figure}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=8mm and 11mm,
+    box/.style={draw,rounded corners,align=center,minimum height=10mm,text width=31mm,fill=gray!8},
+    agent/.style={box,fill=blue!10,very thick,text width=34mm},
+    store/.style={draw,rounded corners,align=center,minimum height=10mm,text width=31mm,fill=green!10},
+    arrow/.style={-{Stealth[length=2mm]},thick}
+]
+\node[store] (raw) {Modern AutoCrit\\reviewed criteria};
+\node[box,right=of raw] (validate) {Schema validation\\and corpus adapter};
+\node[store,right=of validate] (corpus) {Versioned criterion\\and evidence store};
+
+\node[box,below=of corpus] (mine) {Pair mining\\and baseline retrieval};
+\node[agent,left=of mine] (agent) {Agent orchestrator\\and audit trace};
+\node[box,left=of agent] (tools) {Exact rules, terminology,\\embeddings, LLM critic};
+
+\node[box,below=of agent] (review) {Human review\\and adjudication UI};
+\node[store,right=of review] (labels) {Versioned pair-label\\and split store};
+\node[box,right=of labels] (train) {Offline training,\\calibration, evaluation};
+\node[store,above=of train] (registry) {Frozen model registry\\and result artifacts};
+
+\draw[arrow] (raw)--(validate);
+\draw[arrow] (validate)--(corpus);
+\draw[arrow] (corpus)--(mine);
+\draw[arrow] (mine)--(agent);
+\draw[arrow,<->] (agent)--(tools);
+\draw[arrow] (agent)--(review);
+\draw[arrow] (review)--(labels);
+\draw[arrow] (labels)--(train);
+\draw[arrow] (train)--(registry);
+\draw[arrow] (registry)--(mine);
+\draw[arrow,dashed] (corpus)--(agent);
+\end{tikzpicture}}
+\caption{Planned TriAlign data, labeling, training, and serving flow.}
+\end{figure}
+
+\subsection{System boundaries}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.20\linewidth} >{\raggedright\arraybackslash}p{0.35\linewidth} >{\raggedright\arraybackslash}p{0.35\linewidth}}
+\toprule
+\textbf{Subsystem} & \textbf{Responsibility} & \textbf{Primary artifact} \\
+\midrule
+Corpus adapter & Read the Modern AutoCrit workbook, validate required fields, normalize types, and preserve immutable source evidence. & Versioned Parquet/JSON criterion table plus validation report. \\
+Pair miner & Build random controls, nearest-neighbor candidates, structured challenge pairs, and trial-family-safe partitions. & Pair manifest with sampling provenance and split identifiers. \\
+Agent runtime & Select tools, compare evidence, request an LLM judgment when needed, check conflicts, estimate uncertainty, and escalate. & Append-only trace containing inputs, tool versions, outputs, and routing decision. \\
+Review application & Show both criteria and context, collect accept/correct/ambiguous decisions, and support adjudication. & Versioned human label and rationale; no silent overwrite. \\
+Training pipeline & Fine-tune the encoder, fit the relationship model, calibrate probabilities, and run seeded evaluation. & Frozen model bundle, configuration, metrics, and model card. \\
+Retrieval service & Embed a query with a frozen model, retrieve candidates, apply relationship prediction, and return evidence. & Ranked results with model version, relationship, uncertainty, and provenance. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Repository layout to implement}
+
+\begingroup\footnotesize
+\begin{verbatim}
+trialign/
+  configs/              # versioned data, model, prompt, and experiment configs
+  data/                 # raw, interim, reviewed, split, and pair manifests
+  src/trialign/
+    data/               # workbook adapters, schemas, validation, split logic
+    pairing/            # candidate mining and controlled challenge generation
+    tools/              # interval, unit, negation, terminology, and logic checks
+    agents/             # orchestration, critic, routing, uncertainty, audit trace
+    models/             # embedding, relationship classifier, calibration, registry
+    evaluation/         # retrieval, classification, calibration, and statistics
+    api/                # runtime service interfaces
+  app/                  # human review and comparison interface
+  tests/                # unit, schema, leakage, integration, and regression tests
+  scripts/              # reproducible CLI entry points
+  artifacts/            # ignored local run outputs; released artifacts are versioned
+\end{verbatim}
+\endgroup
+
+The first implementation should remain modular but small. A Python state machine with typed tool interfaces is preferred over adopting an agent framework before the workflow stabilizes. Every stage must also be runnable from a command line so experiments do not depend on the web interface.
+
+\subsection{Core records and interfaces}
+
+The minimum stable records are:
+\begin{itemize}
+    \item \texttt{CriterionRecord} and \texttt{PairCandidate};
+    \item \texttt{AgentJudgment} and \texttt{HumanDecision}; and
+    \item \texttt{DatasetSplit} and \texttt{ModelVersion}.
+\end{itemize}
+Each record should include a schema version, stable identifier, creation time, parent artifact identifiers, and code/model/prompt version where applicable. Pydantic models and exported JSON Schemas should enforce these interfaces. Migrations must create a new artifact rather than modifying reviewed data in place.
+
+\section{Task Definition}
 
 For each pair of criteria, we will assign one of the following relationships:
 
@@ -117,7 +210,7 @@ These are separate because ordinary embedding distance is symmetric, while ``A i
 
 The annotation guide will be reviewed with the instructor before the benchmark is frozen. It will define each label, give positive and counterexamples, require reviewers to interpret inclusion/exclusion polarity before judging restrictiveness, and specify when evidence is insufficient. Every label will retain the source evidence and a concise rationale.
 
-\section{Data We Need}
+\section{Data Pipeline and Benchmark Construction}
 
 \subsection{Protocol corpus}
 
@@ -154,7 +247,7 @@ Natural cross-trial comparisons and constructed challenges will be marked and an
 
 Training, validation, and test sets will be separated by trial family \emph{before} criterion pairs are constructed. Amendments, shared protocol templates, near duplicates, and constructed examples derived from them must stay in the same partition. We will record provenance and permitted reuse conditions, keep final test labels inaccessible to agent retrieval, and report possible encoder pretraining exposure to public trial text. Pilot and test comparisons will be independently double labeled, with qualified clinical adjudication for unresolved clinically material disagreements. During initial test review, reviewers will not see model scores or LLM proposals.
 
-\section{How Labels Become Training Data}
+\section{Labeling Pipeline}
 
 The workflow is:
 
@@ -191,9 +284,41 @@ This is the human-steering loop: human corrections guide which examples are coll
 
 To evaluate whether targeted selection genuinely helps, uncertainty/disagreement sampling will be compared with random sampling under the same review budget. Manual annotation, LLM-assisted review, and the complete agent workflow will also be compared on matched tasks rather than on different examples.
 
-\section{The Dense Embedding Model}
+\section{Model Development Plan}
 
 We will start from one open pretrained text-encoder checkpoint rather than train a language model from scratch. We will compare it with three frozen generic encoders and a biomedical encoder where feasible, then fine-tune the selected open checkpoint on human-validated pairs. The contribution is the new protocol-derived dataset, clinically difficult negatives, training setup, agentic labeling process, and evaluation rather than merely calling an existing Hugging Face model.
+
+\subsection{Candidate checkpoints and comparison tools}
+
+The final checkpoint is a validation-set decision, not a commitment made in this document. Every candidate must have an acceptable license, a reproducible model revision, and an input length suitable for atomic criteria plus limited context.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.18\linewidth} >{\raggedright\arraybackslash}p{0.25\linewidth} >{\raggedright\arraybackslash}p{0.46\linewidth}}
+\toprule
+\textbf{Role} & \textbf{Candidate} & \textbf{Tool or source} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Role} & \textbf{Candidate} & \textbf{Tool or source} \\
+\midrule
+\endhead
+Lexical baseline & TF--IDF and cosine similarity & Scikit-learn \texttt{TfidfVectorizer}: \url{https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html}. \\
+Small general encoder & \texttt{all-MiniLM-L6-v2} & Hugging Face model: \url{https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2}. Useful fast baseline, not assumed to be clinically adequate. \\
+Strong general encoder & \texttt{all-mpnet-base-v2} & Hugging Face model: \url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}. \\
+Retrieval-oriented encoder & \texttt{bge-base-en-v1.5} & Hugging Face model: \url{https://huggingface.co/BAAI/bge-base-en-v1.5}. Input formatting and recommended query instructions must be recorded. \\
+Biomedical encoder & BioLORD-2023 & Hugging Face model: \url{https://huggingface.co/FremyCompany/BioLORD-2023}. Evaluate whether its biomedical concept training transfers to full eligibility statements. \\
+Biomedical concept baseline & SapBERT & Hugging Face model: \url{https://huggingface.co/cambridgeltl/SapBERT-from-PubMedBERT-fulltext}. This is primarily a biomedical entity baseline, not automatically a sentence-retrieval model. \\
+Embedding training & Sentence Transformers & Training and evaluator APIs: \url{https://www.sbert.net/docs/sentence_transformer/training_overview.html}. Candidate losses include multiple-negatives ranking, triplet, contrastive, or CoSENT losses, selected to match the final label format. \\
+Model and data access & Hugging Face Hub, Transformers, Datasets & Pin repository revisions and package versions; cache downloaded artifacts; store licenses and model cards with experiment metadata. \\
+Vector retrieval & Exact NumPy/scikit-learn search first; FAISS if needed & FAISS: \url{https://github.com/facebookresearch/faiss}. With only a few thousand criteria, exact normalized dot-product search should remain the reference implementation. \\
+Relationship model & Scikit-learn or PyTorch classifier & Start with logistic regression or a small multilayer head over $[u,v,|u-v|,u\odot v]$ before considering a cross-encoder. \\
+Experiment tracking & Local JSON/Parquet plus MLflow or Weights \& Biases if useful & The required interface is a reproducible local run manifest; a hosted tracker is optional. \\
+Statistics & NumPy, SciPy, scikit-learn, statsmodels & Bootstrap by trial family, paired tests, calibration curves, confusion matrices, and risk--coverage analysis. \\
+Application/API & FastAPI plus a small review UI, or Streamlit for the first prototype & Choose after the review interaction is sketched; all business logic must stay in importable modules and CLI commands. \\
+Agent/LLM layer & Explicit Python orchestrator plus provider adapter & Keep tool calls typed and auditable. Direct provider SDKs are preferred initially; an agent framework is optional rather than an architectural dependency. \\
+\bottomrule
+\end{longtable}
+
+Before downloading or training a model, record its exact Hub identifier, revision hash, license, pooling method, maximum sequence length, embedding dimension, input prefix requirements, and normalization convention. The baseline runner should expose one common \texttt{encode(texts, config)} interface and save embeddings with a corpus fingerprint so results cannot be mixed across data versions.
 
 Training examples have three broad roles:
 
@@ -217,6 +342,10 @@ Structured rules are used for labeling and quality control. We will not average 
 
 Fine-tuning occurs offline. Runtime comparisons use frozen, versioned weights. The application will show distances, nearest neighbors, source evidence, structured differences, predicted relationships, uncertainty, and review decisions rather than silently updating the model during use.
 
+\subsection{Minimum training experiment}
+
+The first trainable experiment should use one selected Sentence Transformers checkpoint, a frozen trial-family split, one positive/negative pair format, one hard-negative strategy, and at least three random seeds. It must compare the fine-tuned model with the unchanged starting checkpoint on the same judged candidate pool. Training should stop on a validation retrieval metric; the test set is evaluated once after choices are frozen. Larger sweeps, parameter-efficient tuning, cross-encoders, or multi-task losses are follow-up experiments rather than prerequisites.
+
 \section{Population Information from Manuscripts}
 
 We probably will not have individual patient data. Therefore, we will not claim to calculate how many individual patients would change eligibility between two trials, and we will not simulate an unknown patient population as if it were observed.
@@ -237,7 +366,7 @@ This is an optional secondary descriptive analysis, not part of the primary embe
 
 Before implementing this analysis, we need a short literature review and a common dictionary for baseline variables. If too few manuscripts report comparable fields, this component should be reduced rather than filled with unsupported assumptions.
 
-\section{What Makes the System Agentic}
+\section{Agent Runtime Design}
 
 One agent coordinates a workflow rather than simply generating an answer. Its tools cover Modern AutoCrit extraction, retrieval, frozen embeddings, LLM judgment, exact rule checking, and human review. The system preserves inputs, model and prompt versions, intermediate judgments, corrections, uncertainty, and final decisions. It will:
 
@@ -256,14 +385,14 @@ One agent coordinates a workflow rather than simply generating an answer. Its to
 
 The agent does not change model weights during a comparison and does not invent a distance. Training happens offline on reviewed data. At runtime, the agent loads a versioned model and decides whether a result is reliable enough to accept.
 
-\section{How We Will Evaluate It}
+\section{Evaluation Implementation}
 
 \subsection{Models to compare}
 
 \begin{itemize}
-    \item TF--IDF or another lexical baseline;
-    \item three frozen general sentence encoders;
-    \item frozen biomedical sentence encoder;
+    \item scikit-learn TF--IDF with cosine similarity as the transparent lexical baseline;
+    \item frozen \texttt{all-MiniLM-L6-v2}, \texttt{all-mpnet-base-v2}, and \texttt{bge-base-en-v1.5} general/retrieval encoders;
+    \item frozen BioLORD-2023 and, if useful for entity-focused cases, SapBERT biomedical baselines;
     \item structured rules where applicable;
     \item LLM judgment without fine-tuning;
     \item our fine-tuned dense encoder; and
@@ -290,28 +419,48 @@ The primary scope is similarity ranking and equivalence retrieval for individual
 
 The system is decision support for protocol comparison, not an automated patient-screening device. Individual patient eligibility decisions, patient-level outcome modeling, causal transportability claims, and a single weighted hybrid score with ambiguous clinical meaning are outside scope. The optional manuscript analysis remains descriptive and contingent on comparable aggregate reporting.
 
-\section{Team Responsibilities}
+\section{Implementation Workstreams}
 
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.17\linewidth} >{\raggedright\arraybackslash}p{0.35\linewidth} >{\raggedright\arraybackslash}p{0.36\linewidth}}
-\toprule
-\textbf{Owner} & \textbf{Main job} & \textbf{Deliverables} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Owner} & \textbf{Main job} & \textbf{Deliverables} \\
-\midrule
-\endhead
-Member A: data and protocols & Build the protocol/manuscript corpus, run Modern AutoCrit, organize criterion pairs, and lead annotation. & Clean criterion dataset, provenance, annotation guide, pair labels, data splits, reviewer agreement, and baseline-characteristic table. \\
-\midrule
-Member B: embeddings and statistics & Run baseline encoders, fine-tune the new encoder, build the relationship classifier, and perform statistical evaluation. & Baseline results, training pipeline, trained model, calibration, confidence intervals, ablations, and population-summary analysis. \\
-\midrule
-Member C: agent and application & Build the agent workflow, tools, checks, LLM labeler, critic, review routing, and demonstration. & Working agent, tool interfaces, audit logs, active-learning loop, escalation results, and end-to-end application. \\
-\bottomrule
-\end{longtable}
+These are tasks to complete, not permanent assignments to named team members. Ownership can change by milestone, but every pull request should identify the workstream, acceptance criteria, reviewer, and affected artifact versions.
 
-All three members will read the AutoCriteria paper, help label difficult examples, review one another's work, run integration tests, interpret errors, and prepare the presentations and report.
+\subsection*{Data and benchmark}
+\begin{itemize}[label=$\square$]
+    \item Define and test the Modern AutoCrit workbook adapter and stable TriAlign schemas.
+    \item Complete criterion review, publish correction rules, and freeze a versioned source corpus.
+    \item Define trial-family groups before pair generation and add automated leakage tests.
+    \item Write the relationship-label guide with counterexamples and an explicit ambiguous option.
+    \item Implement random, nearest-neighbor, structured, and controlled-challenge pair samplers with provenance.
+    \item Build adjudication exports and calculate reviewer agreement by label and clinical phenomenon.
+\end{itemize}
 
-\section{Required Deliverables}
+\subsection*{Baselines, training, and statistics}
+\begin{itemize}[label=$\square$]
+    \item Implement one configuration-driven runner for every lexical and embedding baseline.
+    \item Cache versioned embeddings and build exact-search retrieval before adding an approximate index.
+    \item Produce the embedding-gap report and select one checkpoint for fine-tuning using validation data.
+    \item Implement pair/triplet datasets, hard-negative sampling, seeded training, checkpointing, and model cards.
+    \item Build the directional relationship classifier and probability-calibration step.
+    \item Implement retrieval, classification, calibration, risk--coverage, bootstrap, and ablation reports.
+\end{itemize}
+
+\subsection*{Agent, review application, and integration}
+\begin{itemize}[label=$\square$]
+    \item Define typed tool contracts for retrieval, structured comparison, terminology, LLM judgment, critic checks, and escalation.
+    \item Implement an explicit state machine and append-only audit trace with resumable jobs.
+    \item Create the pair-review UI with source context, field differences, rationale, uncertainty, and correction controls.
+    \item Add consistency checks for swapped input order, intervals, units, negation, and Boolean scope.
+    \item Implement model-registry loading, runtime retrieval, abstention, and evidence-linked result display.
+    \item Add unit, integration, regression, and end-to-end tests plus one-command developer workflows.
+\end{itemize}
+
+\subsection*{Shared completion work}
+\begin{itemize}[label=$\square$]
+    \item Review difficult clinical examples together and adjudicate clinically material disagreements.
+    \item Maintain decision records, changelog entries, setup instructions, and reproducible environment files.
+    \item Reproduce final runs from a clean checkout and prepare the application demonstration, report, and presentation.
+\end{itemize}
+
+\section{Definition of Done}
 
 \begin{enumerate}
     \item \textbf{Agentic prototype:} display source criteria, structured fields, frozen-encoder comparisons, LLM evidence and rationale, exact checks, uncertainty, review controls, abstention/escalation, and audit records.
@@ -323,7 +472,7 @@ All three members will read the AutoCriteria paper, help label difficult example
 
 Final test answers will remain separate from training artifacts and agent retrieval. Public release will include only data and source material whose reuse conditions permit distribution; otherwise, the manifest and reconstruction instructions will be provided.
 
-\section{Timeline}
+\section{Implementation Schedule}
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{0.19\linewidth} >{\raggedright\arraybackslash}p{0.70\linewidth}}
 \toprule
@@ -346,7 +495,7 @@ Final period & Freeze data and models, reproduce results, finish the application
 \bottomrule
 \end{longtable}
 
-\section{TODO List}
+\section{Engineering Backlog}
 
 \subsection*{Before October 20}
 \begin{itemize}[label=$\square$]
@@ -382,13 +531,54 @@ Final period & Freeze data and models, reproduce results, finish the application
     \item Freeze code, prompts, data, model versions, and reproducibility instructions.
 \end{itemize}
 
+\section{Literature Worth Reviewing}
+
+The goal of this reading list is to resolve implementation choices, not to accumulate background citations. For each paper or resource, add a short note under \texttt{docs/references/} recording the problem, data, supervision, split strategy, metrics, reusable code or model, and one design decision it changes for TriAlign.
+
+\subsection*{Eligibility extraction and representation}
+\begin{itemize}
+    \item \textbf{AutoCriteria} establishes the extraction problem and the system that Modern AutoCrit extends \cite{autocriteria}. Review its output representation, evaluation design, and failure modes before defining the TriAlign adapter.
+    \item \textbf{Chia} provides an expert-annotated eligibility corpus and a useful semantic decomposition \cite{chia}. Review it for external terminology and evaluation ideas even if it is not included in the primary training corpus.
+    \item \textbf{Modern AutoCrit} is the operational upstream contract \cite{modern-autocrit}. Review the validated export schema, identifier rules, review semantics, and provenance fields rather than treating the spreadsheet as anonymous text.
+\end{itemize}
+
+\subsection*{Sentence embeddings and representation learning}
+\begin{itemize}
+    \item \textbf{Sentence-BERT} explains bi-encoder sentence representations and efficient cosine retrieval \cite{sbert}; it is the architectural starting point for the frozen and fine-tuned encoders.
+    \item \textbf{SimCSE} is relevant to contrastive objectives, negative construction, and representation quality \cite{simcse}.
+    \item \textbf{BGE/C-Pack} is relevant to retrieval-oriented encoders and instruction-aware input formatting \cite{bge}.
+    \item \textbf{SapBERT} and \textbf{BioLORD} should be reviewed to understand the difference between biomedical concept alignment and complete-sentence eligibility meaning \cite{sapbert,biolord}.
+    \item The current Sentence Transformers training documentation should be used for runnable loss, trainer, and evaluator patterns: \url{https://www.sbert.net/docs/sentence_transformer/training_overview.html}.
+\end{itemize}
+
+\subsection*{Clinical-trial retrieval and similarity}
+\begin{itemize}
+    \item \textbf{Trial2Vec} provides a direct clinical-trial document retrieval comparison and a warning that whole-trial similarity is not the same as criterion-level equivalence \cite{trial2vec}.
+    \item Eligibility-cluster work should be reviewed for candidate mining and domain grouping, while checking whether its notion of similarity preserves operators, negation, and clinical direction \cite{clusters}.
+\end{itemize}
+
+\subsection*{Human labels, active learning, and agent evaluation}
+\begin{itemize}
+    \item Review active-learning literature on uncertainty, diversity, and disagreement sampling before claiming that agent-selected examples reduce annotation cost; compare every strategy with matched random sampling.
+    \item Review inter-rater reliability and adjudication guidance before selecting Cohen's $\kappa$, weighted $\kappa$, Krippendorff's $\alpha$, or prevalence-aware alternatives. Agreement must be reported by relationship class, not only as one overall number.
+    \item Review LLM-as-a-judge limitations and position/order bias before designing the critic. Pair reversal, evidence support, abstention, and blinded human labels should be explicit tests rather than prompt assumptions.
+\end{itemize}
+
+\subsection*{Calibration, abstention, and statistical evaluation}
+\begin{itemize}
+    \item \textbf{On Calibration of Modern Neural Networks} motivates post-hoc calibration and expected calibration error, including their limitations \cite{calibration}.
+    \item Selective-prediction and risk--coverage literature should guide abstention thresholds and escalation evaluation rather than using confidence as an unexplained score \cite{selective}.
+    \item Clustered resampling literature should be reviewed before implementing confidence intervals because pairs sharing a trial family are not independent.
+    \item Population-adjustment literature remains relevant only to the optional manuscript analysis and its limits \cite{signorovitch,phillippo}.
+\end{itemize}
+
 \section{Scope Boundaries}
 
 The minimum complete project is a one- or two-area protocol corpus, lexical matching, three frozen general encoders, a biomedical baseline where feasible, a reviewed pair and anchor dataset, one fine-tuned open dense encoder, a relationship classifier, one agentic labeling/review workflow, and leakage-controlled held-out evaluation. The target dataset is 80--120 trials and approximately 2,000 atomic criteria; achieved counts and exclusions will be reported transparently.
 
 The manuscript baseline-characteristics analysis is included only if enough comparable variables are available and the literature review supports the chosen summaries. We will not claim individual-level population disagreement, automated patient eligibility, causal transportability, clinical risk, or simulated patient outcomes without suitable data. We will also avoid an unexplained weighted score that mixes unrelated quantities.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem{autocriteria}
 Datta, S., et al.
 AutoCriteria: A Generalizable Clinical Trial Eligibility Criteria Extraction System Powered by Large Language Models, 2023.
@@ -416,6 +606,48 @@ Wang, Z., et al.
 Trial2Vec: Zero-shot clinical trial document similarity search using self-supervision.
 \emph{Findings of EMNLP}, 2022.
 \url{https://arxiv.org/abs/2206.14719}.
+
+\bibitem{sbert}
+Reimers, N. and Gurevych, I.
+Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
+\emph{EMNLP-IJCNLP}, 2019.
+\url{https://arxiv.org/abs/1908.10084}.
+
+\bibitem{simcse}
+Gao, T., Yao, X., and Chen, D.
+SimCSE: Simple Contrastive Learning of Sentence Embeddings.
+\emph{EMNLP}, 2021.
+\url{https://arxiv.org/abs/2104.08821}.
+
+\bibitem{bge}
+Xiao, S., Liu, Z., Zhang, P., and Muennighoff, N.
+C-Pack: Packaged Resources To Advance General Chinese Embedding.
+2023.
+\url{https://arxiv.org/abs/2309.07597}.
+
+\bibitem{sapbert}
+Liu, F., Shareghi, E., Meng, Z., Basaldella, M., and Collier, N.
+Self-Alignment Pretraining for Biomedical Entity Representations.
+\emph{NAACL}, 2021.
+\url{https://arxiv.org/abs/2010.11784}.
+
+\bibitem{biolord}
+Remy, F., Demuynck, K., and Demeester, T.
+BioLORD: Learning Ontological Representations from Definitions for Biomedical Concepts and their Textual Descriptions.
+2022.
+\url{https://arxiv.org/abs/2210.11892}.
+
+\bibitem{calibration}
+Guo, C., Pleiss, G., Sun, Y., and Weinberger, K. Q.
+On Calibration of Modern Neural Networks.
+\emph{ICML}, 2017.
+\url{https://proceedings.mlr.press/v70/guo17a.html}.
+
+\bibitem{selective}
+Geifman, Y. and El-Yaniv, R.
+Selective Classification for Deep Neural Networks.
+\emph{NeurIPS}, 2017.
+\url{https://proceedings.neurips.cc/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html}.
 
 \bibitem{signorovitch}
 Signorovitch, J. E., Wu, E. Q., Yu, A. P., et al.

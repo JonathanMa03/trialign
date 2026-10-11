@@ -1,0 +1,38 @@
+project:
+  seed: 20261011
+  schema_version: "0.1.0"
+
+data:
+  source_workbook: data/trial100_notreviewed.xlsx
+  review_sheet: Human Review
+  reviewed_statuses: [accepted, corrected]
+  processed_dir: data/processed
+  artifact_dir: artifacts
+
+splits:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+  group_column: trial_id
+
+pairing:
+  random_pairs: 1000
+  same_entity_pairs: 2000
+  require_cross_trial: true
+
+models:
+  lexical:
+    name: tfidf
+    ngram_range: [1, 2]
+    min_df: 1
+  candidates:
+    - sentence-transformers/all-MiniLM-L6-v2
+    - sentence-transformers/all-mpnet-base-v2
+    - BAAI/bge-base-en-v1.5
+    - FremyCompany/BioLORD-2023
+    - cambridgeltl/SapBERT-from-PubMedBERT-fulltext
+
+agent:
+  llm_enabled: false
+  abstention_threshold: 0.60
+  audit_dir: artifacts/audit

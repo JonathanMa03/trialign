@@ -288,3 +288,13 @@ __pycache__/
 !*.jpg
 !*.jpeg
 !*.svg
+
+# =========================
+# TriAlign generated data and experiment artifacts
+# =========================
+
+data/processed/*
+!data/processed/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+models/

@@ -81,12 +81,67 @@ The planned TriAlign application will allow a user to select a criterion, retrie
 
 TriAlign is decision support for clinical protocol comparison. Patient-level screening, causal transportability claims, outcome prediction, and a weighted mixture of unrelated scores are outside the primary scope.
 
+## Development setup
+
+Python 3.11 or 3.12 is recommended for the broadest PyTorch and FAISS compatibility.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[models,app,plots,dev]"
+```
+
+The root `requirements.txt` provides the corresponding single-file environment for teammates who prefer:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Before human review is complete, validate the current Modern AutoCrit workbook without modifying it:
+
+```bash
+trialign inspect
+# Or directly from a source checkout:
+python scripts/trialign.py inspect
+```
+
+After all criteria have been accepted or corrected, the initial reproducible pipeline is:
+
+```bash
+trialign freeze --input data/trial100_reviewed.xlsx
+trialign split
+trialign pairs
+trialign baseline-tfidf
+trialign export-schemas
+```
+
+These commands create a versioned reviewed corpus, trial-level splits, auditable pair candidates, and a lexical reference baseline. Generated data and experiment artifacts are ignored by Git by default; manifests and selected release artifacts should be committed intentionally. Run the current test suite with `pytest`.
+
 ## Repository structure
 
 ```text
 trialign/
+├── configs/
+│   └── default.yaml                    # Default data, split, pair, model, and agent settings
 ├── data/
-│   └── trial100_notreviewed.xlsx       # Unreviewed Modern AutoCrit 100-trial export
+│   ├── trial100_notreviewed.xlsx       # Unreviewed Modern AutoCrit 100-trial export
+│   └── processed/                      # Generated reviewed corpus, splits, and pairs
+├── src/trialign/
+│   ├── data/                           # Workbook adapters, validation, and split logic
+│   ├── pairing/                        # Reproducible candidate-pair generation
+│   ├── tools/                          # Exact structured comparison tools
+│   ├── models/                         # Baseline and embedding interfaces
+│   ├── agents/                         # Orchestration and auditable tool contracts
+│   ├── evaluation/                     # Shared evaluation metrics
+│   ├── schemas/                        # Versioned Pydantic records
+│   └── cli.py                         # Command-line workflows
+├── app/
+│   └── review_app.py                   # Initial Streamlit review surface
+├── scripts/
+│   └── trialign.py                     # Source-checkout CLI launcher
+├── tests/                                  # Unit and pipeline smoke tests
+├── artifacts/                              # Local model and experiment outputs
 ├── docs/
 │   ├── proposal.tex                    # Full methodology and project scope
 │   ├── proposal.pdf                    # Compiled proposal
@@ -104,7 +159,8 @@ trialign/
 │   └── CODEOWNERS
 ├── .gitignore
 ├── LICENSE
-├── requirements.txt                    # To be refined with implementation
+├── pyproject.toml                       # Installable package and tool configuration
+├── requirements.txt                    # Complete development environment
 └── README.md
 ```
 
