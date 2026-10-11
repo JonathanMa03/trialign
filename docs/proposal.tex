@@ -1,0 +1,433 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs,array,longtable}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.2em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.7em,itemsep=0.25em,topsep=0.3em}
+\setlength{\emergencystretch}{1.5em}
+
+\title{TriAlign: An Agentic Tool for Clinically Meaningful Eligibility-Criterion Retrieval and Comparison}
+\author{Jonathan Ma, Jiatong Gao}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Read This First}
+
+Before starting, each team member should read the original AutoCriteria paper \cite{autocriteria} and understand its basic workflow: an LLM reads free-text eligibility criteria from a clinical trial and converts them into a more structured format. The paper is the starting point for this project.
+
+Team members should then review the Modern AutoCrit repository \cite{modern-autocrit}:
+
+\begin{center}
+\url{https://github.com/JonathanMa03/modern-autocrit/tree/main}
+\end{center}
+
+The repository contains the working system that this project will extend. Teammates do not need to understand every implementation detail before contributing, but they should be able to run the application, inspect one completed extraction, and follow a criterion from source protocol text to its structured output.
+
+Modern AutoCrit is our expanded implementation of that idea. The original AutoCriteria work established the protocol-to-structured-criteria concept. Modern AutoCrit adds the project infrastructure needed for TriAlign:
+
+\begin{itemize}
+    \item retrieval of ClinicalTrials.gov records by NCT identifier;
+    \item parsing of ClinicalTrials.gov API v2 records;
+    \item atomic segmentation of compound eligibility text into separately comparable criteria;
+    \item Chia-inspired structured criteria with domain, entity, comparator, value, unit, interval, negation, timing, repetition, qualifiers, and Boolean scope;
+    \item stable criterion and parent-statement identifiers, source versions, surrounding context, and protocol provenance;
+    \item governed clinical terminology and canonical concepts;
+    \item separate extraction confidence, automated validation findings, and human-review status;
+    \item recoverable single-trial and manifest jobs with persistent batch checkpoints;
+    \item a frozen, versioned export containing only reviewed criteria that pass TriAlign-readiness checks;
+    \item modular backend code rather than one long extraction script; and
+    \item a browser interface for running extraction and inspecting results.
+\end{itemize}
+
+The features most relevant to TriAlign are atomic segmentation, normalized structured values, stable identifiers, Boolean scope, surrounding context, terminology normalization, source evidence, extraction uncertainty, automated validation, and reviewer decisions. They provide the inputs and quality signals needed to construct criterion pairs. The browser interface and job-recovery layer are useful engineering support, but they are not the central contribution of TriAlign.
+
+You do not need to understand the entire codebase immediately. The important input and output are:
+
+\begin{center}
+\textbf{Protocol eligibility text}
+$\longrightarrow$
+\textbf{atomic, structured eligibility criteria}
+\end{center}
+
+For example, Modern AutoCrit should turn ``participants must be at least 18 years old'' into a record containing the concept \emph{age}, the operator $\geq$, the value 18, and the unit years.
+
+This project begins after extraction. We want to compare criteria from different protocols and train an embedding model that understands clinically important differences.
+
+\section{The Project in Plain Language}
+
+Current sentence-embedding models often reward similar wording. That is not always clinically correct:
+
+\begin{itemize}
+    \item ``age $\geq18$'' and ``age $<18$'' look almost identical but describe different groups;
+    \item ``no cardiovascular disease'' and ``controlled hypertension is allowed'' discuss the same topic but are not equivalent;
+    \item ``creatinine clearance $\geq30$ mL/min'' and ``eGFR $\geq30$ mL/min/1.73 m$^2$'' may look similar but use different measurements; and
+    \item two differently worded criteria may actually mean the same thing.
+\end{itemize}
+
+Our goal is to build a new dense embedding model for eligibility criteria. Criteria with similar clinical meaning should be close in the learned space. Criteria that only look similar, but differ because of negation, operators, thresholds, timing, or exceptions, should be separated.
+
+The system will be a usable clinical data-science tool rather than only a model-development exercise. A user should be able to supply or select a criterion, retrieve comparable criteria from other protocols, inspect their structured differences, see an interpretable relationship and uncertainty estimate, and review the original evidence. The system will use one agent to find difficult examples, choose comparison tools, ask an LLM for an initial judgment when clinical context is needed, run exact checks when the relation is computable, send uncertain cases to humans, and turn accepted labels into model-training data.
+
+\subsection*{One-sentence aim}
+
+\emph{Build and evaluate an agentic workflow that creates human-validated criterion pairs from clinical protocols and uses them to fine-tune a clinically meaningful dense embedding model.}
+
+\subsection*{Primary project question}
+
+\emph{Where do generic dense embeddings fail to capture clinically meaningful differences in trial eligibility criteria, and can an agent combine LLM judgments, structured checks, and human review to fine-tune an embedding model that handles those differences?}
+
+\subsection*{Three research questions}
+
+\begin{enumerate}
+    \item Which clinical phenomena---including negation, operators, thresholds, units, timing, prior treatment, exceptions, and compound logic---cause conventional embeddings to produce clinically misleading rankings?
+    \item Does fine-tuning one open dense-encoder checkpoint on human-validated criterion pairs and hard negatives improve equivalence retrieval and anchor ordering over frozen lexical, general, and biomedical baselines?
+    \item Does the agentic workflow improve labeling quality, calibration, and reviewer efficiency while appropriately abstaining or escalating uncertain cases?
+\end{enumerate}
+
+\section{What We Are Trying to Learn}
+
+For each pair of criteria, we will assign one of the following relationships:
+
+\begin{itemize}
+    \item equivalent;
+    \item partially overlapping or compatible;
+    \item criterion A is more restrictive;
+    \item criterion B is more restrictive;
+    \item contradictory or effectively disjoint;
+    \item related topic, but not directly comparable;
+    \item unrelated; or
+    \item too ambiguous to decide.
+\end{itemize}
+
+The main model has two jobs:
+
+\begin{enumerate}
+    \item \textbf{Retrieval:} given one criterion, retrieve other criteria with comparable clinical meaning.
+    \item \textbf{Relationship prediction:} explain whether a retrieved pair is equivalent, overlapping, directional, contradictory, or unrelated.
+\end{enumerate}
+
+These are separate because ordinary embedding distance is symmetric, while ``A is more restrictive than B'' is directional.
+
+The annotation guide will be reviewed with the instructor before the benchmark is frozen. It will define each label, give positive and counterexamples, require reviewers to interpret inclusion/exclusion polarity before judging restrictiveness, and specify when evidence is insufficient. Every label will retain the source evidence and a concise rationale.
+
+\section{Data We Need}
+
+\subsection{Protocol corpus}
+
+Clinical protocols are the main source material. The target corpus is 80--120 public trials and approximately 2,000 atomic criteria from one or two therapeutic areas. Oncology and cardiovascular disease are the leading application areas because they provide complementary challenges: oncology emphasizes biomarkers, stage, performance status, prior therapy, and nested exceptions, while cardiovascular protocols combine measurements, event history, treatment stability, and temporal restrictions. If complete review at the target size is infeasible, we will report the achieved corpus size rather than silently weakening review requirements. For every protocol, we will keep:
+
+\begin{itemize}
+    \item the original eligibility text;
+    \item individual criteria extracted by Modern AutoCrit;
+    \item structured values, operators, units, negation, timing, and other qualifiers;
+    \item stable protocol, parent-statement, and atomic-criterion identifiers;
+    \item the source protocol version, location, surrounding text, inclusion/exclusion context, and reuse conditions;
+    \item extraction confidence and human-review status as separate variables; and
+    \item basic trial metadata.
+\end{itemize}
+
+The dataset must include more than age. We want examples involving demographics, laboratory thresholds, disease stage, biomarkers, prior treatment, medication use, comorbidities, performance status, reproductive requirements, timing, severity, negation, exceptions, and AND/OR scope. Laboratory, disease, and treatment criteria must all be represented.
+
+Chia is a useful example of a large structured eligibility-criteria dataset \cite{chia}. Prior work has also studied embeddings for eligibility clustering and trial similarity \cite{clusters,trial2vec}. We still need our own pair labels because those resources do not directly answer our relationship question.
+
+\subsection{How we find useful pairs}
+
+First, we will embed all criteria using three frozen general encoders and, where feasible, one biomedical encoder. Development examples will be mined across multiple encoders rather than selected from the errors of only one model. We will record the encoder, query, rank, sampling rule, and reason each pair entered the dataset. We will then inspect nearest neighbors and deliberately collect cases where conventional embeddings fail. Useful cases include:
+
+\begin{itemize}
+    \item opposite operators or negation despite high similarity;
+    \item changed values, unit conversions, incompatible measurements, or time windows;
+    \item equivalent meaning written differently;
+    \item broad rules paired with narrower exceptions or nested requirements;
+    \item similar vocabulary used for different clinical purposes; and
+    \item uncertain or poorly extracted criteria.
+\end{itemize}
+
+Natural cross-trial comparisons and constructed challenges will be marked and analyzed separately. Constructed challenges may include controlled paraphrases, converted units, changed thresholds, reversed operators, inserted or removed negation, nested requirements, and unrelated controls. Anchor triplets will encode expected ordering; for example, ``age at least 18'' should be closer to ``age 18 or older'' than to ``age below 18.'' We will also include random and clearly unrelated pairs. Otherwise, a benchmark made only from difficult failures would not reflect normal model behavior. Random sampling will later serve as a control for uncertainty-based selection.
+
+Training, validation, and test sets will be separated by trial family \emph{before} criterion pairs are constructed. Amendments, shared protocol templates, near duplicates, and constructed examples derived from them must stay in the same partition. We will record provenance and permitted reuse conditions, keep final test labels inaccessible to agent retrieval, and report possible encoder pretraining exposure to public trial text. Pilot and test comparisons will be independently double labeled, with qualified clinical adjudication for unresolved clinically material disagreements. During initial test review, reviewers will not see model scores or LLM proposals.
+
+\section{How Labels Become Training Data}
+
+The workflow is:
+
+\begin{center}
+Protocol pair
+$\rightarrow$ agent tools
+$\rightarrow$ LLM suggestion
+$\rightarrow$ human review
+$\rightarrow$ accepted label
+$\rightarrow$ model training.
+\end{center}
+
+\subsection{LLM suggestion}
+
+The LLM receives the two criteria, their structured fields, and enough versioned protocol context to interpret qualifiers and exclusion logic. It proposes a relationship, the clinically important difference, supporting evidence, confidence, uncertainty, and a short rationale. This proposal is not treated as truth and LLM agreement is never the reference standard.
+
+Automatic checks reject obvious mistakes. For example, a label should reverse correctly when A and B are swapped, incompatible units should be flagged, and exact disjoint intervals cannot be called overlapping.
+
+\subsection{Human review and steering}
+
+Reviewers accept, correct, reject, or mark each proposed label as ambiguous. Pilot and test examples will be independently reviewed by two people so that we can improve the label guide and measure agreement. Clinically consequential disagreements will receive qualified adjudication. Only accepted or adjudicated labels enter core training; unresolved cases remain visible rather than being forced into a class.
+
+As the model improves, the agent will prioritize examples where:
+
+\begin{itemize}
+    \item the model is uncertain;
+    \item the LLM and structured tools disagree;
+    \item input order changes the answer;
+    \item the example is unlike the existing training data; or
+    \item reviewers frequently disagree.
+\end{itemize}
+
+This is the human-steering loop: human corrections guide which examples are collected next and how the model is retrained.
+
+To evaluate whether targeted selection genuinely helps, uncertainty/disagreement sampling will be compared with random sampling under the same review budget. Manual annotation, LLM-assisted review, and the complete agent workflow will also be compared on matched tasks rather than on different examples.
+
+\section{The Dense Embedding Model}
+
+We will start from one open pretrained text-encoder checkpoint rather than train a language model from scratch. We will compare it with three frozen generic encoders and a biomedical encoder where feasible, then fine-tune the selected open checkpoint on human-validated pairs. The contribution is the new protocol-derived dataset, clinically difficult negatives, training setup, agentic labeling process, and evaluation rather than merely calling an existing Hugging Face model.
+
+Training examples have three broad roles:
+
+\begin{itemize}
+    \item \textbf{Positive pairs:} equivalent or clinically interchangeable criteria;
+    \item \textbf{ordinary negatives:} unrelated criteria; and
+    \item \textbf{hard negatives:} criteria with similar wording but an important clinical difference.
+\end{itemize}
+
+The encoder $f_\theta(c)$ maps criterion $c$ to a vector. Its basic distance is
+
+\[
+d_\theta(A,B)=1-\cos\{f_\theta(A),f_\theta(B)\}.
+\]
+
+Contrastive or triplet training pulls positive pairs closer and pushes appropriate negatives apart. Hard negatives teach the model that an operator, number, negation, time window, or exception can matter even when the rest of the sentence is unchanged. Partially overlapping requirements should not automatically be pushed as far apart as unrelated criteria; label-aware sampling or loss weighting must preserve that distinction.
+
+A small classification head will use both criterion vectors to predict the explicit relationship label. This head handles directional relationships that cosine distance alone cannot represent.
+
+Structured rules are used for labeling and quality control. We will not average structured, embedding, population, and LLM scores into one score with unclear clinical meaning.
+
+Fine-tuning occurs offline. Runtime comparisons use frozen, versioned weights. The application will show distances, nearest neighbors, source evidence, structured differences, predicted relationships, uncertainty, and review decisions rather than silently updating the model during use.
+
+\section{Population Information from Manuscripts}
+
+We probably will not have individual patient data. Therefore, we will not claim to calculate how many individual patients would change eligibility between two trials, and we will not simulate an unknown patient population as if it were observed.
+
+Instead, we may link protocols to their trial manuscripts and collect reported baseline characteristics from Table~1 or supplementary tables. Examples include age, sex, race or ethnicity, disease stage, performance status, prior treatment, and disease-specific severity measures.
+
+For a characteristic reported by both trials, we can calculate a standardized difference. For continuous variables:
+
+\[
+\Delta_k(a,b)=
+\frac{\bar{x}_{ak}-\bar{x}_{bk}}
+{\sqrt{(s_{ak}^2+s_{bk}^2)/2}}.
+\]
+
+Binary proportions can be standardized in a similar way. The main output should be a table or profile showing which reported characteristics differ, not a single unexplained population score.
+
+This is an optional secondary descriptive analysis, not part of the primary embedding benchmark. It asks whether protocols that look similar according to their eligibility criteria also report similar enrolled baseline characteristics. It does not analyze population outcomes, determine individual patient eligibility, establish causality or transportability, or quantify clinical risk. Published summaries omit information and cannot recover the full joint patient distribution. Population-adjustment literature explains these limitations \cite{signorovitch,phillippo}.
+
+Before implementing this analysis, we need a short literature review and a common dictionary for baseline variables. If too few manuscripts report comparable fields, this component should be reduced rather than filled with unsupported assumptions.
+
+\section{What Makes the System Agentic}
+
+One agent coordinates a workflow rather than simply generating an answer. Its tools cover Modern AutoCrit extraction, retrieval, frozen embeddings, LLM judgment, exact rule checking, and human review. The system preserves inputs, model and prompt versions, intermediate judgments, corrections, uncertainty, and final decisions. It will:
+
+\begin{enumerate}
+    \item confirm protocol versions and reviewed criterion interpretations;
+    \item run frozen encoders and organize representative and difficult comparisons by concept, clinical phenomenon, and sampling source;
+    \item select candidate criterion pairs and retrieve original context without losing qualifiers or exclusion logic;
+    \item choose structured, terminology, embedding, or LLM tools;
+    \item request an LLM relationship, clinical difference, evidence, rationale, and uncertainty;
+    \item check units, intervals, operators, negation, and label reversal when A and B are swapped;
+    \item send uncertain cases to human reviewers;
+    \item record the final label and its provenance;
+    \item choose new examples using uncertainty and disagreement while retaining random sampling as a control; and
+    \item apply frozen, versioned weights and display distances, neighbors, evidence, and review decisions with an audit trail.
+\end{enumerate}
+
+The agent does not change model weights during a comparison and does not invent a distance. Training happens offline on reviewed data. At runtime, the agent loads a versioned model and decides whether a result is reliable enough to accept.
+
+\section{How We Will Evaluate It}
+
+\subsection{Models to compare}
+
+\begin{itemize}
+    \item TF--IDF or another lexical baseline;
+    \item three frozen general sentence encoders;
+    \item frozen biomedical sentence encoder;
+    \item structured rules where applicable;
+    \item LLM judgment without fine-tuning;
+    \item our fine-tuned dense encoder; and
+    \item the full agent workflow with review and abstention.
+\end{itemize}
+
+Fine-tuning will be compared with its own frozen starting checkpoint and the strongest baseline selected using validation data. Supervision experiments will reuse the same encoder, splits, and review budget. We will also remove important pieces one at a time, such as hard negatives, LLM suggestions, human corrections, targeted sampling, or critic review, to see what actually improves performance and whether fine-tuning degrades ordinary paraphrase recognition.
+
+\subsection{Measures}
+
+For retrieval, we will report anchor-ordering accuracy, equivalence-retrieval precision and recall@$k$, mean reciprocal rank, and ranking quality. At a threshold selected only on validation data, we will report both the fraction of non-equivalent pairs incorrectly accepted and the fraction of true equivalents recovered, overall and by clinical phenomenon. For relationship prediction, we will report macro-F1, class-level errors, confusion matrices, probability calibration, abstention, and input-order consistency.
+
+LLM suggestions will be compared with independently adjudicated labels for relationship accuracy, evidence support, input-order consistency, abstention, and reviewer corrections. Unsupported judgments and clinically meaningful failures will be analyzed explicitly.
+
+All systems will receive identical inputs with documented formatting and will be evaluated over fully judged candidate pools. Natural and constructed comparisons will be reported separately. Paired uncertainty estimates will resample disjoint trial-family groups rather than individual pairs because comparisons from one family are dependent; training-seed variation will also be reported.
+
+For the agent, manual annotation, LLM-assisted review, and agent-assisted review will be tested on matched tasks and budgets. We will measure acceptance and correction, conflict detection, reviewer time, escalation errors, latency, monetary cost, and performance change after each annotation round.
+
+Age remains a useful unit test for boundaries and operators. It is not the main benchmark.
+
+\section{Primary Scope and Explicit Exclusions}
+
+The primary scope is similarity ranking and equivalence retrieval for individual atomic criteria, plus a separate relationship classifier. Shared clinical topic is not treated as equivalent eligibility meaning. Cosine distance will not be presented as a directional restrictiveness score or a measure of clinical risk.
+
+The system is decision support for protocol comparison, not an automated patient-screening device. Individual patient eligibility decisions, patient-level outcome modeling, causal transportability claims, and a single weighted hybrid score with ambiguous clinical meaning are outside scope. The optional manuscript analysis remains descriptive and contingent on comparable aggregate reporting.
+
+\section{Team Responsibilities}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.17\linewidth} >{\raggedright\arraybackslash}p{0.35\linewidth} >{\raggedright\arraybackslash}p{0.36\linewidth}}
+\toprule
+\textbf{Owner} & \textbf{Main job} & \textbf{Deliverables} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Owner} & \textbf{Main job} & \textbf{Deliverables} \\
+\midrule
+\endhead
+Member A: data and protocols & Build the protocol/manuscript corpus, run Modern AutoCrit, organize criterion pairs, and lead annotation. & Clean criterion dataset, provenance, annotation guide, pair labels, data splits, reviewer agreement, and baseline-characteristic table. \\
+\midrule
+Member B: embeddings and statistics & Run baseline encoders, fine-tune the new encoder, build the relationship classifier, and perform statistical evaluation. & Baseline results, training pipeline, trained model, calibration, confidence intervals, ablations, and population-summary analysis. \\
+\midrule
+Member C: agent and application & Build the agent workflow, tools, checks, LLM labeler, critic, review routing, and demonstration. & Working agent, tool interfaces, audit logs, active-learning loop, escalation results, and end-to-end application. \\
+\bottomrule
+\end{longtable}
+
+All three members will read the AutoCriteria paper, help label difficult examples, review one another's work, run integration tests, interpret errors, and prepare the presentations and report.
+
+\section{Required Deliverables}
+
+\begin{enumerate}
+    \item \textbf{Agentic prototype:} display source criteria, structured fields, frozen-encoder comparisons, LLM evidence and rationale, exact checks, uncertainty, review controls, abstention/escalation, and audit records.
+    \item \textbf{Versioned benchmark:} include source context, identifiers and versions, relationship labels, evidence, rationales, adjudications, anchor pairs/triplets, sampling provenance, reuse conditions, and independent trial-family splits.
+    \item \textbf{Baseline gap report and training artifacts:} document lexical and encoder failures, provide the reproducible fine-tuning pipeline and trained open encoder, and report supervision and component ablations.
+    \item \textbf{Held-out test report:} cover embedding improvement, equivalence retrieval, relationship classification, LLM quality, reviewer effort, agent reliability, calibration, abstention, latency, cost, and clinical failure analysis.
+    \item \textbf{Reproducibility package:} include permitted data or a complete acquisition manifest, annotation rules, references, prompts, model and dependency versions, model formatting, random seeds, and instructions sufficient for another team to run the prototype.
+\end{enumerate}
+
+Final test answers will remain separate from training artifacts and agent retrieval. Public release will include only data and source material whose reuse conditions permit distribution; otherwise, the manifest and reconstruction instructions will be provided.
+
+\section{Timeline}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.19\linewidth} >{\raggedright\arraybackslash}p{0.70\linewidth}}
+\toprule
+\textbf{Dates} & \textbf{Goal} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Dates} & \textbf{Goal} \\
+\midrule
+\endhead
+October 3--6 & Everyone reads AutoCriteria. Agree on relationship labels, therapeutic areas, protocol selection, annotation format, and software interfaces. \\
+October 7--12 & Run Modern AutoCrit on the first protocols. Test frozen embedding models. Retrieve nearest neighbors and collect clear failure examples. Pilot the LLM labeler and human-review form. \\
+October 13--16 & Label a small multi-domain dataset, measure initial reviewer agreement, build the first training dataset, and implement basic agent checks. \\
+October 17--19 & Produce preliminary retrieval results, failure examples, a working agent trace, and, if enough labels exist, a small fine-tuning experiment. Prepare the presentation. \\
+October 20 & \textbf{Progress presentation:} explain AutoCriteria and Modern AutoCrit; describe the corpus; show embedding failures; explain the LLM-to-human labeling loop; report baseline results; demonstrate one agent run; present risks and the remaining plan. \\
+October 21--November 2 & Expand protocols and labels, improve prompts and checks, finish double review, collect manuscript summaries, and freeze train/validation/test splits. \\
+November 3--16 & Fine-tune the encoder, build the relationship classifier, calibrate it, and run the main ablations. \\
+November 17--30 & Run held-out tests, agent and abstention experiments, manuscript population analysis, robustness checks, and error analysis. \\
+Final period & Freeze data and models, reproduce results, finish the application, write the report, and prepare the final presentation. \\
+\bottomrule
+\end{longtable}
+
+\section{TODO List}
+
+\subsection*{Before October 20}
+\begin{itemize}[label=$\square$]
+    \item Read the AutoCriteria paper and review the Modern AutoCrit input/output.
+    \item Choose one or two therapeutic areas and define which protocols qualify.
+    \item Agree on relationship labels and write short examples for each label.
+    \item Run Modern AutoCrit on the first protocol batch and inspect its output.
+    \item Define the path toward 80--120 trials and approximately 2,000 reviewed atomic criteria, while documenting the smaller progress-presentation subset honestly.
+    \item Select and record three frozen generic encoders, one biomedical encoder if feasible, and one open checkpoint eligible for fine-tuning.
+    \item Retrieve nearest neighbors and collect multi-domain failure examples.
+    \item Build the LLM label format, rule checks, and human-review form.
+    \item Double-label a pilot dataset, calculate agreement, and define qualified adjudication for unresolved cases.
+    \item Split data by trial family before pairing; group amendments, templates, near duplicates, and constructed derivatives and check for leakage.
+    \item Create a minimal fine-tuning dataset and training script.
+    \item Demonstrate one full agent and review workflow.
+    \item Prepare the October 20 slides, figures, and risk list.
+\end{itemize}
+
+\subsection*{After October 20}
+\begin{itemize}[label=$\square$]
+    \item Expand labels using uncertainty and tool disagreement.
+    \item Define positive, ordinary-negative, and hard-negative sampling.
+    \item Fine-tune and calibrate the dense encoder.
+    \item Train the relationship classifier.
+    \item Test the contribution of hard negatives, LLM suggestions, human corrections, and the critic.
+    \item Review aggregate population-comparison literature and define allowed claims.
+    \item Extract comparable manuscript baseline characteristics with provenance.
+    \item Evaluate retrieval, relationship classification, calibration, and agent routing.
+    \item Compare uncertainty/disagreement sampling with random sampling under a matched review budget.
+    \item Run blinded test annotation without model or LLM suggestions and keep final labels inaccessible to agent retrieval.
+    \item Report natural and constructed results separately, trial-family resampling uncertainty, and training-seed variation.
+    \item Complete domain-specific and out-of-distribution error analysis.
+    \item Freeze code, prompts, data, model versions, and reproducibility instructions.
+\end{itemize}
+
+\section{Scope Boundaries}
+
+The minimum complete project is a one- or two-area protocol corpus, lexical matching, three frozen general encoders, a biomedical baseline where feasible, a reviewed pair and anchor dataset, one fine-tuned open dense encoder, a relationship classifier, one agentic labeling/review workflow, and leakage-controlled held-out evaluation. The target dataset is 80--120 trials and approximately 2,000 atomic criteria; achieved counts and exclusions will be reported transparently.
+
+The manuscript baseline-characteristics analysis is included only if enough comparable variables are available and the literature review supports the chosen summaries. We will not claim individual-level population disagreement, automated patient eligibility, causal transportability, clinical risk, or simulated patient outcomes without suitable data. We will also avoid an unexplained weighted score that mixes unrelated quantities.
+
+\begin{thebibliography}{9}
+\bibitem{autocriteria}
+Datta, S., et al.
+AutoCriteria: A Generalizable Clinical Trial Eligibility Criteria Extraction System Powered by Large Language Models, 2023.
+\url{https://arxiv.org/abs/2304.06096}.
+
+\bibitem{modern-autocrit}
+Ma, J.
+Modern AutoCrit, GitHub repository.
+\url{https://github.com/JonathanMa03/modern-autocrit/tree/main}.
+
+\bibitem{chia}
+Kury, F., Butler, A., Yuan, C., et al.
+Chia, a large annotated corpus of clinical trial eligibility criteria.
+\emph{Scientific Data}, 2020.
+\url{https://doi.org/10.1038/s41597-020-00620-0}.
+
+\bibitem{clusters}
+Griciute, B., et al.
+Analysis of eligibility criteria clusters based on large language models for clinical trial design.
+\emph{Journal of the American Medical Informatics Association}, 2025.
+\url{https://pmc.ncbi.nlm.nih.gov/articles/PMC11833473/}.
+
+\bibitem{trial2vec}
+Wang, Z., et al.
+Trial2Vec: Zero-shot clinical trial document similarity search using self-supervision.
+\emph{Findings of EMNLP}, 2022.
+\url{https://arxiv.org/abs/2206.14719}.
+
+\bibitem{signorovitch}
+Signorovitch, J. E., Wu, E. Q., Yu, A. P., et al.
+Comparative effectiveness without head-to-head trials: a method for matching-adjusted indirect comparisons applied to psoriasis treatment with adalimumab or etanercept.
+\emph{Pharmacoeconomics}, 2010;28:935--945.
+\url{https://pubmed.ncbi.nlm.nih.gov/20831302/}.
+
+\bibitem{phillippo}
+Phillippo, D. M., Ades, A. E., Dias, S., et al.
+Methods for population-adjusted indirect comparisons in health technology appraisal.
+\emph{Medical Decision Making}, 2018;38(2):200--211.
+\url{https://pmc.ncbi.nlm.nih.gov/articles/PMC5774635/}.
+\end{thebibliography}
+
+\end{document}

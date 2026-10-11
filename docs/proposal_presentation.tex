@@ -1,0 +1,102 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usepackage[T1]{fontenc}\usepackage{lmodern}\usepackage{booktabs}\usepackage{tabularx}\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{wine}{HTML}{9B1C2B}\definecolor{orange}{HTML}{D97800}\definecolor{peach}{HTML}{F7E7DF}\definecolor{cream}{HTML}{FFF9F5}\definecolor{ink}{HTML}{302F2D}\definecolor{muted}{HTML}{756A65}
+\setbeamercolor{normal text}{fg=ink,bg=cream}\setbeamercolor{structure}{fg=wine}\setbeamercolor{frametitle}{fg=white,bg=wine}\setbeamercolor{block title}{fg=white,bg=wine}\setbeamercolor{block body}{fg=ink,bg=peach}
+\setbeamertemplate{navigation symbols}{}\setbeamertemplate{itemize item}{\color{orange}$\blacktriangleright$}
+\setbeamertemplate{footline}{\leavevmode\hbox{\begin{beamercolorbox}[wd=.75\paperwidth,ht=2.7ex,dp=1.1ex,leftskip=1em]{author in head/foot}\color{muted}\scriptsize TriAlign\end{beamercolorbox}\begin{beamercolorbox}[wd=.25\paperwidth,ht=2.7ex,dp=1.1ex,rightskip=1em plus1fil]{author in head/foot}\color{muted}\scriptsize\insertframenumber/\inserttotalframenumber\end{beamercolorbox}}}
+\setbeamertemplate{frametitle}{\nointerlineskip\begin{beamercolorbox}[sep=.65em,wd=\paperwidth]{frametitle}\insertframetitle\end{beamercolorbox}}
+\newcommand{\pill}[1]{\tikz[baseline=-.6ex]\node[rounded corners=2pt,fill=peach,inner xsep=5pt,inner ysep=2pt,text=wine,font=\scriptsize\bfseries]{#1};}
+\newcommand{\source}[1]{{\tiny\color{muted}#1}}
+\begin{document}
+
+{\setbeamercolor{background canvas}{bg=wine}\begin{frame}[plain]
+\vfill{\color{white}\Huge\bfseries TriAlign\par}\vspace{.6em}
+{\Large\color{peach}An agentic tool for clinically meaningful comparison of trial eligibility criteria\par}\vspace{1.8em}
+{\large\color{white}Jonathan Ma \quad\textbullet\quad Jiatong Gao\par}\vfill
+{\color{peach}Clinical protocols $\rightarrow$ reviewed structure $\rightarrow$ interpretable comparison}
+\end{frame}}
+
+\begin{frame}{Why this tool is needed}
+Eligibility criteria determine who can enter a trial, yet important differences are buried in long protocols and inconsistent prose.
+\begin{itemize}
+\item Study teams compare criteria for protocol design, feasibility, competitive intelligence, evidence synthesis, and amendment review.
+\item Keyword search finds shared words; ordinary embeddings often find shared topics. Neither guarantees shared eligibility meaning.
+\item Users need to know whether criteria are equivalent, narrower, overlapping, contradictory, related, or incomparable---with evidence and uncertainty.
+\end{itemize}
+\begin{block}{Practical goal}Select a criterion, retrieve comparable criteria across protocols, inspect the differences, and trace the result back to its source.\end{block}
+\end{frame}
+
+\begin{frame}{From AutoCriteria to Modern AutoCrit}
+\begin{columns}[T,onlytextwidth]\column{.46\textwidth}
+\textbf{AutoCriteria established}
+\begin{itemize}\item LLM-assisted conversion of eligibility prose into structured criteria\item a scalable starting point for protocol preprocessing\end{itemize}
+\column{.51\textwidth}\textbf{Modern AutoCrit adds}
+\begin{itemize}\item NCT, pasted-text, and full-protocol PDF ingestion\item atomic thresholds, negation, timing, repetition, exceptions, and AND/OR scope\item provenance, stable IDs, validation, human correction, and resumable jobs\item versioned Excel and validated JSON exports\end{itemize}
+\end{columns}
+\begin{block}{Engineering change}The OpenAI SDK and small testable modules replaced LangChain/LangGraph and the original long script, making state, retries, validation, and provenance explicit.\end{block}
+\source{Datta et al., AutoCriteria (2023); github.com/JonathanMa03/modern-autocrit}
+\end{frame}
+
+\begin{frame}{The gap TriAlign addresses}
+\begin{tabularx}{\textwidth}{@{}X X X@{}}\toprule Pair & Embedding problem & Clinical relation \\\midrule
+Age $\geq18$ vs. age $<18$ & nearly identical wording & disjoint populations \\
+No cardiovascular disease vs. controlled hypertension permitted & same clinical topic & exception changes scope \\
+No prior chemotherapy vs. none within 6 months & high lexical overlap & temporal rule differs \\
+BP $>145/95$ once vs. twice in 3 months & same measurement & repetition/timing differ \\\bottomrule\end{tabularx}
+\begin{block}{Three questions}Where do conventional embeddings fail? Can reviewed hard cases improve a dense encoder? Can an agent choose the right tools, quantify uncertainty, and escalate safely?\end{block}
+\end{frame}
+
+\begin{frame}{Protocol corpus: two complementary areas}
+\begin{columns}[T,onlytextwidth]\column{.46\textwidth}
+\begin{block}{50 oncology trials}Biomarkers, stage, histology, prior therapy, washout periods, performance status, organ function, and nested exceptions.\end{block}
+\column{.46\textwidth}
+\begin{block}{50 cardiovascular trials}Heart failure, atrial fibrillation, coronary/valvular disease, hypertension, stroke, thrombosis, PAD, and aneurysm.\end{block}\end{columns}
+\begin{itemize}\item Target: approximately 2,000 human-reviewed atomic criteria.\item Chia may supplement terminology and examples, but does not supply gold pairwise labels.\item Every atom retains NCT ID, source version, parent statement, context, review, and validation.\end{itemize}
+\source{Kury et al., Chia, Scientific Data 7, 281 (2020).}
+\end{frame}
+
+\begin{frame}{Interpretable relationships, not an opaque score}
+\begin{columns}[T,onlytextwidth]\column{.56\textwidth}
+\begin{itemize}\item \pill{Equivalent} same operational rule\item \pill{More restrictive} one permits a subset\item \pill{Partially overlapping} shared but non-nested\item \pill{Contradictory / disjoint} cannot both hold\item \pill{Related, not comparable} shared topic, different operation\item \pill{Unrelated} no meaningful relationship\item \pill{Ambiguous} insufficient context\end{itemize}
+\column{.40\textwidth}\begin{block}{Why this matters}Similarity can rank candidates, but users see a clinical relationship, evidence, and calibrated uncertainty rather than a weighted mixture with unclear meaning.\end{block}\end{columns}
+\end{frame}
+
+\begin{frame}{The agentic workflow takes center stage}
+\begin{center}\resizebox{.96\textwidth}{!}{\begin{tikzpicture}[node distance=7mm,box/.style={draw=wine,rounded corners,fill=peach,text width=27mm,minimum height=11mm,align=center},agent/.style={draw=orange,very thick,rounded corners,fill=white,text width=31mm,minimum height=14mm,align=center,font=\bfseries},arr/.style={-{Stealth},thick,orange}]
+\node[box] (i) {Reviewed pair\\+ source context};\node[agent,right=of i] (a) {Agent plans\\and routes};
+\node[box,above right=3mm and 9mm of a] (e) {Exact interval and\\Boolean checks};\node[box,right=9mm of a] (r) {Terminology and\\embedding retrieval};\node[box,below right=3mm and 9mm of a] (l) {Contextual LLM\\judgment + critic};\node[box,right=12mm of r] (o) {Relationship, evidence,\\uncertainty, escalation};
+\draw[arr](i)--(a);\draw[arr](a)--(e);\draw[arr](a)--(r);\draw[arr](a)--(l);\draw[arr](e)--(o);\draw[arr](r)--(o);\draw[arr](l)--(o);\end{tikzpicture}}\end{center}
+The agent selects tools, reconciles disagreements, records its trace, and abstains when evidence is insufficient. Exact cases are not forced through an LLM; ambiguous cases are not hidden behind cosine similarity.
+\end{frame}
+
+\begin{frame}{Human steering becomes representation learning}
+\begin{enumerate}\item The agent retrieves pairs and assembles structural and source evidence.\item An LLM proposes a relationship; exact checks or a critic challenge conflicts.\item A human accepts, corrects, or marks ambiguity. The human decision is authoritative.\item Reviewed pairs form positives, hard negatives, and ordered anchors.\item One open dense encoder is fine-tuned offline and calibrated on held-out data.\item Later review prioritizes uncertainty and disagreement, compared with random sampling.\end{enumerate}
+\begin{block}{Contribution}A reviewed protocol dataset, clinically difficult negatives, agentic labeling workflow, and controlled evaluation---not merely checkpoint fine-tuning.\end{block}
+\end{frame}
+
+\begin{frame}{Evaluation plan}
+\begin{tabularx}{\textwidth}{@{}p{.27\textwidth}X@{}}\toprule Component & Measures \\\midrule
+Retrieval & precision/recall@$k$, mean reciprocal rank, anchor-ordering accuracy \\
+Relationship prediction & macro-F1, class errors, confusion matrix, order consistency \\
+Uncertainty & calibration, risk--coverage, abstention and escalation errors \\
+Agent usefulness & correction rate, conflict detection, reviewer time, latency, and cost \\
+Statistics & trial-family bootstrap intervals, paired comparisons, and ablations \\\bottomrule\end{tabularx}
+\vspace{.5em}Trial families are split before pair construction; amendments and shared templates stay together. Held-out labels remain unavailable to agent retrieval.
+\end{frame}
+
+\begin{frame}{What we will build and how}
+\begin{columns}[T,onlytextwidth]\column{.48\textwidth}\textbf{Working tool}
+\begin{itemize}\item cross-protocol criterion retrieval\item field-level and contextual differences\item relationship and uncertainty\item traceable source evidence\item correction and escalation\end{itemize}
+\column{.48\textwidth}\textbf{Execution}
+\begin{enumerate}\item calibrate on 10 trials\item extract/review the 100-trial cohort\item measure embedding failures and label pairs\item fine-tune and calibrate one encoder\item integrate agent, critic, audit, and abstention\end{enumerate}\end{columns}
+\begin{block}{Safeguards}Human-reviewed inputs, blinded test labels, trial-family splits, and no automated patient screening, causal claims, or opaque hybrid score.\end{block}
+\end{frame}
+
+\begin{frame}{Take-home proposal}
+\begin{block}{TriAlign}An agentic clinical data-science tool combining reviewed protocol structure, exact checks, retrieval, embeddings, contextual LLM reasoning, and human steering to compare eligibility criteria with interpretable relationships and calibrated uncertainty.\end{block}
+\vspace{1em}\begin{center}\large Modern AutoCrit supplies traceable atoms.\\[.45em]Human review supplies trustworthy relationships.\\[.45em]TriAlign learns and operationalizes the comparison.\end{center}
+\vfill\source{References: Datta et al., AutoCriteria (2023); Kury et al., Chia (2020); Modern AutoCrit repository; full methods in the project proposal.}
+\end{frame}
+\end{document}
