@@ -2,7 +2,7 @@
 
 ### Evaluating and Improving Clinical Meaning Distances in Trial Eligibility Embeddings
 
-**Author:** [Jonathan Ma](https://jonathanma03.github.io), Jiatong Gao
+**Author:** [Jonathan Ma](https://jonathanma03.github.io), [Jiatong Gao](www.linkedin.com/in/jiatonggao)
 
 TriAlign is a downstream project to [Modern AutoCrit](https://github.com/JonathanMa03/modern-autocrit/tree/main). Modern AutoCrit converts clinical-trial eligibility prose into reviewed, atomic criteria with structured clinical fields and source provenance. TriAlign begins from those outputs and asks a different question: when are two eligibility criteria actually similar in clinical meaning rather than merely similar in wording?
 
