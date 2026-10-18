@@ -174,6 +174,34 @@ trialign/
 
 The first implementation should remain modular but small. A Python state machine with typed tool interfaces is preferred over adopting an agent framework before the workflow stabilizes. Every stage must also be runnable from a command line so experiments do not depend on the web interface.
 
+\subsection{Dashboard and user workflow}
+
+The dashboard is the operational interface to TriAlign, not a collection of decorative summary charts. It turns retrieval, relationship prediction, agent routing, source evidence, uncertainty, and human steering into one reviewable workflow. A clinical data scientist should be able to:
+
+\begin{enumerate}
+    \item search or filter the reviewed corpus by trial, therapeutic area, criterion type, domain, entity, relationship, uncertainty, or review status;
+    \item select one criterion and retrieve comparable criteria from other protocols with the frozen encoder;
+    \item inspect the two source passages, parent statements, structured fields, and protocol links side by side;
+    \item see embedding similarity separately from the predicted clinical relationship and its direction;
+    \item inspect the agent's selected tools, exact-check results, evidence, disagreements, calibrated uncertainty, and escalation reason;
+    \item accept, correct, reject, or mark the proposed relationship as ambiguous; and
+    \item export a versioned decision with reviewer rationale and a complete audit reference.
+\end{enumerate}
+
+The initial dashboard should have five compact views:
+
+\begin{itemize}
+    \item \textbf{Search:} select a trial or individual reviewed criterion and apply corpus filters.
+    \item \textbf{Ranked comparisons:} display cross-trial candidates, embedding scores, predicted relationships, uncertainty, and review state.
+    \item \textbf{Comparison detail:} show source evidence and field-level differences for polarity, entity, comparator, value, unit, interval, negation, timing, repetition, exceptions, and Boolean scope.
+    \item \textbf{Review queue:} prioritize tool disagreements, input-order inconsistencies, unfamiliar concepts, high uncertainty, and explicit agent abstentions.
+    \item \textbf{Evaluation:} summarize retrieval, relationship classification, calibration, risk--coverage, reviewer corrections, latency, and cost by model version and clinical phenomenon.
+\end{itemize}
+
+The principal product output is a ranked, evidence-linked comparison rather than a single similarity score. Each result must distinguish the symmetric embedding score from the explicit relationship label, such as equivalent, more restrictive, partially overlapping, disjoint, unrelated, or ambiguous. It must also retain both criterion identifiers, trial and protocol provenance, model and prompt versions, tool traces, uncertainty, escalation status, and any human correction.
+
+Training, corpus freezing, pair generation, and bulk evaluation remain command-line workflows. The dashboard calls the same importable, versioned application services and must not contain separate model logic. Runtime requests use frozen model weights; accepted dashboard decisions enter a new versioned offline training set only after validation. Streamlit is sufficient for the first prototype, while the service boundary should permit a later FastAPI-backed interface without rewriting comparison logic.
+
 \subsection{Core records and interfaces}
 
 The minimum stable records are:
@@ -447,7 +475,9 @@ These are tasks to complete, not permanent assignments to named team members. Ow
 \begin{itemize}[label=$\square$]
     \item Define typed tool contracts for retrieval, structured comparison, terminology, LLM judgment, critic checks, and escalation.
     \item Implement an explicit state machine and append-only audit trace with resumable jobs.
-    \item Create the pair-review UI with source context, field differences, rationale, uncertainty, and correction controls.
+    \item Create the dashboard with criterion search, ranked cross-trial retrieval, side-by-side source context and field differences, agent trace, uncertainty, correction controls, and export.
+    \item Add a review queue for disagreement, order sensitivity, out-of-distribution inputs, abstention, and unresolved ambiguity.
+    \item Add an evaluation view for retrieval, relationships, calibration, risk--coverage, reviewer corrections, latency, and cost without duplicating experiment logic in the UI.
     \item Add consistency checks for swapped input order, intervals, units, negation, and Boolean scope.
     \item Implement model-registry loading, runtime retrieval, abstention, and evidence-linked result display.
     \item Add unit, integration, regression, and end-to-end tests plus one-command developer workflows.
@@ -463,7 +493,7 @@ These are tasks to complete, not permanent assignments to named team members. Ow
 \section{Definition of Done}
 
 \begin{enumerate}
-    \item \textbf{Agentic prototype:} display source criteria, structured fields, frozen-encoder comparisons, LLM evidence and rationale, exact checks, uncertainty, review controls, abstention/escalation, and audit records.
+    \item \textbf{Agentic dashboard prototype:} support criterion search, ranked cross-protocol retrieval, side-by-side source and structured differences, LLM evidence and rationale, exact checks, agent trace, uncertainty, review controls, abstention/escalation, export, and audit records.
     \item \textbf{Versioned benchmark:} include source context, identifiers and versions, relationship labels, evidence, rationales, adjudications, anchor pairs/triplets, sampling provenance, reuse conditions, and independent trial-family splits.
     \item \textbf{Baseline gap report and training artifacts:} document lexical and encoder failures, provide the reproducible fine-tuning pipeline and trained open encoder, and report supervision and component ablations.
     \item \textbf{Held-out test report:} cover embedding improvement, equivalence retrieval, relationship classification, LLM quality, reviewer effort, agent reliability, calibration, abstention, latency, cost, and clinical failure analysis.
