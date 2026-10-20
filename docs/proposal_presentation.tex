@@ -100,15 +100,31 @@ Did each component help? & Remove hard negatives, human corrections, critic chec
 \end{frame}
 
 \begin{frame}{Benchmark Comparisons}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{.20\textwidth}p{.27\textwidth}X@{}}\toprule System & Implementation & Comparison role \\\midrule
+Lexical baseline & TF--IDF + cosine & Word-overlap reference. \\
+General encoder & \texttt{all-mpnet-base-v2} & Frozen semantic-retrieval baseline. \\
+Biomedical encoder & \texttt{BioLORD-2023} & Frozen biomedical-representation baseline. \\
+TrialGPT-style agent & Criterion-level LLM reasoning adapted from patient--trial matching & Tests an LLM-only evidence-and-judgment workflow on compatible criterion-pair cases. \\
+EligMeta-style agent & LLM parsing plus deterministic eligibility-alignment logic & Tests recent eligibility-aware agent design on compatible alignment cases. \\
+TriAlign & Fine-tuned MPNet + directional head + routed tools & Learns reviewed hard cases and chooses deterministic, embedding, or fuzzy comparison. \\\bottomrule\end{tabularx}
+\vspace{.4em}
+\begin{block}{Fair comparison}All runnable systems receive the same reviewed pairs and evidence. We compare labels, ranking, evidence support, abstention, latency, and cost only where outputs align; TrialGPT and EligMeta remain task-adjacent rather than identical benchmarks.\end{block}
+\source{Jin et al., TrialGPT, Nature Communications (2024); Zhao et al., EligMeta, arXiv:2604.02678 (2026); Hugging Face model cards for MPNet and BioLORD.}
+\end{frame}
+
+\begin{frame}{Five milestones from current review to delivery}
 \small
-\begin{tabularx}{\textwidth}{@{}p{.25\textwidth}p{.31\textwidth}X@{}}\toprule System & Implementation & Comparison role \\\midrule
-Lexical baseline & TF--IDF + cosine similarity & Measures word overlap without learned clinical semantics. \\
-General encoder & \texttt{all-mpnet-base-v2} & Strong off-the-shelf sentence-embedding baseline for semantic retrieval. \\
-Biomedical encoder & \texttt{BioLORD-2023}& Tests whether biomedical concept knowledge improves eligibility retrieval. \\
-TriAlign & Fine-tuned MPNet encoder + directionalD head + agent tools & Learns from reviewed hard cases, predicts the clinical relationship, and routes exact or ambiguous comparisons. \\\bottomrule\end{tabularx}
-\vspace{.55em}
-\begin{block}{Fair comparison}All systems use the same corpus and trial-family split. TriAlign is compared with unchanged MPNet, isolating the value of reviewed supervision and agent tools.\end{block}
-\source{Model cards: huggingface.co/sentence-transformers/all-mpnet-base-v2; huggingface.co/FremyCompany/BioLORD-2023.}
+\begin{tabularx}{\textwidth}{@{}p{.055\textwidth}p{.19\textwidth}p{.18\textwidth}X@{}}\toprule
+& Stage & Timing & Exit artifact \\\midrule
+\pill{1} & \textbf{Freeze inputs} & Oct. 20--Nov. 2 & Reviewed, blocker-free criterion corpus with versioned trial-family splits. \\
+\pill{2} & \textbf{Build benchmark} & Nov. 3--9 & Adjudicated natural and challenge pairs plus frozen baseline results. \\
+\pill{3} & \textbf{Improve distance} & Nov. 10--16 & Fine-tuned MPNet, directional relationship head, and validation-selected checkpoint. \\
+\pill{4} & \textbf{Complete agent} & Nov. 17--30 & Routed exact/encoder/LLM tools, critic checks, calibration, abstention, and review workflow. \\
+\pill{5} & \textbf{Validate + deliver} & Final period & Held-out tests, agent comparisons, ablations, intervals, UI, documentation, and demonstration. \\\bottomrule
+\end{tabularx}
+\vspace{.7em}
+\begin{block}{Gate between stages}A stage advances only after its versioned artifacts and acceptance checks pass. Incomplete review or split leakage blocks training instead of being silently ignored.\end{block}
 \end{frame}
 
 \begin{frame}{A Quick UI “Sketch”}
