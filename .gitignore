@@ -297,4 +297,6 @@ data/processed/*
 !data/processed/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
-models/
+# Root-level downloaded/trained model artifacts only. Do not ignore
+# the Python source package at src/trialign/models/.
+/models/
