@@ -162,7 +162,20 @@ def write_corpus(
     destination = Path(output)
     destination.parent.mkdir(parents=True, exist_ok=True)
     rows = [record.model_dump(mode="json") for record in records]
-    pd.DataFrame(rows).to_parquet(destination, index=False)
+    # Parquet columns need homogeneous types; Excel value fields can contain
+    # numbers, categorical strings, and booleans. JSON scalars preserve these
+    # distinctions (including text such as "001") without lossy coercion.
+    encoded_columns = [
+        column
+        for column in ("value", "value_raw", "value_normalized")
+        if len({type(row[column]) for row in rows if row.get(column) is not None}) > 1
+    ]
+    parquet_rows = [dict(row) for row in rows]
+    for row in parquet_rows:
+        for column in encoded_columns:
+            value = row.get(column)
+            row[column] = json.dumps(value, ensure_ascii=False) if value is not None else None
+    pd.DataFrame(parquet_rows).to_parquet(destination, index=False)
     manifest = {
         "schema_version": "0.1.0",
         "rows": len(rows),
@@ -171,6 +184,8 @@ def write_corpus(
             "\n".join(sorted(row["criterion_id"] for row in rows)).encode()
         ).hexdigest(),
         **(metadata or {}),
+        "parquet_sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+        "parquet_json_scalar_columns": encoded_columns,
     }
     destination.with_suffix(destination.suffix + ".manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -180,7 +195,22 @@ def write_corpus(
 
 def load_parquet_corpus(path: str | Path) -> list[CriterionRecord]:
     """Read a corpus previously written by :func:`write_corpus`."""
-    frame = pd.read_parquet(path)
+    source = Path(path)
+    frame = pd.read_parquet(source)
+    manifest_path = source.with_suffix(source.suffix + ".manifest.json")
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for column in manifest.get("parquet_json_scalar_columns", []):
+            if column not in frame:
+                raise ValueError(f"Manifest declares missing Parquet column: {column}")
+            frame[column] = pd.Series(
+                [
+                    json.loads(value) if isinstance(value, str) else _missing_to_none(value)
+                    for value in frame[column]
+                ],
+                index=frame.index,
+                dtype=object,
+            )
     records = []
     for row in frame.to_dict(orient="records"):
         normalized = normalize_workbook_row(row)

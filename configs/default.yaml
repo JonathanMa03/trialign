@@ -3,7 +3,7 @@ project:
   schema_version: "0.1.0"
 
 data:
-  source_workbook: data/trial100_notreviewed.xlsx
+  source_workbook: data/trial100_v1.xlsx
   review_sheet: Human Review
   reviewed_statuses: [accepted, corrected]
   processed_dir: data/processed
