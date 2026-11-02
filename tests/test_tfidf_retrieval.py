@@ -33,3 +33,50 @@ def test_empty_corpus():
     from scipy.sparse import csr_matrix
 
     assert retrieve_neighbors([], csr_matrix((0, 0))) == []
+
+
+def test_invalid_top_k():
+    import pytest
+    from scipy.sparse import csr_matrix
+
+    with pytest.raises(ValueError, match="top_k"):
+        retrieve_neighbors([], csr_matrix((0, 0)), top_k=0)
+
+
+def test_embedding_count_must_match_records():
+    import pytest
+    from scipy.sparse import csr_matrix
+
+    records = [SimpleNamespace(criterion_id="a", trial_id="trial1")]
+
+    with pytest.raises(ValueError, match="one embedding"):
+        retrieve_neighbors(records, csr_matrix((0, 2)))
+
+
+def test_same_trial_has_no_candidates():
+    records = [
+        SimpleNamespace(criterion_id="a", trial_id="trial1"),
+        SimpleNamespace(criterion_id="b", trial_id="trial1"),
+    ]
+    texts = ["age eighteen", "kidney function"]
+    encoder = TfidfEncoder().fit(texts)
+
+    assert retrieve_neighbors(records, encoder.encode(texts)) == []
+
+
+def test_top_k_limits_results():
+    records = [
+        SimpleNamespace(criterion_id="a", trial_id="trial1"),
+        SimpleNamespace(criterion_id="b", trial_id="trial2"),
+        SimpleNamespace(criterion_id="c", trial_id="trial3"),
+    ]
+    texts = ["age eighteen", "age eighteen", "kidney function"]
+    encoder = TfidfEncoder().fit(texts)
+
+    results = retrieve_neighbors(records, encoder.encode(texts), top_k=1)
+
+    assert len(results) == 3
+    assert all(row["rank"] == 1 for row in results)
+    assert next(
+        row["candidate_id"] for row in results if row["query_id"] == "a"
+    ) == "b"

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from time import perf_counter
 
 import pandas as pd
 import typer
@@ -201,6 +202,7 @@ def baseline_tfidf(
     config: Path = typer.Option(None, "--config"),
 ) -> None:
     """Fit the lexical reference baseline and save cross-trial neighbors."""
+    started = perf_counter()
     settings = load_settings(config)
     corpus_path = settings.resolve(corpus)
     records = load_parquet_corpus(corpus_path)
@@ -243,6 +245,15 @@ def baseline_tfidf(
     save_npz(destination / "embeddings.npz", embeddings)
     encoder.save(str(destination / "vectorizer.joblib"))
 
+    manifest_path = corpus_path.with_suffix(
+        corpus_path.suffix + ".manifest.json"
+    )
+    corpus_manifest = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.exists()
+        else {}
+    )
+
     _write_json(
         destination / "run.json",
         {
@@ -258,6 +269,12 @@ def baseline_tfidf(
             "embedding_shape": list(embeddings.shape),
             "embedding_dtype": str(embeddings.dtype),
             "embedding_format": embeddings.format,
+            "runtime_seconds": perf_counter() - started,
+            "development_only": corpus_manifest.get("development_only"),
+            "human_review_complete": corpus_manifest.get(
+                "human_review_complete"
+            ),
+            "source_sha256": corpus_manifest.get("source_sha256"),
         },
     )
 

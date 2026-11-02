@@ -297,4 +297,4 @@ data/processed/*
 !data/processed/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
-models/
+/models/
