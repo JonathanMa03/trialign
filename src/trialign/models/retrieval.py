@@ -1,19 +1,36 @@
-"""Rank cross-trial candidates using normalized sparse vectors."""
+"""Rank cross-trial candidates using normalized sparse or dense vectors."""
 
-# import numpy as np
+import numpy as np
+from scipy import sparse
 
 
-def retrieve_neighbors(records, embeddings, top_k=20, model="tfidf"):
+def retrieve_neighbors(
+    records,
+    embeddings,
+    top_k=20,
+    model="tfidf",
+    model_revision=None,
+    text_field="comparison_text",
+):
     if top_k < 1:
         raise ValueError("top_k must be at least 1.")
+    if embeddings.ndim != 2:
+        raise ValueError("Embeddings must be a two-dimensional matrix.")
     if embeddings.shape[0] != len(records):
         raise ValueError("Each record must have one embedding.")
+    if text_field not in {"comparison_text", "source"}:
+        raise ValueError("text_field must be comparison_text or source.")
 
     neighbors = []
 
     for i, query in enumerate(records):
-        # Calculate one query's scores, avoiding an all-by-all matrix.
-        scores = (embeddings[i:i + 1] @ embeddings.T).toarray().ravel()
+        # Score one query at a time, avoiding an all-by-all matrix.
+        similarities = embeddings[i:i + 1] @ embeddings.T
+
+        if sparse.issparse(similarities):
+            scores = similarities.toarray().ravel()
+        else:
+            scores = np.asarray(similarities).ravel()
 
         candidates = [
             j
@@ -22,7 +39,6 @@ def retrieve_neighbors(records, embeddings, top_k=20, model="tfidf"):
             and candidate.trial_id != query.trial_id
         ]
 
-        # Higher scores first; candidate ID breaks ties.
         candidates.sort(
             key=lambda j: (-float(scores[j]), records[j].criterion_id)
         )
@@ -34,8 +50,8 @@ def retrieve_neighbors(records, embeddings, top_k=20, model="tfidf"):
                 "rank": rank,
                 "score": float(scores[j]),
                 "model": model,
-                "model_revision": None,
-                "text_field": "comparison_text",
+                "model_revision": model_revision,
+                "text_field": text_field,
             })
 
     return neighbors

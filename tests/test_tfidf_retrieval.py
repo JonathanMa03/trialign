@@ -80,3 +80,55 @@ def test_top_k_limits_results():
     assert next(
         row["candidate_id"] for row in results if row["query_id"] == "a"
     ) == "b"
+
+
+def test_dense_and_sparse_retrieval_agree():
+    records = [
+        SimpleNamespace(criterion_id="a", trial_id="trial1"),
+        SimpleNamespace(criterion_id="b", trial_id="trial2"),
+        SimpleNamespace(criterion_id="c", trial_id="trial3"),
+    ]
+    texts = ["age eighteen", "age eighteen", "kidney function"]
+    encoder = TfidfEncoder().fit(texts)
+    vectors = encoder.encode(texts)
+
+    sparse_results = retrieve_neighbors(records, vectors, top_k=2)
+    dense_results = retrieve_neighbors(records, vectors.toarray(), top_k=2)
+
+    assert [
+        (r["query_id"], r["candidate_id"], r["rank"])
+        for r in sparse_results
+    ] == [
+        (r["query_id"], r["candidate_id"], r["rank"])
+        for r in dense_results
+    ]
+
+    import numpy as np
+
+    np.testing.assert_allclose(
+        [r["score"] for r in sparse_results],
+        [r["score"] for r in dense_results],
+        atol=1e-6,
+    )
+
+
+def test_retrieval_preserves_model_metadata():
+    import numpy as np
+
+    records = [
+        SimpleNamespace(criterion_id="a", trial_id="trial1"),
+        SimpleNamespace(criterion_id="b", trial_id="trial2"),
+    ]
+    vectors = np.array([[1.0, 0.0], [1.0, 0.0]], dtype=np.float32)
+
+    results = retrieve_neighbors(
+        records,
+        vectors,
+        model="synthetic-dense",
+        model_revision="test-revision",
+        text_field="source",
+    )
+
+    assert all(r["model"] == "synthetic-dense" for r in results)
+    assert all(r["model_revision"] == "test-revision" for r in results)
+    assert all(r["text_field"] == "source" for r in results)

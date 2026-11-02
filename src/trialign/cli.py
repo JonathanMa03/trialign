@@ -227,7 +227,6 @@ def baseline_tfidf(
     destination = settings.resolve(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
 
-    # Keep the output columns even when no cross-trial candidates exist.
     neighbor_columns = [
         "query_id",
         "candidate_id",
@@ -280,4 +279,173 @@ def baseline_tfidf(
 
     console.print(
         f"[green]Wrote TF-IDF baseline artifacts to {destination}[/green]"
+    )
+
+
+@app.command("baseline-dense")
+def baseline_dense(
+    corpus: Path = typer.Option(Path("data/processed/criteria_reviewed.parquet")),
+    model_name: str = typer.Option(
+        "sentence-transformers/all-mpnet-base-v2", "--model-name"
+    ),
+    output_dir: Path = typer.Option(Path("artifacts/baselines/dense")),
+    text_field: str = typer.Option("comparison_text", "--text-field"),
+    batch_size: int = typer.Option(32, min=1),
+    device: str = typer.Option("auto", "--device"),
+    top_k: int = typer.Option(20, min=1),
+    revision: str = typer.Option(None, "--revision"),
+    config: Path = typer.Option(None, "--config"),
+) -> None:
+    """Encode criteria with a dense model and save cross-trial neighbors."""
+    import numpy as np
+
+    from trialign.models.dense import DenseEncoder
+
+    started = perf_counter()
+
+    if text_field not in {"comparison_text", "source"}:
+        raise typer.BadParameter(
+            "Choose comparison_text or source.",
+            param_hint="--text-field",
+        )
+
+    if device not in {"auto", "cpu", "cuda", "mps"}:
+        raise typer.BadParameter(
+            "Choose auto, cpu, cuda, or mps.",
+            param_hint="--device",
+        )
+
+    settings = load_settings(config)
+    corpus_path = settings.resolve(corpus)
+    records = load_parquet_corpus(corpus_path)
+
+    if not records:
+        raise typer.BadParameter(
+            "The corpus is empty.",
+            param_hint="--corpus",
+        )
+
+    ids = [record.criterion_id for record in records]
+    if len(ids) != len(set(ids)):
+        raise typer.BadParameter(
+            "The corpus contains duplicate criterion IDs.",
+            param_hint="--corpus",
+        )
+
+    # Check hardware before loading or downloading model weights.
+    import torch
+
+    if device == "auto":
+        if torch.cuda.is_available():
+            selected_device = "cuda"
+        elif torch.backends.mps.is_available():
+            selected_device = "mps"
+        else:
+            selected_device = "cpu"
+    else:
+        selected_device = device
+
+    if selected_device == "cuda" and not torch.cuda.is_available():
+        raise typer.BadParameter(
+            "CUDA is unavailable. Use cpu or auto.",
+            param_hint="--device",
+        )
+
+    if selected_device == "mps" and not torch.backends.mps.is_available():
+        raise typer.BadParameter(
+            "Apple MPS is unavailable. Use cpu or auto.",
+            param_hint="--device",
+        )
+
+    manifest_path = corpus_path.with_suffix(
+        corpus_path.suffix + ".manifest.json"
+    )
+    corpus_manifest = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.exists()
+        else {}
+    )
+
+    texts = [
+        (record.comparison_text or record.source)
+        if text_field == "comparison_text"
+        else record.source
+        for record in records
+    ]
+
+    console.print(
+        f"Encoding {len(records)} criteria with {model_name} "
+        f"on {selected_device}. First use may download model weights."
+    )
+
+    encoder = DenseEncoder(
+        model_name,
+        device=selected_device,
+        revision=revision,
+        batch_size=batch_size,
+    )
+    embeddings = encoder.encode(texts)
+
+    neighbors = retrieve_neighbors(
+        records,
+        embeddings,
+        top_k=top_k,
+        model=model_name,
+        model_revision=revision,
+        text_field=text_field,
+    )
+
+    destination = settings.resolve(output_dir)
+    destination.mkdir(parents=True, exist_ok=True)
+
+    neighbor_columns = [
+        "query_id",
+        "candidate_id",
+        "rank",
+        "score",
+        "model",
+        "model_revision",
+        "text_field",
+    ]
+    pd.DataFrame(
+        neighbors,
+        columns=neighbor_columns,
+    ).to_parquet(destination / "neighbors.parquet", index=False)
+
+    np.save(destination / "embeddings.npy", embeddings)
+
+    _write_json(
+        destination / "run.json",
+        {
+            "model": model_name,
+            "model_revision": revision,
+            "revision_status": (
+                "user_supplied; not independently resolved"
+                if revision
+                else "unpinned; resolved revision not yet recorded"
+            ),
+            "corpus": str(corpus_path),
+            "text_field": text_field,
+            "criteria": len(records),
+            "trials": len({row.trial_id for row in records}),
+            "top_k": top_k,
+            "seed": settings.seed,
+            "batch_size": batch_size,
+            "device": selected_device,
+            "neighbors": len(neighbors),
+            "embedding_shape": list(embeddings.shape),
+            "embedding_dtype": str(embeddings.dtype),
+            "embedding_format": "dense",
+            "normalized": True,
+            "runtime_seconds": perf_counter() - started,
+            "development_only": corpus_manifest.get("development_only"),
+            "human_review_complete": corpus_manifest.get(
+                "human_review_complete"
+            ),
+            "source_sha256": corpus_manifest.get("source_sha256"),
+        },
+    )
+
+    console.print(
+        f"[green]Wrote dense baseline artifacts to {destination}[/green]"
     )
