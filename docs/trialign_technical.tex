@@ -31,47 +31,34 @@
 \setlength{\headheight}{14pt}
 \setcounter{tocdepth}{2}
 \title{\textcolor{ink}{TriAlign Technical Design}\\[.4em]
-  \large Clinical-Meaning Comparison of Trial Eligibility Criteria\\
+  \large An Agent for Clinically Meaningful Comparison of Eligibility Criteria\\
   \normalsize Architecture, Dataset, Pair Semantics, Interface Concepts, and Research Notes}
 \author{Jonathan Ma \and Jiatong Gao}
-\date{November 1, 2026}
+\date{Revised November 4, 2026}
 
 \begin{document}
 \maketitle
 \begin{abstract}
 TriAlign compares clinical-trial eligibility rules using structured constraints,
-dense representations, and contextual reasoning. This document expands the
-engineering proposal into a technical specification and a research notebook.
-It defines what constitutes a clinically meaningful criterion relationship,
+dense representations, and contextual reasoning. This document defines what constitutes a clinically meaningful criterion relationship,
 how source evidence and normalization are retained, how an agent selects and
 reconciles comparison tools, and how a clinician could inspect and correct a
 result. The frozen criterion release contains 3,537 records from 100 trials.
 Pair labels, trained models, routing evaluation, and interface concepts described
-here are subsequent deliverables, not completed experimental results.
+here are subsequent deliverables, and in the future, experimental results will be added.
 \end{abstract}
 
-\textbf{Document status.} This is a companion to \pathcode{docs/proposal.tex},
-not a replacement for the proposal or an approved clinical workflow.
-\emph{Verified current state} refers to the v1 corpus manifest and inspected
-repository interfaces. \emph{Proposed design} specifies intended behavior that
-still requires implementation and evaluation. UI/UX concepts are alternatives
-to investigate, not a final interface specification. External-system notes
-separate published descriptions from proposed TriAlign adaptations; primary
-sources were checked on November 1, 2026.
-
+\newpage
 \tableofcontents
 \newpage
 
-\section{Motivation and Clinical Significance}
+\section{Motivation}
 \label{sec:motivation}
 
-\subsection{Clinical problem and intended use}
-An eligibility criterion is an operational restriction on a trial population.
-Two rules can reuse the same terminology while admitting different people.
-For example, inclusion rules ``age at least 18 years'' and ``age below 18
-years'' have similar vocabulary and disjoint allowed age ranges. Conversely,
-an abbreviation and an expanded term may express the same rule with limited
-word overlap. TriAlign is intended to make these differences visible when
+\subsection{The Clinical Problem}
+An eligibility criterion determines what characteristics a patient must have to be included in a clinical trial.
+Two rules can reuse the same terminology while admitting different people, ie "age $\ge$ 18 years" vs "age < 18 years" have similar vocabulary and disjoint allowed age ranges. Conversely,
+an abbreviation and an expanded term may express the same rule with limited word overlap. TriAlign is intended to pull seemingly similar criteria apart when
 clinical investigators, protocol designers, and research coordinators compare
 protocols.
 
@@ -112,7 +99,7 @@ cosine score therefore cannot, by itself, select a directional label or prove
 equivalence.
 
 \subsection{Research questions and hypotheses}
-The proposal's three research questions are retained:
+Three questions we.re interested in are:
 \begin{enumerate}
 \item Which phenomena produce false-high similarity for clinically different
 rules, or false-low similarity for equivalent rules, in general and biomedical
@@ -125,14 +112,6 @@ reviewer effort, latency, or cost relative to an LLM-only judge and an
 always-run fixed chain?
 \end{enumerate}
 
-These questions lead to separate experiments. Representation learning is
-evaluated through retrieval and supervised prediction. The exact comparator
-is evaluated on its supported logical fragment. The agent is evaluated on
-whether its routing and reconciliation improve the overall workflow. Success
-on one experiment must not be substituted for evidence on another. Negative
-findings, including no fine-tuning gain or no routing benefit, are valid
-outcomes and belong in the final report.
-
 \section{Eligibility Criteria Dataset}
 \label{sec:data}
 
@@ -143,16 +122,8 @@ distinguishes inclusion from exclusion; extracts atomic constraints; and
 preserves the parent statement and local context. Extraction records include
 clinical fields, source identifiers, protocol versions, validation findings,
 and review status. TriAlign consumes reviewed outputs rather than replacing
-this extraction system.
-
-An atomic record is a comparison unit, not necessarily a self-contained
-sentence. A measurement atom can be meaningful only under a population
-condition or an exception in its parent. For example, drug-specific
-contraception windows can be separated only if the drug, applicable
-population, and post-treatment anchor remain attached to each window.
-Criterion review corrects segmentation, polarity, measurement fields,
-normalization, and scope. Ambiguous source rules must not be made precise by
-inventing a threshold or a Boolean connective.
+this extraction system. Criterion review corrects segmentation, polarity, measurement fields,
+normalization, and scope.
 
 \subsection{Current frozen release and historical counts}
 \begin{table}[htbp]\centering
@@ -172,11 +143,9 @@ Pair labels & Not included in the criterion release\\\bottomrule
 flag is distinct from a pair label or a calibrated confidence estimate.}
 \end{table}
 
-The user reports manual validation of the complete source corpus. Historical
-method fields are retained as provenance rather than overwritten to imply that
-every earlier processing step used the same review method. The cohort design
+The cohort design
 in the proposal is 50 oncology and 50 cardiovascular trials. Therapeutic-area
-evaluation should use an explicit trial-level mapping; that design statement
+evaluation will use an explicit trial-level mapping; that design statement
 is not a verified per-row therapeutic-area annotation in the manifest.
 
 The initial extraction had 3,145 candidates. Splitting, correction, and removal
@@ -199,8 +168,7 @@ Review and release & \code{review_status}, \code{export_ready}, issue/blocker li
 \end{longtable}
 
 The evidence hierarchy is the protocol wording and its governing context,
-followed by the reviewed structured interpretation and normalization. A model
-explanation does not supersede the source. When an atom and its parent appear
+followed by the reviewed structured interpretation and normalization. When an atom and its parent appear
 inconsistent, the system should expose the conflict and request adjudication.
 Opening a current registry link does not establish that its wording matches
 the version originally extracted.
@@ -594,6 +562,79 @@ training seeds for the final trained comparison. If supervision is inadequate
 or no improvement is observed, retain the strongest frozen model and report
 the result.
 
+\subsubsection{Retraining procedure and release checklist}
+\label{sec:retraining}
+\planned\ Retraining is an offline maintenance operation, never part of a
+demonstration comparison. This checkout has encoder inference wrappers but
+no implemented training entry point. The following is the required runbook
+for that implementation; it does not describe an executable training command
+that already exists. The training deliverable must add exact preparation,
+training, evaluation, export and index-building commands to the README,
+together with a checked-in example configuration.
+
+\begin{enumerate}
+\item \textbf{Decide what needs updating.} Record the reason: new adjudicated
+pairs, a changed labeling contract, reproducible errors, or a new base model.
+Adding corpus criteria alone requires encoding/index refresh, not necessarily
+encoder retraining. Changing deterministic rules alone requires route
+validation. A label-contract change requires a versioned annotation migration
+and reevaluation of affected examples before training.
+\item \textbf{Freeze the inputs.} Select an immutable corpus release and
+manifest, adjudicated ordered-pair labels, label mapping, serializer and
+family/group split manifest. Keep existing test families held out; group
+duplicates, templates and swapped pairs together. New examples enter the
+appropriate partition without moving old test cases into training. Save
+input hashes and validate IDs, label direction, missingness and leakage.
+\item \textbf{Recreate the environment and configuration.} Save the code
+revision, dependency lock, hardware, base-model ID and full resolved commit.
+Specify frozen-head training versus encoder fine-tuning, feature schema,
+maximum sequence length, truncation audit, loss functions and weights,
+negative/triple sampling, class weights, optimizer, learning rate, schedule,
+batch size, gradient accumulation, epochs or step limit, seeds, checkpoint
+frequency, stopping criterion and development selection metric. Record all
+effective values, including defaults. Resolve choices on development data.
+\item \textbf{Estimate resources before the full run.} Run a short training
+smoke run and measure peak memory, step time and validation overhead on the
+chosen machine. A frozen-embedding head is the lower-cost first experiment;
+full encoder fine-tuning may benefit from a separate GPU machine. Reduce
+batch size or use validated gradient accumulation if memory is insufficient;
+record the effective batch and any change to negative sampling. Do not claim
+identical contrastive behavior merely because effective batch sizes match.
+\item \textbf{Train and select without test feedback.} Generate only
+authorized training examples, fit learned preprocessing on training data,
+and save loss curves, development metrics and checkpoints. Select using the
+predeclared development policy. Save optimizer/scheduler state, random states
+and data-order configuration for resumable checkpoints; distinguish resuming
+an interrupted run from starting a new experiment. Repeat the final selected
+configuration with at least three seeds and retain failures as well as gains.
+\item \textbf{Evaluate before promotion.} Compare the candidate with the
+current release and frozen baselines on identical partitions. Report
+retrieval and ordered-label metrics, false equivalence, swap consistency,
+clinical error slices, abstention/coverage, and local runtime and memory.
+Tune calibration or abstention only on development data. Run held-out test
+evaluation after configuration selection; do not repeatedly tune against it.
+If the candidate fails the declared quality or resource gates, retain the
+previous release and report the negative result.
+\item \textbf{Export and rebuild compatible assets.} Export encoder,
+tokenizer, pooling/normalization configuration, relationship head, label map
+and serializer. Verify that reloaded outputs match the selected checkpoint
+within recorded tolerances. Rebuild corpus embeddings whenever encoder,
+serializer or corpus changes; a head-only change can reuse unchanged
+embeddings but still requires a new compatible application manifest.
+\item \textbf{Release and rehearse.} Publish the approved artifacts and
+model card to the Hub, pin the resulting full commit, and retain the previous
+release for rollback. Package evaluation reports, configuration, seeds,
+hashes and index manifest. Download the release to the demonstration machine
+and verify offline startup, representative comparisons, latency and replay
+before selecting it as the default. Publication credentials stay outside
+the configuration and model package.
+\end{enumerate}
+
+Training duration is not yet measured. Estimate it from the smoke run's
+steps per epoch, planned epochs and validation cost; report actual elapsed
+time and peak memory with the resulting release. Model training and demo
+inference may use different machines without requiring a hosted website.
+
 \subsubsection{Retrieval versus interpretation}
 A useful retrieval candidate can be an equivalent rule, a stricter rule, or a
 clinically important contradiction. Define the relevance policy for each
@@ -601,6 +642,49 @@ retrieval experiment rather than assuming that only equivalent pairs matter.
 Training can pursue broad concept retrieval while the ordered head and exact
 tools distinguish clinical relationships. Evaluate both stages so a retrieval
 gain does not conceal a rise in false equivalence.
+
+\subsubsection{Hugging Face model release and local inference}
+\label{sec:modelrelease}
+\planned\ Publish the trained TriAlign encoder as a versioned Hugging Face
+Model Hub repository. The Hub stores and distributes model checkpoints
+\cite{hfhub}; the demonstration downloads the selected release in advance
+and executes inference on the presenter's computer. The model repository
+identifier will be assigned when a trained release is ready. Publication is
+a release task, not a claim that a TriAlign checkpoint already exists.
+
+The model release should contain encoder weights, tokenizer files, pooling
+and embedding-normalization settings, and the configuration needed to load
+the encoder. Package the ordered relationship head, label-to-index mapping,
+and approved structured-feature serializer alongside it when those components
+are trained. If the head has a separate artifact, pin both artifacts together
+in the application release manifest. The model card should identify the base
+checkpoint and its resolved revision, training-corpus and split versions,
+training configuration, evaluation results and limitations, and applicable
+redistribution terms. Keep held-out labels and local API credentials out of
+the model package.
+
+Pin the full resolved Hub commit for each encoder and relationship-head
+release. A moving branch name alone is insufficient to reproduce a run.
+Hugging Face supports revision-specific downloads and local caching
+\cite{hfdownload}. During preparation, download all required model files,
+verify the selected revision and checksums, and run an inference warm-up.
+During the demonstration, load the prepared local model directory rather
+than resolving a newer remote revision. A missing or mismatched artifact
+should produce an actionable startup error instead of a silent download or
+model substitution.
+
+Precompute corpus embeddings with the same model revision and serializer.
+At runtime, encode a new query locally, retrieve from the local index, and
+run the relationship head and exact tools on the same machine. CPU execution
+is the initial deployment target; locally available acceleration can be used
+after compatibility and latency are measured. Switching encoder releases
+requires regenerating the corpus index and validating its manifest.
+
+This architecture supports model distribution through Hugging Face while
+keeping application execution local. A public website, a Hugging Face Space,
+and a dedicated inference endpoint are not required for the planned
+demonstrations. A hosted application can be evaluated as a later deployment
+option after the research workflow and operating requirements are established.
 
 \subsection{Fuzzy Clinical Reasoning: LLM Judge and Critic}
 \label{sec:critic}
@@ -807,13 +891,123 @@ confidence indicator only if its interpretation is defensible. By December 8,
 include the error-analysis plot and a documented uncertainty/review policy.
 The projected map and larger protocol matrix are optional extensions.
 
+The presentation application starts on the presenter's computer and is
+displayed in a local browser. This is the planned demonstration deployment
+for both November 17 and December 8, avoiding recurring website and managed
+inference hosting costs. Model distribution follows
+Section~\ref{sec:modelrelease}; the runtime uses locally prepared weights,
+the frozen corpus, and a precomputed embedding index.
+
 The live demonstration must include a success, an important failure, and a
-necessary abstention. A cached mode replays the same versioned inputs and
-outputs and is labeled as replay. A recording or screenshots provide a final
-fallback. Before presentation, verify environment startup, corpus/index
-versions, credentials, network availability, expected latency, source links,
-and cached mode. The current Streamlit application is a candidate-table
-placeholder, not an implemented version of this workspace.
+necessary abstention. Live local execution means the selected local tools
+actually run. Calling the external contextual LLM remains an optional online
+operation with its own API usage cost and network dependency. A local-only
+mode runs retrieval and supported exact/model comparisons, and explicitly
+escalates a case if it needs unavailable contextual reasoning. A cached mode
+replays saved versioned outputs, including saved judge/critic results where
+available, and is labeled as replay. A new input without a matching cached
+case cannot receive a fabricated replay result.
+
+A recording or screenshots provide a final fallback. Before presentation,
+verify local startup, model/index revisions and checksums, inference warm-up,
+expected latency on the demonstration machine, source evidence, local review
+storage, and replay mode. Check credentials and connectivity only for the
+optional online route; stored source excerpts remain available locally even
+when registry links cannot be opened. The current Streamlit application is
+a candidate-table placeholder, not an implemented version of this workspace.
+
+\subsection{Local startup and demonstration assets}
+\label{sec:localdemo}
+The existing local UI entry point can be launched from the repository root
+with the project's Python environment and application dependencies installed:
+\begin{verbatim}
+python -m streamlit run app/review_app.py \
+  --server.address 127.0.0.1 --server.port 8501
+\end{verbatim}
+Open \url{http://127.0.0.1:8501} in the presenter's browser. This command
+currently starts the placeholder review surface; completing the agent
+workflow behind that entry point remains an implementation deliverable.
+The intended finished workflow should use this documented local launch
+path, with any additional preparation/configuration steps listed in the
+README. Binding to the loopback address supports a single-machine
+demonstration without a public deployment.
+
+\begin{longtable}{L{.25\linewidth}L{.66\linewidth}}
+\toprule Local asset & Preparation and runtime requirement\\\midrule
+\endhead
+Python environment & Install and pin dependencies before the presentation; record the application Git revision and machine configuration.\\
+Model files & Download the pinned Hub release in advance; retain weights, tokenizer, configuration, relationship head and checksums on disk.\\
+Corpus and search index & Load the frozen Parquet/manifest and matching precomputed embeddings/index. Check corpus hash, model revision and serializer version together.\\
+Demonstration cases & Save selected inputs, source excerpts, expected routes, output versions and representative success/failure/abstention cases.\\
+Replay bundle & Keep complete saved outputs and traces locally; require matching input and configuration identifiers before replay.\\
+Review records & Persist corrections, rationale and traces to a local SQLite database or versioned local files; preserve them across application restarts.\\
+Optional LLM route & Read credentials from the local environment, enable online calls explicitly, and set call/time/cost limits. Without that route, use local-only execution or clearly labeled replay.\\\bottomrule
+\end{longtable}
+
+The startup workflow should distinguish a valid warm cache from missing or
+incompatible assets. Rehearse from a fresh application process after all
+downloads are complete, including an offline run. The offline acceptance
+criterion is that the UI starts, local retrieval and supported comparisons
+work, local evidence is readable, and prepared cases can be replayed without
+network access. Arbitrary new fuzzy comparisons still require a running
+contextual model or escalation. Local startup removes the need for website
+hosting; it does not imply that training, initial model downloads, or optional
+external LLM inference have no resource or usage costs.
+
+\subsection{Compute requirements and demonstration latency}
+\label{sec:demolatency}
+\planned\ The initial goal is an interactive single-user comparison on the
+presenter's machine. No end-to-end latency measurements exist yet. A trained
+encoder performs inference rather than retraining for each input. With a
+loaded model and precomputed corpus embeddings, a new query needs one
+encoding, local retrieval, and comparisons for a bounded candidate set.
+Comparing two new criteria needs their encodings; comparing stored criteria
+can reuse compatible cached vectors. Deterministic checks do not generate
+text and are expected to contribute less delay than contextual LLM reasoning.
+These are architectural expectations, not measured performance claims.
+
+For the current 3,537-criterion corpus, a 768-dimensional float32 embedding
+matrix occupies approximately 10.4 MiB before metadata/index overhead.
+An exhaustive query scan evaluates about 2.7 million vector components,
+which makes simple local vector search a reasonable initial design. Model
+weights, activations, tokenization and application overhead consume
+additional memory. Do not recompute the whole corpus or enumerate all
+criterion pairs in response to a single UI action. A full protocol comparison
+is a different workload: batch its query encodings and bound the candidates
+and contextual calls per criterion.
+
+The main latency risks are cold model loading, long inputs, repeated
+encodings, and the contextual judge/critic route. An external LLM introduces
+network and service latency; sequential judge and critic calls add to the
+critical path. A local generative LLM may instead be limited by RAM, available
+accelerator memory and token generation speed, and can compete with the
+encoder for resources. Running the encoder locally does not establish that
+the complete generative route will be fast or fit on the same laptop.
+Backend, device and batch-size optimizations must be benchmarked on the
+actual machine rather than assumed to improve performance \cite{stefficiency}.
+
+Keep the encoder and index loaded across UI interactions, warm them before
+presenting, reuse compatible embeddings and bound the retrieved top-$k$.
+Invoke contextual reasoning only when the route requires it, with explicit
+call, output-token, timeout and revision limits. Show retrieved evidence and
+completed exact results while contextual work is pending. On timeout, retain
+those results and display an unresolved state; offer a matching, explicitly
+labeled replay when available. Do not silently skip a required critic or
+present an incomplete relationship as final to meet a speed target.
+
+\textbf{Benchmark and acceptance procedure.} Record machine model, CPU,
+RAM, accelerator, software/model/index revisions, input lengths and top-$k$.
+Measure cold startup separately from warm comparisons. Use representative
+exact, encoder-only and judge-plus-critic cases, including long inputs and
+failures; report sample counts, median and 95th-percentile latency, peak
+memory, cache status, route/call counts and external API time. Measure stage
+times for encoding, search, exact/head inference, judge, critic and rendering
+as well as the user-visible total. A proposed usability target is a warm
+local retrieval/exact result within 2 seconds and a completed contextual
+comparison within 30 seconds. These are targets to validate and revise,
+not promised runtimes. If the contextual route misses the budget, preserve
+the fast local workflow and use a budgeted external model, suitable local
+acceleration, or clearly labeled prepared replay for the demonstration.
 
 \section{Evaluation and Comparisons}
 \label{sec:eval}
@@ -1098,7 +1292,9 @@ the supplied development pairs.
 \item Together, integrate ranked candidates, source/context, aligned
 constraints, supported numerical plots, real route traces, and cached replay.
 Save at least one success and one meaningful failure; demonstrate abstention
-when needed.
+when needed. Launch the application locally using
+Section~\ref{sec:localdemo}, with all required model and index assets prepared
+in advance. Verify startup and replay without an internet connection.
 \end{enumerate}
 The v1 criterion freeze is complete. Pair labels and implementation/evaluation
 artifacts remain subsequent deliverables. An approximately 200--300-pair pilot
@@ -1111,7 +1307,7 @@ The format is 20 minutes total for presentation, demonstration, and Q\&A.
 The final package for this milestone includes the frozen corpus/labels and
 family splits; reproducible baseline and agent configurations; trained-model
 results if justified; comparative evaluation, ablations and uncertainty
-analysis; documented positive/negative cases; and stable live/cached demos.
+analysis; documented positive/negative cases; and stable local live/replay demos.
 
 JM finalizes and validates the benchmark and all denominators. JG completes
 baseline runs, agent routing/reconciliation/critic/escalation, feasible
@@ -1133,11 +1329,16 @@ manifest; criterion/pair manifests and family/split files; labeling guide and
 adjudication provenance; code and prompts; model/index/configuration versions;
 per-case inputs, predictions, evidence, traces and review outcomes; summary
 tables generated from saved outputs; and reproducible training instructions
-or model artifacts. The README must cover installation, dependencies, API
-access, execution, expected outputs, reproduction and troubleshooting.
+or model artifacts. Include the Hub repository identifiers and full resolved
+release revisions, a local model/index manifest, hardware and latency notes,
+and instructions for preparing an offline demonstration bundle. The README
+must cover installation, dependencies, API access for the optional online
+route, local startup, expected outputs, replay, reproduction and troubleshooting.
 
 Verify a clean-environment execution of data loading, baseline inference,
-agent comparison, evaluation and demonstration. Link every report example to
+agent comparison, evaluation and local demonstration. Rehearse local-only,
+optional online LLM, and cached replay modes separately, including restart
+persistence of reviewer decisions. Link every report example to
 its frozen case and source evidence. Record cache behavior and the limits of
 reproducing stochastic external-model outputs. Freeze a tagged submission
 archive after the contribution statements and numerical claims are audited.
@@ -1152,7 +1353,8 @@ Leakage & Map families before mining; group amendments/templates/variants; restr
 No fine-tuning or routing gain & Report negative findings and ablations; retain the strongest justified frozen configuration.\\
 Unfair external comparisons & Require a matched output contract or identify the work as an adaptation/architectural comparison; do not combine incomparable native metrics.\\
 Uncalibrated confidence & Label scores accurately; select thresholds on development data; report coverage and error together.\\
-Live/API failure & Use bounded retries, explicit error states, cached replay, and a rehearsed recording fallback.\\
+Live/API failure & Start locally with predownloaded models and indexes; use bounded retries for optional online calls, explicit error states, cached replay, and a rehearsed recording fallback.\\
+Deployment cost & Run the demonstration on the presenter's machine and distribute versioned model artifacts through the Hub. Track any training or optional LLM API costs separately from website hosting.\\
 Clinical overinterpretation & Keep criterion-level inference, logical witnesses, and protocol precedent distinct from patient screening, population prevalence and causal conclusions.\\\bottomrule
 \end{longtable}
 
@@ -1165,6 +1367,13 @@ score alone does not satisfy that definition.
 
 \clearpage
 \begin{thebibliography}{99}
+\bibitem{stefficiency} Sentence Transformers. \emph{Speeding up Inference}.
+\url{https://www.sbert.net/docs/sentence_transformer/usage/efficiency.html}.
+Accessed November 4, 2026.
+\bibitem{hfhub} Hugging Face. \emph{The Model Hub}.
+\url{https://huggingface.co/docs/hub/models-the-hub}. Accessed November 4, 2026.
+\bibitem{hfdownload} Hugging Face. \emph{Download files from the Hub}.
+\url{https://huggingface.co/docs/huggingface_hub/guides/download}. Accessed November 4, 2026.
 \bibitem{mpnet} Sentence Transformers. \emph{all-mpnet-base-v2 model card}.
 \url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}.
 \bibitem{biolord} FremyCompany / F. Remy et al. \emph{BioLORD-2023 model card}.
