@@ -30,7 +30,9 @@ The primary project data come from the 100-trial oncology and cardiovascular coh
 data/trial100_notreviewed.xlsx
 ```
 
-This workbook is an **unreviewed extraction**, not a gold-standard dataset. It contains atomic structured criteria together with original evidence, parent statements, trial identifiers, normalization fields, extraction confidence, validation findings, and provenance. Criteria must be human-reviewed before they are frozen for pair construction, model training, or evaluation.
+This workbook retains the **original unreviewed extraction**. The authoritative reviewed source is now `data/trial100_v1.xlsx`, frozen as `data/processed/trial100_v1.parquet`: 3,537 criteria from 100 trials. It preserves structured fields, original evidence, parent statements, trial identifiers and provenance. Corpus review and pair-relationship validation are separate steps.
+
+The frozen development pair-review release is in `data/processed/pair_pilot_v1/release_v1/`. It preserves all 75 decisions, exports 67 clean development comparisons, and queues seven unresolved relationships plus one source-role conflict. It is not a held-out clinical benchmark or an approved supervised training set. The [technical document](docs/trialign_technical.tex) records the comparison scopes, remaining actions and family exclusions.
 
 ### Alternate source: Chia
 
@@ -106,17 +108,13 @@ trialign inspect
 python scripts/trialign.py inspect
 ```
 
-After all criteria have been accepted or corrected, the initial reproducible pipeline is:
+Verify the committed corpus, workbook, decisions, source snapshots, family reservations and frozen pair-review exports with:
 
 ```bash
-trialign freeze --input data/trial100_reviewed.xlsx
-trialign split
-trialign pairs
-trialign baseline-tfidf
-trialign export-schemas
+python scripts/freeze_pair_pilot.py --verify
 ```
 
-These commands create a versioned reviewed corpus, trial-level splits, auditable pair candidates, and a lexical reference baseline. Generated data and experiment artifacts are ignored by Git by default; manifests and selected release artifacts should be committed intentionally. Run the current test suite with `pytest`.
+The command is read-only and fails on stale hashes, workbook/log disagreements, missing evidence, invalid labels or changed release dispositions. Generated data remain ignored by default; the selected corpus, pilot and family-audit release files are explicitly tracked. Final train/validation/test partitions are not assigned. The generic `trialign split` and `trialign pairs` commands remain scaffolding and do not enforce this release's family exclusions.
 
 ## Repository structure
 
@@ -149,8 +147,8 @@ trialign/
 │   ├── proposal_presentation.pdf       # Compiled proposal presentation
 │   ├── Python_git.md                    # Python/Git collaboration notes
 │   ├── R_git.md                         # R/Git collaboration notes
-│   ├── logging/
-│   │   └── CHANGELOG.md                 # Project change history
+│   ├── trialign_technical.tex           # Canonical technical notes, contracts, audits and change history
+│   ├── trialign_technical.pdf           # Compiled technical document
 │   ├── notes/
 │   │   └── main.tex                     # Working notes
 │   └── references/
@@ -163,6 +161,15 @@ trialign/
 ├── requirements.txt                    # Complete development environment
 └── README.md
 ```
+
+## Documentation
+
+Detailed project notes, labeling contracts, family audits, demonstration plans
+and substantive change history live in [the technical document](docs/trialign_technical.tex)
+and its [compiled PDF](docs/trialign_technical.pdf). Update that document for
+future work instead of creating separate Markdown notes or changelogs.
+The main README and Python/R Git guides remain standalone Markdown files.
+Machine-readable data, annotation workbooks and source code remain separate artifacts.
 
 ## References
 

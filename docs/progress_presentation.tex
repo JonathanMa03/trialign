@@ -1,0 +1,212 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme{default}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,booktabs,tabularx,graphicx}
+\definecolor{wine}{HTML}{9B1C2B}
+\definecolor{orange}{HTML}{D97800}
+\definecolor{cream}{HTML}{FFF9F5}
+\definecolor{ink}{HTML}{302F2D}
+\definecolor{muted}{HTML}{756A65}
+\setbeamercolor{normal text}{fg=ink,bg=cream}
+\setbeamercolor{structure}{fg=wine}
+\setbeamercolor{frametitle}{fg=wine,bg=cream}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{wine}\small\textbullet}
+\setbeamertemplate{footline}{\hspace{1em}\color{muted}\scriptsize TriAlign progress\hfill\insertframenumber\hspace{1em}\vspace{.5em}}
+\setbeamertemplate{note page}[plain]
+\setbeameroption{hide notes}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\source}[1]{\par\vfill{\tiny\color{muted}#1\par}}
+\newcommand{\gap}{\par\vspace{.55em}}
+\newcommand{\status}[1]{{\color{wine}\textbf{#1}}}
+\title{TriAlign}
+\subtitle{Progress in comparing clinical trial eligibility criteria}
+\author{Jonathan Ma and Jiatong Gao}
+\date{November 2026}
+\begin{document}
+\raggedright
+
+\begin{frame}[plain]
+\vspace{.7cm}
+{\Huge\color{wine}\bfseries TriAlign\par}
+\gap
+{\Large Progress in comparing clinical trial\\eligibility criteria\par}
+\vspace{1cm}
+Jonathan Ma \qquad Jiatong Gao\par
+\gap
+{\color{muted}November 2026}
+\note{Jonathan, 0:30. Status reflects repository inspection on November 6, 2026. Explain that this is a progress report. Allocate 14 minutes of content including a 3-minute demonstration, 1 minute for transitions, and 5 minutes for discussion. The live demo still needs implementation and rehearsal. Source: proposal.tex and trialign\_technical.tex.}
+\end{frame}
+
+\begin{frame}{Project objective}
+Help a clinical team compare a current eligibility rule with rules from other trials.
+\gap
+\begin{enumerate}
+\item Retrieve potentially comparable criteria.
+\item Explain operational differences using source evidence.
+\item Record a relationship or escalate an unresolved comparison.
+\end{enumerate}
+\gap
+\textbf{Illustrative case:} inclusion age $\geq18$ versus inclusion age $<18$.\\
+Shared words conceal disjoint allowed populations.
+\gap
+Scope: criterion comparison for protocol review, without patient screening.
+\source{Source: technical guide, Sections 1 and 3. Example is illustrative, not a measured encoder failure.}
+\note{Jonathan, 1:00. Describe protocol review and historical precedents. Do not say we have measured embedding errors on this example. Similarity is useful for retrieving candidates but does not itself establish a relationship.}
+\end{frame}
+
+\begin{frame}{Current dataset}
+\begin{tabularx}{\textwidth}{@{}p{.34\textwidth}Y@{}}
+\toprule
+Source & Current artifact\\\midrule
+Modern AutoCrit & Reviewed atomic criteria derived from public trial eligibility text\\
+Frozen release & \texttt{trial100\_v1}: 3,537 criteria across 100 trials\\
+Review state & All retained rows marked corrected; zero recorded validation issues or readiness blockers\\
+Provenance & Trial and criterion IDs, source versions, parent statements and available context\\
+Reproducibility & Parquet snapshot with corpus hash and adjacent manifest\\\bottomrule
+\end{tabularx}
+\gap
+Criterion validation is complete by the source review record. \textbf{Clinical pair labels are a separate task.}
+\source{Source: trial100\_v1.parquet.manifest.json. Review authority: project owner's reported manual validation. Chia remains an optional external source, not part of this release.}
+\note{Jonathan, 1:15. Use 3,537, not the earlier proposal's 3,145 extraction count. Zero validation issues concerns the export's recorded checks, not independent proof of clinical correctness. The cohort is oncology/cardiovascular; do not assert verified per-area counts without the mapping. Source: data/processed/trial100\_v1.parquet.manifest.json, frozen November 1, 2026.}
+\end{frame}
+
+\begin{frame}{Pair construction and manual review}
+\textbf{Completed:} reproducible development pilot and an Excel labeling workbook.
+\gap
+\begin{tabularx}{\textwidth}{@{}Y r@{}}\toprule
+Primary sampling method & Pairs\\\midrule
+Same entity with structured differences & 25\\
+Further same-entity matches & 25\\
+Lexical neighbors within a domain & 15\\
+Random controls & 10\\\midrule
+Total natural cross-trial pairs & 75\\\bottomrule
+\end{tabularx}
+\gap
+Twenty trials reserved for development. Family audit remains pending.\\
+\status{No pair labels entered in the workbook as of November 6.}
+\source{Source: pair\_pilot\_v1/manifest.json, generator and labeling workbook. Sampling categories do not imply labels.}
+\note{Jonathan, 1:15. The reserved pool contains 815 criteria, not all of which appear in selected pairs. Checks confirmed unique groups, cross-trial membership, quotas, reuse caps and deterministic regeneration. Reserve related families from held-out testing after audit. This is an enriched convenience pilot, not a clinical benchmark or prevalence sample. Source: scripts/build\_pair\_pilot.py and data/processed/pair\_pilot\_v1/.}
+\end{frame}
+
+\begin{frame}{Clinical relationship labels}
+\begin{columns}[T,onlytextwidth]
+\column{.53\textwidth}
+\textbf{Comparable allowed populations}
+\begin{itemize}
+\item Equivalent
+\item A more restrictive
+\item B more restrictive
+\item Partial overlap
+\item Contradictory or disjoint
+\end{itemize}
+\column{.43\textwidth}
+\textbf{Other dispositions}
+\begin{itemize}
+\item Related, not comparable
+\item Unrelated
+\item Ambiguous
+\end{itemize}
+\end{columns}
+\gap
+Interpret eligibility role, internal negation, units, time and Boolean scope before assigning a label.
+\gap
+Example: inclusion age $\geq21$ is more restrictive than inclusion age $\geq18$ in a common age frame.
+\source{Source: pair labeling contract 0.1 and technical guide, Section 3. Reversing A/B swaps only the two restrictive labels.}
+\note{Jonathan, 1:00. Related but not comparable means the concepts are understood but no supported shared representation exists. Ambiguous means missing or conflicting evidence prevents a defensible interpretation. Independent second annotation is desirable but has not happened. Hand over to Jiatong.}
+\end{frame}
+
+\begin{frame}{AI and agent workflow}
+\begin{tabularx}{\textwidth}{@{}p{.24\textwidth}Y p{.24\textwidth}@{}}\toprule
+Stage & Intended behavior & Current status\\\midrule
+Candidate retrieval & Find cross-trial lexical and dense neighbors & Teammate branch\\
+Exact tools & Compare supported, fully interpreted constraints & Starter comparator\\
+Encoder and head & Rank candidates and predict ordered relationships & Fine-tuning and head planned\\
+LLM judge and critic & Resolve contextual cases and challenge evidence & Planned\\
+Orchestrator & Reconcile results, trace routes and escalate & Exact-only skeleton\\
+Human review & Inspect evidence and record final decisions & Excel pilot available\\\bottomrule
+\end{tabularx}
+\source{Source: current orchestrator, structured tool and technical guide; teammate branch d30c71e for dense retrieval. Full routed workflow is not implemented.}
+\note{Jiatong, 1:15. Explain one pair's path verbally: validate evidence, retrieve or run a supported exact tool, escalate context-sensitive cases, and record human decisions. A future router may combine tools. Do not present the skeleton as an LLM agent already running. Source: src/trialign/agents/orchestrator.py and src/trialign/tools/structured.py.}
+\end{frame}
+
+\begin{frame}{Baseline progress}
+\textbf{Code present on the teammate branch}
+\begin{itemize}
+\item TF--IDF, MPNet and BioLORD retrieval interfaces.
+\item Shared neighbor format with query/candidate IDs, rank and score.
+\item Cross-trial filtering and normalized dense embeddings.
+\end{itemize}
+\gap
+\textbf{Teammate-reported integration results}
+\begin{itemize}
+\item Common provisional sample: 200 criteria across 100 trials.
+\item 20 tests passed; saved-output checks passed.
+\end{itemize}
+\gap
+\status{Clinical performance is not yet measured.} Validated relevance labels and exact resolved model revisions are still needed.
+\source{Source: teammate's progress report and local branch feature/comparisons-agent-ui at d30c71e. Saved run artifacts are absent from this checkout.}
+\note{Jiatong, 1:15. Distinguish code inspection from the reported runs. We have not independently reproduced the complete 20-test suite or the saved dense outputs here. A prior review reproduced 19 non-CLI tests. Do not treat these as accuracy results. The provisional sample is not the full frozen corpus evaluation. Model revision tracking remains pending. Her branch has not been merged or edited.}
+\end{frame}
+
+\begin{frame}{A failure in the current exact comparator}
+\begin{tabularx}{\textwidth}{@{}p{.30\textwidth}Y@{}}\toprule
+Constructed diagnostic & Rule\\\midrule
+A & Inclusion: age $\geq18$ years\\
+B & Exclusion: age $\geq18$ years\\\midrule
+Current tool output & Equivalent, confidence 1.0\\
+Expected relationship & Disjoint allowed age sets in this simplified frame\\\bottomrule
+\end{tabularx}
+\gap
+The comparator matches intervals without first applying eligibility role.\\
+Its fixed confidence values do not measure calibrated certainty.
+\gap
+\textbf{Next fix:} gate context and polarity before allowing an exact label.
+\source{Source: constructed diagnostic executed against main on November 6; structured.py. This is a code failure case, not a corpus error rate.}
+\note{Jiatong, 1:15. We executed this diagnostic using two synthetic CriterionRecords. The source criterion text and interval were identical, but criterion\_type differed. The current function returned equivalent with requires\_context false. Show the problem candidly. Under the simple common age universe, A allows adults and B permits those below 18. Do not generalize to entire trials or claim a clinical test-set result.}
+\end{frame}
+
+
+
+\begin{frame}{Current challenges and limitations}
+\begin{itemize}
+\item Pair labels and an audited family split are still missing.
+\item The starter exact tool does not implement the complete labeling contract.
+\item Baseline integration needs shared, versioned inputs and resolved model commits.
+\item We have no fine-tuned encoder, calibrated uncertainty or clinical evaluation yet.
+\item The UI, durable review workflow and end-to-end latency still need validation.
+\end{itemize}
+\gap
+Local execution avoids website hosting. Optional external LLM calls still require network access and may incur usage costs.
+\source{Source: technical guide, local implementation and baseline branch review. Family/duplicate handling precedes held-out evaluation.}
+\note{Jonathan, 1:00. Acknowledge the upstream review effort while keeping criterion quality separate from relationship quality. Do not claim a runtime estimate: the guide's 2-second local and 30-second contextual budgets are proposed targets, not measurements.}
+\end{frame}
+
+\begin{frame}{Next steps}
+\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}Y@{}}\toprule
+Owner & Deliverable before the final presentation\\\midrule
+Jonathan & Adjudicated pilot, revised guide and audited family map\\
+Jiatong & Baseline PR and reproducible runs with pinned revisions\\
+Together & Local pair-review UI with persistent save/reload\\
+Together & Baseline and exact-tool metrics with documented errors\\
+Jiatong & Fine-tuning and held-out comparison, if labels and development results justify training\\\bottomrule
+\end{tabularx}
+\gap
+Final presentation target: December 8, subject to course confirmation.\\
+Training remains conditional on label quality and development evidence.
+\source{Source: technical guide milestones and pair labeling contract. Dates are planning targets, not completed milestones.}
+\note{Jonathan and Jiatong, 1:15 total. Jonathan covers labels and split ownership. Jiatong covers baselines, UI integration and training gate. Total planned content including demo is 14 minutes. Reserve 1 minute for handoffs and application switching to stay within 15 minutes. Then allow 5 minutes for questions.}
+\end{frame}
+
+\begin{frame}{Questions and feedback}
+\Large
+Which clinical comparisons should the pilot prioritize?
+\gap
+What evidence would make a comparison useful to a protocol reviewer?
+\gap
+What should a minimum useful demonstration show?
+\note{Both presenters, 5 minutes for questions and feedback after the 15-minute presentation/demo block.}
+\end{frame}
+
+\end{document}

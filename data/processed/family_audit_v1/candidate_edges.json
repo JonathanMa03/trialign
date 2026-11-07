@@ -1,0 +1,376 @@
+[
+  {
+    "candidate_id": "edge-NCT01995500-NCT02073565",
+    "cosine": 0.302625,
+    "family_link": null,
+    "rare_8gram_coverage": 0.015302,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 17,
+    "status": "pending_evidence_review",
+    "title_a": "Angiography Study of BioNIR Drug Eluting Stent System (NIREUS)",
+    "title_b": "HARMONEE - Japan-USA Harmonized Assessment by Randomized, Multi-Center Study of OrbusNEich's Combo StEnt",
+    "trial_a": "NCT01995500",
+    "trial_b": "NCT02073565"
+  },
+  {
+    "candidate_id": "edge-NCT00025207-NCT00028587",
+    "cosine": 0.253176,
+    "family_link": null,
+    "rare_8gram_coverage": 0.130045,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 29,
+    "status": "pending_evidence_review",
+    "title_a": "Gefitinib in Treating Patients With Malignant Mesothelioma",
+    "title_b": "PS-341 and Combination Chemotherapy in Treating Patients With Advanced Solid Tumors",
+    "trial_a": "NCT00025207",
+    "trial_b": "NCT00028587"
+  },
+  {
+    "candidate_id": "edge-NCT00028587-NCT00091377",
+    "cosine": 0.236606,
+    "family_link": null,
+    "rare_8gram_coverage": 0.026906,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 6,
+    "status": "pending_evidence_review",
+    "title_a": "PS-341 and Combination Chemotherapy in Treating Patients With Advanced Solid Tumors",
+    "title_b": "Phenoxodiol Combined With Either Cisplatin or Paclitaxel in Patients With Recurrent Ovarian Epithelial, Fallopian Tube, or Primary Peritoneal Cancer",
+    "trial_a": "NCT00028587",
+    "trial_b": "NCT00091377"
+  },
+  {
+    "candidate_id": "edge-NCT00028587-NCT00326599",
+    "cosine": 0.235961,
+    "family_link": null,
+    "rare_8gram_coverage": 0.035874,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 8,
+    "status": "pending_evidence_review",
+    "title_a": "PS-341 and Combination Chemotherapy in Treating Patients With Advanced Solid Tumors",
+    "title_b": "Gemcitabine and Carboplatin With or Without AZD2171 as First-Line Therapy in Treating Patients With Stage IIIB or Stage IV Non-Small Cell Lung Cancer",
+    "trial_a": "NCT00028587",
+    "trial_b": "NCT00326599"
+  },
+  {
+    "candidate_id": "edge-NCT00028587-NCT00077532",
+    "cosine": 0.229445,
+    "family_link": null,
+    "rare_8gram_coverage": 0.026906,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 6,
+    "status": "pending_evidence_review",
+    "title_a": "PS-341 and Combination Chemotherapy in Treating Patients With Advanced Solid Tumors",
+    "title_b": "Monoclonal Antibody With or Without gp100 Peptides Plus Montanide ISA-51 in Treating Patients With Stage IV Melanoma",
+    "trial_a": "NCT00028587",
+    "trial_b": "NCT00077532"
+  },
+  {
+    "candidate_id": "edge-NCT00091377-NCT00326599",
+    "cosine": 0.222079,
+    "family_link": null,
+    "rare_8gram_coverage": 0.013966,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 5,
+    "status": "pending_evidence_review",
+    "title_a": "Phenoxodiol Combined With Either Cisplatin or Paclitaxel in Patients With Recurrent Ovarian Epithelial, Fallopian Tube, or Primary Peritoneal Cancer",
+    "title_b": "Gemcitabine and Carboplatin With or Without AZD2171 as First-Line Therapy in Treating Patients With Stage IIIB or Stage IV Non-Small Cell Lung Cancer",
+    "trial_a": "NCT00091377",
+    "trial_b": "NCT00326599"
+  },
+  {
+    "candidate_id": "edge-NCT03064867-NCT03938987",
+    "cosine": 0.220889,
+    "family_link": null,
+    "rare_8gram_coverage": 0.072993,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 50,
+    "status": "pending_evidence_review",
+    "title_a": "Venetoclax Plus R-ICE Chemotherapy for Relapsed/Refractory Diffuse Large B-Cell Lymphoma",
+    "title_b": "Anti-CD19, Dual Co-stimulatory (4-1BB, CD3ζ) Chimeric Antigen Receptor T-cells in Patients With Relapsed/Refractory Aggressive Lymphoma or Acute Lymphoblastic Leukemia (ALL)",
+    "trial_a": "NCT03064867",
+    "trial_b": "NCT03938987"
+  },
+  {
+    "candidate_id": "edge-NCT00077532-NCT00091377",
+    "cosine": 0.219309,
+    "family_link": null,
+    "rare_8gram_coverage": 0.022923,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 8,
+    "status": "pending_evidence_review",
+    "title_a": "Monoclonal Antibody With or Without gp100 Peptides Plus Montanide ISA-51 in Treating Patients With Stage IV Melanoma",
+    "title_b": "Phenoxodiol Combined With Either Cisplatin or Paclitaxel in Patients With Recurrent Ovarian Epithelial, Fallopian Tube, or Primary Peritoneal Cancer",
+    "trial_a": "NCT00077532",
+    "trial_b": "NCT00091377"
+  },
+  {
+    "candidate_id": "edge-NCT00025207-NCT00326599",
+    "cosine": 0.213646,
+    "family_link": null,
+    "rare_8gram_coverage": 0.010336,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 4,
+    "status": "pending_evidence_review",
+    "title_a": "Gefitinib in Treating Patients With Malignant Mesothelioma",
+    "title_b": "Gemcitabine and Carboplatin With or Without AZD2171 as First-Line Therapy in Treating Patients With Stage IIIB or Stage IV Non-Small Cell Lung Cancer",
+    "trial_a": "NCT00025207",
+    "trial_b": "NCT00326599"
+  },
+  {
+    "candidate_id": "edge-NCT00025207-NCT00091377",
+    "cosine": 0.202527,
+    "family_link": null,
+    "rare_8gram_coverage": 0.0,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 0,
+    "status": "pending_evidence_review",
+    "title_a": "Gefitinib in Treating Patients With Malignant Mesothelioma",
+    "title_b": "Phenoxodiol Combined With Either Cisplatin or Paclitaxel in Patients With Recurrent Ovarian Epithelial, Fallopian Tube, or Primary Peritoneal Cancer",
+    "trial_a": "NCT00025207",
+    "trial_b": "NCT00091377"
+  },
+  {
+    "candidate_id": "edge-NCT02769832-NCT04747145",
+    "cosine": 0.191186,
+    "family_link": null,
+    "rare_8gram_coverage": 0.015214,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 11,
+    "status": "pending_evidence_review",
+    "title_a": "Nab-Paclitaxel With Gemcitabine for Relapsed Small Cell Cancer",
+    "title_b": "Analyzing Pulsed Reduced Dose Radiotherapy in Upfront Glioblastoma",
+    "trial_a": "NCT02769832",
+    "trial_b": "NCT04747145"
+  },
+  {
+    "candidate_id": "edge-NCT01841736-NCT04310007",
+    "cosine": 0.190402,
+    "family_link": null,
+    "rare_8gram_coverage": 0.006821,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 10,
+    "status": "pending_evidence_review",
+    "title_a": "Pazopanib Hydrochloride in Treating Patients With Progressive Carcinoid Tumors",
+    "title_b": "Testing the Addition of the Pill Chemotherapy, Cabozantinib, to the Standard Immune Therapy Nivolumab Compared to Standard Chemotherapy for Non-small Cell Lung Cancer",
+    "trial_a": "NCT01841736",
+    "trial_b": "NCT04310007"
+  },
+  {
+    "candidate_id": "edge-NCT00077532-NCT00326599",
+    "cosine": 0.174149,
+    "family_link": null,
+    "rare_8gram_coverage": 0.014327,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 5,
+    "status": "pending_evidence_review",
+    "title_a": "Monoclonal Antibody With or Without gp100 Peptides Plus Montanide ISA-51 in Treating Patients With Stage IV Melanoma",
+    "title_b": "Gemcitabine and Carboplatin With or Without AZD2171 as First-Line Therapy in Treating Patients With Stage IIIB or Stage IV Non-Small Cell Lung Cancer",
+    "trial_a": "NCT00077532",
+    "trial_b": "NCT00326599"
+  },
+  {
+    "candidate_id": "edge-NCT00260364-NCT00326599",
+    "cosine": 0.168466,
+    "family_link": null,
+    "rare_8gram_coverage": 0.0,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 0,
+    "status": "pending_evidence_review",
+    "title_a": "Combining Erlotinib Plus Bevacizumab and Gemcitabine Plus Capecitabine to Treat Advanced Pancreatic Cancer",
+    "title_b": "Gemcitabine and Carboplatin With or Without AZD2171 as First-Line Therapy in Treating Patients With Stage IIIB or Stage IV Non-Small Cell Lung Cancer",
+    "trial_a": "NCT00260364",
+    "trial_b": "NCT00326599"
+  },
+  {
+    "candidate_id": "edge-NCT03054363-NCT03653507",
+    "cosine": 0.168447,
+    "family_link": null,
+    "rare_8gram_coverage": 0.002018,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 2,
+    "status": "pending_evidence_review",
+    "title_a": "Tucatinib, Palbociclib and Letrozole in Metastatic Hormone Receptor Positive and HER2-positive Breast Cancer",
+    "title_b": "A Study of Zolbetuximab (IMAB362) Plus CAPOX Compared With Placebo Plus CAPOX as First-line Treatment of Subjects With Claudin (CLDN) 18.2-positive, HER2-negative, Locally Advanced Unresectable or Metastatic Gastric or Gastroesophageal Junction (GEJ) Adenocarcinoma (GLOW).",
+    "trial_a": "NCT03054363",
+    "trial_b": "NCT03653507"
+  },
+  {
+    "candidate_id": "edge-NCT00025207-NCT00077532",
+    "cosine": 0.167823,
+    "family_link": null,
+    "rare_8gram_coverage": 0.0,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 0,
+    "status": "pending_evidence_review",
+    "title_a": "Gefitinib in Treating Patients With Malignant Mesothelioma",
+    "title_b": "Monoclonal Antibody With or Without gp100 Peptides Plus Montanide ISA-51 in Treating Patients With Stage IV Melanoma",
+    "trial_a": "NCT00025207",
+    "trial_b": "NCT00077532"
+  },
+  {
+    "candidate_id": "edge-NCT02769832-NCT04310007",
+    "cosine": 0.166242,
+    "family_link": null,
+    "rare_8gram_coverage": 0.007361,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 7,
+    "status": "pending_evidence_review",
+    "title_a": "Nab-Paclitaxel With Gemcitabine for Relapsed Small Cell Cancer",
+    "title_b": "Testing the Addition of the Pill Chemotherapy, Cabozantinib, to the Standard Immune Therapy Nivolumab Compared to Standard Chemotherapy for Non-small Cell Lung Cancer",
+    "trial_a": "NCT02769832",
+    "trial_b": "NCT04310007"
+  },
+  {
+    "candidate_id": "edge-NCT02769832-NCT03938987",
+    "cosine": 0.162587,
+    "family_link": null,
+    "rare_8gram_coverage": 0.00292,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 2,
+    "status": "pending_evidence_review",
+    "title_a": "Nab-Paclitaxel With Gemcitabine for Relapsed Small Cell Cancer",
+    "title_b": "Anti-CD19, Dual Co-stimulatory (4-1BB, CD3ζ) Chimeric Antigen Receptor T-cells in Patients With Relapsed/Refractory Aggressive Lymphoma or Acute Lymphoblastic Leukemia (ALL)",
+    "trial_a": "NCT02769832",
+    "trial_b": "NCT03938987"
+  },
+  {
+    "candidate_id": "edge-NCT07445360-NCT07724899",
+    "cosine": 0.161006,
+    "family_link": null,
+    "rare_8gram_coverage": 0.005831,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 2,
+    "status": "pending_evidence_review",
+    "title_a": "Circumferential Pulmonary Venous Isolation Combined With Bachmann Bundle Modification Versus Circumferential Pulmonary Venous Isolation for Persistent Atrial Fibrillation",
+    "title_b": "Efficacy and Safety of Superior Vena Cava Isolation and Pulmonary Vein Isolation for Treatment of Atrial Fibrillation",
+    "trial_a": "NCT07445360",
+    "trial_b": "NCT07724899"
+  },
+  {
+    "candidate_id": "edge-NCT03054363-NCT04310007",
+    "cosine": 0.160164,
+    "family_link": null,
+    "rare_8gram_coverage": 0.0,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 0,
+    "status": "pending_evidence_review",
+    "title_a": "Tucatinib, Palbociclib and Letrozole in Metastatic Hormone Receptor Positive and HER2-positive Breast Cancer",
+    "title_b": "Testing the Addition of the Pill Chemotherapy, Cabozantinib, to the Standard Immune Therapy Nivolumab Compared to Standard Chemotherapy for Non-small Cell Lung Cancer",
+    "trial_a": "NCT03054363",
+    "trial_b": "NCT04310007"
+  },
+  {
+    "candidate_id": "edge-NCT01811992-NCT04747145",
+    "cosine": 0.138706,
+    "family_link": null,
+    "rare_8gram_coverage": 0.048421,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 23,
+    "status": "pending_evidence_review",
+    "title_a": "Combined Cytotoxic and Immune-Stimulatory Therapy for Glioma",
+    "title_b": "Analyzing Pulsed Reduced Dose Radiotherapy in Upfront Glioblastoma",
+    "trial_a": "NCT01811992",
+    "trial_b": "NCT04747145"
+  },
+  {
+    "candidate_id": "edge-NCT01760291-NCT04641611",
+    "cosine": 0.085749,
+    "family_link": null,
+    "rare_8gram_coverage": 0.054422,
+    "rare_shared_parents": 0,
+    "reasons": [
+      "ranked_similarity_review_only"
+    ],
+    "shared_parent_evidence": [],
+    "shared_rare_8grams": 8,
+    "status": "pending_evidence_review",
+    "title_a": "Continued Access to PREVAIL (CAP2) - WATCHMAN Left Atrial Appendage (LAA) Closure Technology",
+    "title_b": "Effect of Venous Cannulation on the Incidence of Atrial Fibrillation in Patients Undergoing Coronary Artery Bypass",
+    "trial_a": "NCT01760291",
+    "trial_b": "NCT04641611"
+  }
+]

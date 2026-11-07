@@ -1,0 +1,1335 @@
+{
+  "audit_version": "family-audit-0.1",
+  "corpus_sha256": "8d194ef308bc55e5e05ce80d455633a03e225672e0e69b8abddcb762f3bad158",
+  "counts": {
+    "clinical_families_in_corpus": 100,
+    "cohort_composition": {
+      "cardiovascular": 50,
+      "oncology": 50
+    },
+    "corpus_trials": 100,
+    "external_nodes": 3,
+    "holdout_excluded_corpus_criteria": 841,
+    "holdout_excluded_corpus_trials": 21,
+    "split_groups_in_corpus": 100
+  },
+  "decision_ledger_sha256": "46cdf5b2c346cf1c05de5a5d3a58f5e544a769b26bdbf664ca30ca0326b5b4b2",
+  "family_by_trial": {
+    "NCT00003187": "family-NCT00003187",
+    "NCT00025207": "family-NCT00025207",
+    "NCT00028587": "family-NCT00028587",
+    "NCT00060528": "family-NCT00060528",
+    "NCT00077532": "family-NCT00077532",
+    "NCT00091377": "family-NCT00091377",
+    "NCT00154271": "family-NCT00154271",
+    "NCT00225212": "family-NCT00225212",
+    "NCT00260364": "family-NCT00260364",
+    "NCT00326599": "family-NCT00326599",
+    "NCT00327587": "family-NCT00327587",
+    "NCT00407264": "family-NCT00407264",
+    "NCT00600964": "family-NCT00600964",
+    "NCT00697099": "family-NCT00697099",
+    "NCT00839007": "family-NCT00839007",
+    "NCT00858663": "family-NCT00858663",
+    "NCT01007292": "family-NCT01007292",
+    "NCT01020968": "family-NCT01020968",
+    "NCT01260545": "family-NCT01260545",
+    "NCT01285544": "family-NCT01285544",
+    "NCT01319864": "family-NCT01319864",
+    "NCT01437098": "family-NCT01437098",
+    "NCT01519700": "family-NCT01519700",
+    "NCT01643330": "family-NCT01643330",
+    "NCT01758614": "family-NCT01758614",
+    "NCT01760291": "family-NCT01182441",
+    "NCT01811992": "family-NCT01811992",
+    "NCT01829711": "family-NCT01829711",
+    "NCT01841736": "family-NCT01841736",
+    "NCT01896128": "family-NCT01896128",
+    "NCT01995500": "family-NCT01995500",
+    "NCT02073565": "family-NCT02073565",
+    "NCT02118753": "family-NCT02118753",
+    "NCT02151864": "family-NCT02151864",
+    "NCT02178098": "family-NCT02178098",
+    "NCT02268071": "family-NCT02268071",
+    "NCT02346565": "family-NCT02346565",
+    "NCT02538900": "family-NCT02538900",
+    "NCT02567409": "family-NCT02567409",
+    "NCT02572167": "family-NCT02572167",
+    "NCT02594111": "family-NCT02594111",
+    "NCT02605707": "family-NCT02605707",
+    "NCT02672098": "family-NCT02672098",
+    "NCT02760199": "family-NCT02760199",
+    "NCT02769832": "family-NCT02769832",
+    "NCT02834611": "family-NCT02834611",
+    "NCT02896595": "family-NCT02896595",
+    "NCT02964949": "family-NCT02964949",
+    "NCT03052634": "family-NCT03052634",
+    "NCT03054363": "family-NCT03054363",
+    "NCT03064867": "family-NCT03064867",
+    "NCT03153111": "family-NCT03153111",
+    "NCT03319628": "family-NCT03319628",
+    "NCT03462628": "family-NCT03462628",
+    "NCT03476187": "family-NCT03476187",
+    "NCT03532802": "family-NCT03532802",
+    "NCT03653507": "family-NCT03653507",
+    "NCT03735901": "family-NCT03735901",
+    "NCT03772899": "family-NCT03772899",
+    "NCT03875781": "family-NCT03875781",
+    "NCT03938987": "family-NCT03938987",
+    "NCT04062565": "family-NCT04062565",
+    "NCT04063033": "family-NCT04063033",
+    "NCT04310007": "family-NCT04310007",
+    "NCT04603872": "family-NCT04603872",
+    "NCT04641611": "family-NCT04641611",
+    "NCT04747145": "family-NCT04747145",
+    "NCT04880434": "family-NCT02601313",
+    "NCT04959500": "family-NCT04959500",
+    "NCT05030428": "family-NCT05030428",
+    "NCT05120544": "family-NCT05120544",
+    "NCT05195632": "family-NCT05195632",
+    "NCT05355701": "family-NCT05355701",
+    "NCT05379712": "family-NCT05379712",
+    "NCT05419375": "family-NCT05419375",
+    "NCT05436977": "family-NCT05436977",
+    "NCT05508867": "family-NCT05508867",
+    "NCT05681702": "family-NCT05681702",
+    "NCT05949021": "family-NCT05949021",
+    "NCT06158698": "family-NCT06158698",
+    "NCT06212674": "family-NCT06212674",
+    "NCT06490328": "family-NCT06490328",
+    "NCT06556667": "family-NCT06556667",
+    "NCT06622434": "family-NCT06622434",
+    "NCT06651437": "family-NCT06651437",
+    "NCT06663137": "family-NCT06663137",
+    "NCT06688201": "family-NCT06688201",
+    "NCT06730230": "family-NCT06730230",
+    "NCT06731244": "family-NCT06731244",
+    "NCT06778330": "family-NCT06778330",
+    "NCT06871228": "family-NCT06871228",
+    "NCT07010263": "family-NCT07010263",
+    "NCT07020611": "family-NCT07020611",
+    "NCT07172919": "family-NCT07172919",
+    "NCT07310992": "family-NCT07310992",
+    "NCT07445360": "family-NCT07445360",
+    "NCT07584967": "family-NCT07584967",
+    "NCT07710937": "family-NCT07710937",
+    "NCT07724899": "family-NCT07724899",
+    "NCT07798037": "family-NCT07798037"
+  },
+  "generator_sha256": "ba798bed390f303930c0e0be7ca88b642dd4d87f66d90d2dcb6b9759214548f8",
+  "holdout_excluded_trial_ids": [
+    "NCT00025207",
+    "NCT00091377",
+    "NCT00154271",
+    "NCT00225212",
+    "NCT01260545",
+    "NCT01437098",
+    "NCT01760291",
+    "NCT01841736",
+    "NCT02268071",
+    "NCT02769832",
+    "NCT02834611",
+    "NCT03064867",
+    "NCT03153111",
+    "NCT04063033",
+    "NCT04747145",
+    "NCT05379712",
+    "NCT05419375",
+    "NCT05681702",
+    "NCT06730230",
+    "NCT07172919",
+    "NCT07584967"
+  ],
+  "limitations": [
+    "No confirmed in-cohort family link found is not proof that every pair is independent.",
+    "Registry metadata may postdate frozen eligibility text.",
+    "Complete protocol PDFs and unnamed external parents were not exhaustively audited.",
+    "Use split groups and exclusions together; existing generic split CLI does not enforce this artifact.",
+    "Do not assign partitions until the annotation guide/pilot review and split policy are frozen."
+  ],
+  "pilot_manifest_sha256": "b02f6dc552e1e0fde57e1f98eeb0ffc59163e955edd8758a308aa875f9142bdf",
+  "rows": [
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00003187",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00003187",
+      "trial_id": "NCT00003187"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT00025207",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00025207",
+      "trial_id": "NCT00025207"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00028587",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00028587",
+      "trial_id": "NCT00028587"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00060528",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00060528",
+      "trial_id": "NCT00060528"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00077532",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00077532",
+      "trial_id": "NCT00077532"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT00091377",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00091377",
+      "trial_id": "NCT00091377"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT00154271",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00154271",
+      "trial_id": "NCT00154271"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT00225212",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00225212",
+      "trial_id": "NCT00225212"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00260364",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00260364",
+      "trial_id": "NCT00260364"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00326599",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00326599",
+      "trial_id": "NCT00326599"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00327587",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00327587",
+      "trial_id": "NCT00327587"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00407264",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00407264",
+      "trial_id": "NCT00407264"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00600964",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00600964",
+      "trial_id": "NCT00600964"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00697099",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00697099",
+      "trial_id": "NCT00697099"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00839007",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00839007",
+      "trial_id": "NCT00839007"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT00858663",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT00858663",
+      "trial_id": "NCT00858663"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01007292",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01007292",
+      "trial_id": "NCT01007292"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01020968",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01020968",
+      "trial_id": "NCT01020968"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT01182441",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": false,
+      "split_group_id": "group-NCT01182441",
+      "trial_id": "NCT01182441"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT01260545",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01260545",
+      "trial_id": "NCT01260545"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01285544",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01285544",
+      "trial_id": "NCT01285544"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01319864",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01319864",
+      "trial_id": "NCT01319864"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT01437098",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01437098",
+      "trial_id": "NCT01437098"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01519700",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01519700",
+      "trial_id": "NCT01519700"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01643330",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01643330",
+      "trial_id": "NCT01643330"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01758614",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01758614",
+      "trial_id": "NCT01758614"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT01182441",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01182441",
+      "trial_id": "NCT01760291"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01811992",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01811992",
+      "trial_id": "NCT01811992"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01829711",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01829711",
+      "trial_id": "NCT01829711"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT01841736",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01841736",
+      "trial_id": "NCT01841736"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01896128",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01896128",
+      "trial_id": "NCT01896128"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT01995500",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT01995500",
+      "trial_id": "NCT01995500"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02073565",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02073565",
+      "trial_id": "NCT02073565"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02118753",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02118753",
+      "trial_id": "NCT02118753"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02151864",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02151864",
+      "trial_id": "NCT02151864"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02178098",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02178098",
+      "trial_id": "NCT02178098"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT02268071",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02268071",
+      "trial_id": "NCT02268071"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02346565",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02346565",
+      "trial_id": "NCT02346565"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02538900",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02538900",
+      "trial_id": "NCT02538900"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02567409",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02567409",
+      "trial_id": "NCT02567409"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02572167",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02572167",
+      "trial_id": "NCT02572167"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02594111",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02594111",
+      "trial_id": "NCT02594111"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02601313",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": false,
+      "split_group_id": "group-NCT02601313",
+      "trial_id": "NCT02601313"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02605707",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02605707",
+      "trial_id": "NCT02605707"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02672098",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02672098",
+      "trial_id": "NCT02672098"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02760199",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02760199",
+      "trial_id": "NCT02760199"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT02769832",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02769832",
+      "trial_id": "NCT02769832"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT02834611",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02834611",
+      "trial_id": "NCT02834611"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02896595",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02896595",
+      "trial_id": "NCT02896595"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02964949",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02964949",
+      "trial_id": "NCT02964949"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03052634",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03052634",
+      "trial_id": "NCT03052634"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03054363",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03054363",
+      "trial_id": "NCT03054363"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT03064867",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03064867",
+      "trial_id": "NCT03064867"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT03153111",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03153111",
+      "trial_id": "NCT03153111"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03319628",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03319628",
+      "trial_id": "NCT03319628"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03462628",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03462628",
+      "trial_id": "NCT03462628"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03476187",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03476187",
+      "trial_id": "NCT03476187"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03532802",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03532802",
+      "trial_id": "NCT03532802"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03653507",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03653507",
+      "trial_id": "NCT03653507"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03735901",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03735901",
+      "trial_id": "NCT03735901"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03772899",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03772899",
+      "trial_id": "NCT03772899"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03875781",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03875781",
+      "trial_id": "NCT03875781"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT03938987",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT03938987",
+      "trial_id": "NCT03938987"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT04062565",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04062565",
+      "trial_id": "NCT04062565"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT04063033",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04063033",
+      "trial_id": "NCT04063033"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT04310007",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04310007",
+      "trial_id": "NCT04310007"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT04603872",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04603872",
+      "trial_id": "NCT04603872"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT04641611",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04641611",
+      "trial_id": "NCT04641611"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT04747145",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04747145",
+      "trial_id": "NCT04747145"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT02601313",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT02601313",
+      "trial_id": "NCT04880434"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT04959500",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT04959500",
+      "trial_id": "NCT04959500"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05030428",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05030428",
+      "trial_id": "NCT05030428"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05041309",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": false,
+      "split_group_id": "group-NCT02601313",
+      "trial_id": "NCT05041309"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05120544",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05120544",
+      "trial_id": "NCT05120544"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05195632",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05195632",
+      "trial_id": "NCT05195632"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05355701",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05355701",
+      "trial_id": "NCT05355701"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT05379712",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05379712",
+      "trial_id": "NCT05379712"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family",
+        "unresolved_parentage_quarantine"
+      ],
+      "family_id": "family-NCT05419375",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05419375",
+      "trial_id": "NCT05419375"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05436977",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05436977",
+      "trial_id": "NCT05436977"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05508867",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05508867",
+      "trial_id": "NCT05508867"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT05681702",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05681702",
+      "trial_id": "NCT05681702"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT05949021",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT05949021",
+      "trial_id": "NCT05949021"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06158698",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06158698",
+      "trial_id": "NCT06158698"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06212674",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06212674",
+      "trial_id": "NCT06212674"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06490328",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06490328",
+      "trial_id": "NCT06490328"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06556667",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06556667",
+      "trial_id": "NCT06556667"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06622434",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06622434",
+      "trial_id": "NCT06622434"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06651437",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06651437",
+      "trial_id": "NCT06651437"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06663137",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06663137",
+      "trial_id": "NCT06663137"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06688201",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06688201",
+      "trial_id": "NCT06688201"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT06730230",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06730230",
+      "trial_id": "NCT06730230"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06731244",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06731244",
+      "trial_id": "NCT06731244"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06778330",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06778330",
+      "trial_id": "NCT06778330"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT06871228",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT06871228",
+      "trial_id": "NCT06871228"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07010263",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07010263",
+      "trial_id": "NCT07010263"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07020611",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07020611",
+      "trial_id": "NCT07020611"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "unresolved_parentage_quarantine"
+      ],
+      "family_id": "family-NCT07172919",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07172919",
+      "trial_id": "NCT07172919"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07310992",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07310992",
+      "trial_id": "NCT07310992"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07445360",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07445360",
+      "trial_id": "NCT07445360"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [
+        "pilot_development_exposure_or_linked_family"
+      ],
+      "family_id": "family-NCT07584967",
+      "final_split": null,
+      "holdout_excluded": true,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07584967",
+      "trial_id": "NCT07584967"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07710937",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07710937",
+      "trial_id": "NCT07710937"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07724899",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07724899",
+      "trial_id": "NCT07724899"
+    },
+    {
+      "audit_status": "proposed_after_evidence_screen",
+      "exclusion_reasons": [],
+      "family_id": "family-NCT07798037",
+      "final_split": null,
+      "holdout_excluded": false,
+      "in_current_corpus": true,
+      "split_group_id": "group-NCT07798037",
+      "trial_id": "NCT07798037"
+    }
+  ],
+  "split_group_by_trial": {
+    "NCT00003187": "group-NCT00003187",
+    "NCT00025207": "group-NCT00025207",
+    "NCT00028587": "group-NCT00028587",
+    "NCT00060528": "group-NCT00060528",
+    "NCT00077532": "group-NCT00077532",
+    "NCT00091377": "group-NCT00091377",
+    "NCT00154271": "group-NCT00154271",
+    "NCT00225212": "group-NCT00225212",
+    "NCT00260364": "group-NCT00260364",
+    "NCT00326599": "group-NCT00326599",
+    "NCT00327587": "group-NCT00327587",
+    "NCT00407264": "group-NCT00407264",
+    "NCT00600964": "group-NCT00600964",
+    "NCT00697099": "group-NCT00697099",
+    "NCT00839007": "group-NCT00839007",
+    "NCT00858663": "group-NCT00858663",
+    "NCT01007292": "group-NCT01007292",
+    "NCT01020968": "group-NCT01020968",
+    "NCT01260545": "group-NCT01260545",
+    "NCT01285544": "group-NCT01285544",
+    "NCT01319864": "group-NCT01319864",
+    "NCT01437098": "group-NCT01437098",
+    "NCT01519700": "group-NCT01519700",
+    "NCT01643330": "group-NCT01643330",
+    "NCT01758614": "group-NCT01758614",
+    "NCT01760291": "group-NCT01182441",
+    "NCT01811992": "group-NCT01811992",
+    "NCT01829711": "group-NCT01829711",
+    "NCT01841736": "group-NCT01841736",
+    "NCT01896128": "group-NCT01896128",
+    "NCT01995500": "group-NCT01995500",
+    "NCT02073565": "group-NCT02073565",
+    "NCT02118753": "group-NCT02118753",
+    "NCT02151864": "group-NCT02151864",
+    "NCT02178098": "group-NCT02178098",
+    "NCT02268071": "group-NCT02268071",
+    "NCT02346565": "group-NCT02346565",
+    "NCT02538900": "group-NCT02538900",
+    "NCT02567409": "group-NCT02567409",
+    "NCT02572167": "group-NCT02572167",
+    "NCT02594111": "group-NCT02594111",
+    "NCT02605707": "group-NCT02605707",
+    "NCT02672098": "group-NCT02672098",
+    "NCT02760199": "group-NCT02760199",
+    "NCT02769832": "group-NCT02769832",
+    "NCT02834611": "group-NCT02834611",
+    "NCT02896595": "group-NCT02896595",
+    "NCT02964949": "group-NCT02964949",
+    "NCT03052634": "group-NCT03052634",
+    "NCT03054363": "group-NCT03054363",
+    "NCT03064867": "group-NCT03064867",
+    "NCT03153111": "group-NCT03153111",
+    "NCT03319628": "group-NCT03319628",
+    "NCT03462628": "group-NCT03462628",
+    "NCT03476187": "group-NCT03476187",
+    "NCT03532802": "group-NCT03532802",
+    "NCT03653507": "group-NCT03653507",
+    "NCT03735901": "group-NCT03735901",
+    "NCT03772899": "group-NCT03772899",
+    "NCT03875781": "group-NCT03875781",
+    "NCT03938987": "group-NCT03938987",
+    "NCT04062565": "group-NCT04062565",
+    "NCT04063033": "group-NCT04063033",
+    "NCT04310007": "group-NCT04310007",
+    "NCT04603872": "group-NCT04603872",
+    "NCT04641611": "group-NCT04641611",
+    "NCT04747145": "group-NCT04747145",
+    "NCT04880434": "group-NCT02601313",
+    "NCT04959500": "group-NCT04959500",
+    "NCT05030428": "group-NCT05030428",
+    "NCT05120544": "group-NCT05120544",
+    "NCT05195632": "group-NCT05195632",
+    "NCT05355701": "group-NCT05355701",
+    "NCT05379712": "group-NCT05379712",
+    "NCT05419375": "group-NCT05419375",
+    "NCT05436977": "group-NCT05436977",
+    "NCT05508867": "group-NCT05508867",
+    "NCT05681702": "group-NCT05681702",
+    "NCT05949021": "group-NCT05949021",
+    "NCT06158698": "group-NCT06158698",
+    "NCT06212674": "group-NCT06212674",
+    "NCT06490328": "group-NCT06490328",
+    "NCT06556667": "group-NCT06556667",
+    "NCT06622434": "group-NCT06622434",
+    "NCT06651437": "group-NCT06651437",
+    "NCT06663137": "group-NCT06663137",
+    "NCT06688201": "group-NCT06688201",
+    "NCT06730230": "group-NCT06730230",
+    "NCT06731244": "group-NCT06731244",
+    "NCT06778330": "group-NCT06778330",
+    "NCT06871228": "group-NCT06871228",
+    "NCT07010263": "group-NCT07010263",
+    "NCT07020611": "group-NCT07020611",
+    "NCT07172919": "group-NCT07172919",
+    "NCT07310992": "group-NCT07310992",
+    "NCT07445360": "group-NCT07445360",
+    "NCT07584967": "group-NCT07584967",
+    "NCT07710937": "group-NCT07710937",
+    "NCT07724899": "group-NCT07724899",
+    "NCT07798037": "group-NCT07798037"
+  },
+  "status": "proposed_grouping; not final train/validation/test assignments",
+  "unresolved_trial_ids": [
+    "NCT05419375",
+    "NCT07172919"
+  ]
+}

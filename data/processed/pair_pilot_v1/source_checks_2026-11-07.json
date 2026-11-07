@@ -1,0 +1,1978 @@
+{
+  "retrieved_at_utc": "2026-11-07T17:15:31.619763+00:00",
+  "studies": {
+    "NCT00091377": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT00091377",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT00091377",
+          "orgStudyIdInfo": {
+            "id": "CDR0000389129"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "NOVOGEN-NV06-037"
+            },
+            {
+              "id": "YALE-HIC-26423"
+            }
+          ],
+          "organization": {
+            "fullName": "MEI Pharma, Inc.",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Phenoxodiol Combined With Either Cisplatin or Paclitaxel in Patients With Recurrent Ovarian Epithelial, Fallopian Tube, or Primary Peritoneal Cancer",
+          "officialTitle": "Multi-Center, Phase Ib/IIa Safety and Preliminary Efficacy Study of Phenoxodiol (Intravenous) as a Chemo-Sensitizing Agent for Cisplatin and Paclitaxel in Epithelial Ovarian Cancer or Primary Peritoneal Cancer, Platinum- and/or Taxane-Refractory or Resistant"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2016-07",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2004-08"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2007-12",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2008-03",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2004-09-07",
+          "studyFirstSubmitQcDate": "2004-09-08",
+          "studyFirstPostDateStruct": {
+            "date": "2004-09-09",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2016-07-13",
+          "lastUpdatePostDateStruct": {
+            "date": "2016-07-14",
+            "type": "ESTIMATED"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "RATIONALE: Drugs used in chemotherapy, such as cisplatin and paclitaxel, work in different ways to stop tumor cells from dividing so they stop growing or die. Phenoxodiol may help cisplatin and paclitaxel kill more tumor cells by making tumor cells more sensitive to the drugs.\n\nPURPOSE: This randomized phase I/II trial is studying the side effects of phenoxodiol when given together with either cisplatin or paclitaxel and to see how well they work in treating patients with recurrent late-stage ovarian epithelial cancer, fallopian tube cancer, or primary peritoneal cancer that has not responded to treatment with drugs such as paclitaxel, docetaxel, cisplatin, or carboplatin.",
+          "detailedDescription": "OBJECTIVES:\n\nPrimary\n\n* Compare the safety and tolerability of phenoxodiol combined with cisplatin or paclitaxel in patients with recurrent late-stage ovarian epithelial, fallopian tube, or primary peritoneal cancer that is refractory or resistant to platinum and/or taxane drugs.\n* Compare, preliminarily, tumor response in patients treated with these regimens.\n\nOUTLINE: This is an open-label, randomized, multicenter study. Patients are randomized to 1 of 2 treatment arms according to medical history.\n\n* Arm I: Patients receive phenoxodiol IV over 10 minutes on days 1 and 2 and cisplatin IV over 1 hour on day 2.\n* Arm II: Patients receive phenoxodiol as in arm I and paclitaxel IV over 1 hour on day 2.\n\nIn both arms, treatment repeats every 6 weeks for up to 8 courses in the absence of disease progression or unacceptable toxicity.\n\nQuality of life is assessed at 12, 24, 36, and 48 weeks or at the end of study participation.\n\nPatients are followed at 6 and 12 months.\n\nPROJECTED ACCRUAL: A total of 40 patients (20 per treatment arm) will be accrued for this study."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE1",
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NON_RANDOMIZED",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 65,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "DISEASE CHARACTERISTICS:\n\n* Histologically confirmed ovarian epithelial, fallopian tube, or primary peritoneal cancer\n\n  * Recurrent disease\n* Received no more than 4 prior chemotherapy regimens for this malignancy\n\n  * Considered refractory or resistant to prior taxane (paclitaxel or docetaxel) and/or platinum (cisplatin or carboplatin) therapy based on 1 of the following criteria:\n\n    * Treatment-free interval \\< 6 months after platinum or paclitaxel\n    * Disease progression during platinum- or paclitaxel-based therapy\n* Measurable or evaluable disease\n\n  * Measurable disease is defined as at least 1 unidimensionally measurable lesion ≥ 20 mm by conventional techniques OR ≥ 10 mm by spiral CT scan\n  * Evaluable disease is defined as doubling of CA 125 blood levels within the past 6 months AND CA 125 level ≥ 2 times upper limit of normal (ULN) within the past week\n* No active CNS metastases\n\n  * Patients with known CNS metastases must have received prior radiotherapy or CNS-directed chemotherapy AND have ≥ 4 weeks of stable disease\n\nPATIENT CHARACTERISTICS:\n\nAge\n\n* Over 18\n\nPerformance status\n\n* Karnofsky 60-100%\n\nLife expectancy\n\n* At least 3 months\n\nHematopoietic\n\n* Neutrophil count \\> 1,500/mm\\^3\n* Platelet count \\> 100,000/mm\\^3\n* WBC \\> 3,000/mm\\^3\n* Hematocrit ≥ 28% (transfusion or growth factors allowed)\n* Hemoglobin \\> 8.0 g/dL (transfusion or growth factors allowed)\n\nHepatic\n\n* Bilirubin ≤ 1.5 times ULN\n* SGOT ≤ 2.5 times ULN\n* Alkaline phosphatase ≤ 2.5 times ULN\n\nRenal\n\n* Creatinine ≤ 1.5 times ULN\n\nOther\n\n* Not pregnant or nursing\n* Negative pregnancy test\n* Fertile patients must use effective contraception\n* No active infection requiring antibiotics\n* No neuropathy (sensory or motor) \\> grade 1\n\nPRIOR CONCURRENT THERAPY:\n\nBiologic therapy\n\n* No concurrent immunotherapy\n\nChemotherapy\n\n* See Disease Characteristics\n* No other concurrent chemotherapy\n\nEndocrine therapy\n\n* No concurrent hormonal therapy for the malignancy\n\nRadiotherapy\n\n* See Disease Characteristics\n* No prior whole abdominal radiotherapy\n* Concurrent localized radiotherapy allowed for control of local complications not indicative of general disease progression\n\nSurgery\n\n* Not specified\n\nOther\n\n* Recovered from prior antineoplastic therapy\n* More than 4 weeks since prior standard therapy for malignant tumor\n* More than 6 months since prior investigational anticancer drugs\n* No other concurrent investigational drugs\n* No concurrent drugs significantly metabolized by the cytochrome P450 enzymes CYP2C8, CYP2C9, CYP2C19, and CYP3A4/B1C\n* No concurrent amifostine or other protective agents\n* No concurrent grapefruit juice",
+          "healthyVolunteers": false,
+          "sex": "FEMALE",
+          "minimumAge": "18 Years",
+          "maximumAge": "120 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "2824a5d588c44f309642379a461010b5",
+      "archived_job_sha256": "a3b52015debde1fb09ac6fd9310199b3f6d51620d6eb991e0fc5633e678d8f58",
+      "frozen_source_version": "ctgov-2016-07-14",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "ebf70146eb9fedebf042e92ed5d969dac3f2bf0d9f7d6170c66fc0f98a386db9",
+      "live_eligibility_sha256": "ebf70146eb9fedebf042e92ed5d969dac3f2bf0d9f7d6170c66fc0f98a386db9"
+    },
+    "NCT05419375": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT05419375",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT05419375",
+          "orgStudyIdInfo": {
+            "id": "BX43361"
+          },
+          "organization": {
+            "fullName": "Hoffmann-La Roche",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Screening Study for Participants With Malignant Tumors",
+          "officialTitle": "Master Screening Study to Determine Biomarker Status and Potential Trial Eligibility for Patients With Malignant Tumors"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2026-02",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2022-07-22",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2025-09-03",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2025-09-03",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2022-06-13",
+          "studyFirstSubmitQcDate": "2022-06-13",
+          "studyFirstPostDateStruct": {
+            "date": "2022-06-15",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-02-02",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-02-03",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The study objective is to determine the biomarker status of a participant's tumor tissue and use that status to determine eligibility for a linked Roche clinical trial."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "OTHER",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 470,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "General Inclusion Criteria:\n\n* Confirmed availability of a representative formalin-fixed, paraffin-embedded (FFPE) tumor specimen meeting criteria defined in the protocol\n* Considered by principal investigator (PI) to be a candidate for a linked clinical trial with an investigational medicinal product, and that the participant has the awareness and willingness to participate in said trial\n\nInclusion Criteria for Participants with Stage III NSCLC\n\n* Locally advanced, unresectable Stage III NSCLC of either squamous or non-squamous histology based on 8th edition of the American Joint Committee on Cancer (AJCC) and Union for International Cancer Control (UICC) cancer staging system\n* Eastern Cooperative Oncology Group (ECOG) performance status of 0, 1, or 2\n\nInclusion Criteria for Participants with Stage II, IIIA, or Select IIIB (T3N2 only) NSCLC Requiring Adjuvant Treatment\n\n* Stage II, IIIA, or select IIIB (T3N2 only) NSCLC based on the 8th edition of the AJCC and UICC cancer staging system (Amin et al. 2017)\n* Considered eligible for curative intent surgery (complete resection with all surgical margins testing negative for tumor)\n* Screening within Study BX43361, using a pretreatment biopsy, is encouraged to be performed as early in the participant treatment pathway as possible to ensure the participant is potentially eligible for all cohorts, and should meet guidelines as defined by the protocol\n* Representative FFPE tumor specimen obtained prior to the start of any treatment\n* ECOG Performance Status of 0 or 1\n\nGeneral Exclusion Criteria:\n\n* History of malignancy other than NSCLC within 5 years prior to screening, except for malignancies with a negligible risk of metastasis or death\n* Any condition that may affect the interpretation of study results\n* Significant liver or cardiovascular disease\n* Prior allogenic stem-cell or solid-organ transplantation",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "30d89abc13ad4bf1a7fca11d836f4527",
+      "archived_job_sha256": "0af59236e27cebcc91d44a5f5068e3344994ebc57276d146054832a39fc2b17b",
+      "frozen_source_version": "ctgov-2026-02-03",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "fdfd0e39025b7f0a358245848556ac9d89bb4cf471124e838419db5b9dfdbf73",
+      "live_eligibility_sha256": "fdfd0e39025b7f0a358245848556ac9d89bb4cf471124e838419db5b9dfdbf73"
+    },
+    "NCT07584967": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT07584967",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT07584967",
+          "orgStudyIdInfo": {
+            "id": "AC01-02"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "2025-524469-25-00",
+              "type": "CTIS"
+            },
+            {
+              "id": "PIP number",
+              "type": "OTHER",
+              "domain": "EMA/PE/0000267875"
+            },
+            {
+              "id": "2025",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/2025"
+            }
+          ],
+          "organization": {
+            "fullName": "AnaCardio AB",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "A Study to Evaluate the Safety and Efficacy of AC01 Compared to Placebo in Participants With Chronic Heart Failure",
+          "officialTitle": "Randomized, Double-Blind, Placebo-Controlled, Parallel-Group, Multicenter Study to Evaluate the Safety and Efficacy of 2 Dose Levels of the Oral Ghrelin Receptor Agonist AC01 Over 12 Weeks in Patients With Chronic Advanced Heart Failure With Reduced Ejection Fraction (HFrEF)",
+          "acronym": "GOAL-HF2"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2026-09",
+          "overallStatus": "NOT_YET_RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2026-11-15",
+            "type": "ESTIMATED"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2028-07-30",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2028-08-30",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2026-05-04",
+          "studyFirstSubmitQcDate": "2026-05-08",
+          "studyFirstPostDateStruct": {
+            "date": "2026-05-13",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-09-11",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-09-14",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The primary purpose of the study is to evaluate the safety and efficacy of 2 doses of AC01 compared to placebo over 12 weeks in participants with chronic advanced HFrEF.",
+          "detailedDescription": "This is a randomized, double-blind, placebo-controlled, parallel-group, multicenter study designed to evaluate the safety and efficacy of the ghrelin-receptor agonist AC01 compared to placebo in participants with chronic advanced HFrEF. Approximately 400 participants will be randomized to 1 of 3 treatment arms: 3 milligram (mg) AC01, 1 milligram (mg) AC01, or placebo twice daily for 12 weeks. The primary objective is to evaluate the effect of AC01 compared to placebo on cardiac structure and function assessed by echocardiography."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "QUADRUPLE",
+              "whoMasked": [
+                "PARTICIPANT",
+                "CARE_PROVIDER",
+                "INVESTIGATOR",
+                "OUTCOMES_ASSESSOR"
+              ]
+            }
+          },
+          "enrollmentInfo": {
+            "count": 400,
+            "type": "ESTIMATED"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Key Inclusion Criteria:\n\n* History of Chronic Heart Failure (CHF) diagnosed greater than or equal to (\\>=6) months before screening, and in NYHA Class II to IV at screening.\n* Chronic advanced HFrEF defined as:\n\n  * LVEF less than or equal to (\\<=) 35 percentage (%) by local reading \\>=6 months before screening or a record of LVEF qualitatively described as severely reduced or moderately-severely reduced \\>=6 months before screening, and\n  * LVEF \\<=35% at the screening echocardiography (confirmed by core lab), and\n  * no known LVEF greater than (\\>) 35% (or qualitatively described as less than moderately-severely reduced) between the 2 readings.\n* Sinus rhythm or permanent, persistent, or paroxysmal atrial fibrillation flutter (AFF) (AFF at screening is capped at maximum 15% of participants enrolled) with mean resting heart rate of \\>=55 and \\<=90 beats per minute (bpm) at screening, and \\>=50 and \\<=95 bpm at randomization, regardless of rhythm.\n* NT-proBNP \\>=400 picograms per milliliter (pg/mL) in sinus rhythm and \\>=800 pg/mL in AFF at screening (confirmed by central laboratory).\n* Transvenous implantable cardioverter-defibrillator (ICD) for primary prevention with back-up pacing set at 40 bpm.\n* Treated with optimal, stable, medical therapy for HF consistent with prevailing local and international guidelines unless contraindicated or not tolerated, as judged and documented by the investigator.\n\nKey Exclusion Criteria:\n\n* Any acute or serious co-morbid condition that could lead to premature termination of study participation or interfere with the measurement or interpretation of the efficacy and safety assessments in the study.\n* Admitted to hospital with the primary reason of HF within 24 hours before randomization or currently hospitalized with the primary reason of HF for more than 10 days. Current hospitalization (\\>24 hours and \\<=10 days) is capped at a maximum of 15% of participants enrolled.\n* Acute coronary syndrome, stroke or transient ischemic attack, severe ventricular arrhythmia, or major cardiac intervention, percutaneous coronary intervention, valvuloplasty/other cardiac valve repair or implantation, or cardiac surgery within 60 days before randomization.\n* Systolic blood pressure \\>130 or ˂90 millimeters of mercury (mmHg) at screening, or \\>140 or ˂85 mmHg at randomization.\n* Uncontrolled diabetes mellitus, defined as Hemoglobin A1c (HbA1c) \\>=9.0% (\\>=75 millimoles per mole \\[mmol/mol\\]) at screening, or severe complications of diabetes.\n* Body weight \\<50 kilogram (kg) or body mass index (BMI) \\<18 kilograms per square meter (kg/m\\^2) or \\>45 kg/m\\^2 at screening.\n* Any of the following electrocardiogram (ECG) findings at screening: Corrected QT interval using Fridericia's formula (QTcF) \\>450 milliseconds (ms), 1st degree atrioventricular (AV) block with PQ \\>240 ms, or AV block 2nd or 3rd degree.\n* History of aborted cardiac arrest, sustained ventricular tachycardia, or Torsades-de Pointes, or congenital long QT syndrome. Family history of sudden cardiac death, unexplained death, long QT syndrome, or death from a primary dysrhythmia.\n* Cardiac resynchronization therapy, Cardiac Contractility Modulation, or pacemaker device other than the back-up pacing function of the ICD.\n* Mechanical hemodynamic support, kidney support, or ventilation within 7 days before randomization.\n* Treatment with i.v. inotropes, i.v. vasodilators, or i.v. vasopressors within 3 days before randomization.\n* Treatment with any i.v. diuretics or supplemental oxygen within 6 hours before randomization.\n* Use of any drugs or substances known to be strong inducers of Cytochrome P450 3A4 (CYP3A4) enzyme within 28 days before randomization or planned to be used during the study period or strong inhibitors of CYP3A4 within 7 days before randomization or planned to be used during the study period.\n* Use of any drug that is known to prolong the QT interval (for example, sotalol, dofetilide, macrolides, some antidepressants, and some antipsychotics) within 28 days before randomization or planned to be used during the study period.\n* Treatment changes in glucose lowering therapy within 28 days before randomization.\n* Estimated glomerular filtration rate (eGFR) \\<20 milliliters per minute per 1.73 square meters (mL/min/1.73 m2) according to the Chronic Kidney Disease Epidemiology Collaboration formula, planned renal replacement therapy within the next 6 months, or receiving dialysis at screening.\n* Serum potassium \\<3.5 or \\>5.2 milliequivalents per liter (mEq/L) at screening.\n* Alanine aminotransferase (ALT) or aspartate aminotransferase (AST) \\>3 \\*upper limit of normal (ULN) or total bilirubin \\>2 \\* ULN, or known cirrhosis, severe liver, or pancreatic disease at screening.\n* Use of any anti-arrhythmic drugs within 28 days before randomization or planned to be used during the study period, except for amiodarone, ivabradine, digoxin, and beta blockers.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "maximumAge": "85 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "09c8e24f168f4d0b8d1e543496b0c0be",
+      "archived_job_sha256": "5bbc0b2a9cdffba9bcb10ed7315c8051525fcdbeba9fe7cf0d8de16237f2d179",
+      "frozen_source_version": "ctgov-2026-09-14",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "88b8cfb7ac232ed485f8f68af9c23513498510b755fbde576ad98d28699d98dc",
+      "live_eligibility_sha256": "88b8cfb7ac232ed485f8f68af9c23513498510b755fbde576ad98d28699d98dc"
+    },
+    "NCT05681702": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT05681702",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT05681702",
+          "orgStudyIdInfo": {
+            "id": "IRB202202835"
+          },
+          "organization": {
+            "fullName": "University of Florida",
+            "class": "OTHER"
+          },
+          "briefTitle": "Tailoring Bleeding Reduction Approaches in Patients Undergoing PCI",
+          "officialTitle": "Tailoring Bleeding Reduction Approaches in Patients Undergoing Percutaneous Coronary Interventions: Comparative Pharmacodynamic Effects of Potent P2Y12 Inhibitor Monotherapy Versus Dual Antiplatelet Therapy De-escalation",
+          "acronym": "TAILOR BLEED"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2026-10",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2023-02-15",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2026-08-05",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2026-08-05",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2023-01-04",
+          "studyFirstSubmitQcDate": "2023-01-04",
+          "studyFirstPostDateStruct": {
+            "date": "2023-01-12",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-10-26",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-10-28",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "Two strategies have both proven to be effective in reducing bleeding complications while preserving efficacy compared with maintaining long-term DAPT with aspirin and a potent P2Y12 inhibitor: a) DAPT de-escalation (i.e., switching from prasugrel or ticagrelor to clopidogrel while maintaining aspirin) and b) potent P2Y12 inhibitor monotherapy (i.e., maintaining prasugrel or ticagrelor and dropping aspirin). These strategies have been tested in a number of trials and have led to changes in practice guidelines to consider either one of these strategies as bleeding reduction approaches among ACS patients undergoing PCI. However, comparative assessments between DAPT de-escalation and potent P2Y12 inhibitor monotherapy are lacking.",
+          "detailedDescription": "Dual antiplatelet therapy (DAPT) with aspirin and a P2Y12 receptor inhibitor represents the standard of care for the prevention of atherothrombotic events in patients with acute coronary syndrome (ACS) or undergoing percutaneous coronary intervention (PCI). In particular, in ACS patients undergoing PCI, DAPT is initiated during the index event and maintained for up to 12 months to prevent stent-related complications as well as ischemic recurrences in non-treated coronary segments. Three oral P2Y12 inhibitors are currently recommended in this setting: clopidogrel, prasugrel, and ticagrelor. However, in ACS patients undergoing PCI, prasugrel and ticagrelor are preferred over clopidogrel based on results of large-scale clinical trials showing their superior reduction in ischemic events, including stent thrombosis. Nevertheless, such ischemic benefit occurs at the expense of increased bleeding. These observations are attributed to the greater antiplatelet potency of prasugrel and ticagrelor over clopidogrel. Importantly, accruing evidence support that bleeding complications carry significant prognostic implications, including increased mortality, underscoring the need to define antiplatelet strategies associated with reduced bleeding while preserving ischemic efficacy. The notion that most recurrent ischemic events, including stent thrombosis, occur early after the index event (i.e., 1-3 months post PCI) has prompted the design of clinical trials assessing antiplatelet treatment regimens consisting in the use of agents with enhanced platelet inhibition during the first months after PCI followed by approaches with reduced platelet inhibition. To this extent, two strategies have both proven to be effective in reducing bleeding complications while preserving efficacy compared with maintaining long-term DAPT with aspirin and a potent P2Y12 inhibitor: a) DAPT de-escalation (i.e., switching from prasugrel or ticagrelor to clopidogrel while maintaining aspirin) and b) potent P2Y12 inhibitor monotherapy (i.e., maintaining prasugrel or ticagrelor and dropping aspirin). These strategies have been tested in a number of trials and have led to changes in practice guidelines to consider either one of these strategies as bleeding reduction approaches among ACS patients undergoing PCI. However, comparative assessments between DAPT de-escalation and potent P2Y12 inhibitor monotherapy are lacking."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE4"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "interventionModelDescription": "Prospective randomized",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 84,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Patients who presented with chronic coronary syndrome, underwent PCI and have been on maintenance treatment with DAPT, composed of low-dose aspirin (81mg od) and prasugrel (10 mg od) or ticagrelor (90 mg bid) for at least 30 days. Or patients that presented with an Acute coronary syndrome (ACS) event and underwent PCI and have been on maintenance treatment with DAPT, composed of low-dose aspirin (81mg od) and prasugrel (10mg od) or ticagrelor (90mg bid) for 3 months or greater.\n2. Age ≥18 years old\n3. Provide written informed consent\n\nExclusion Criteria:\n\n1. Prior history of stent thrombosis\n2. On treatment with any oral anticoagulant (vitamin K antagonists, dabigatran, rivaroxaban, apixaban, edoxaban) or chronic low-molecular-weight heparin (at venous thrombosis treatment, not for prophylaxis)\n3. Renal failure requiring dialysis\n4. Patients with known bleeding diathesis or coagulation disorders\n5. Known severe hepatic impairment\n6. Hemodynamic instability\n7. Hypersensitivity to clopidogrel\n8. Pregnant and breastfeeding women \\[women of childbearing age must use reliable birth control (i.e., oral contraceptives) while participating in the study\\]",
+          "healthyVolunteers": true,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "0c7f6345bbf64707aa824ae321a4b7a4",
+      "archived_job_sha256": "68d3deee8b710d3966b2031324d617c2071714023d64f668c6582a88c959f7f9",
+      "frozen_source_version": "ctgov-2026-03-09",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "bcbd0f996311ab2d51b130fbac6be3500e13b8583c3539203bb7595f81939f4f",
+      "live_eligibility_sha256": "bcbd0f996311ab2d51b130fbac6be3500e13b8583c3539203bb7595f81939f4f"
+    },
+    "NCT02268071": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT02268071",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT02268071",
+          "orgStudyIdInfo": {
+            "id": "2014-001773-14"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "2014",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/2014"
+            }
+          ],
+          "organization": {
+            "fullName": "Central Hospital, Nancy, France",
+            "class": "OTHER"
+          },
+          "briefTitle": "Stopping Antihypertensive Treatment amOng Hypertensive Patients in Primary Care (STOP-Trial)",
+          "officialTitle": "Arrêt du Traitement Antihypertenseur Chez Les Patients Hypertendus Suivis en Médecine Générale / Stopping Antihypertensive Treatment amOng Hypertensive Patients in Primary Care: The STOP-Trial"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2023-06",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2015-03-10"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2020-10-21",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2020-10-21",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2014-10-14",
+          "studyFirstSubmitQcDate": "2014-10-14",
+          "studyFirstPostDateStruct": {
+            "date": "2014-10-20",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2023-06-20",
+          "lastUpdatePostDateStruct": {
+            "date": "2023-06-22",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The STOP-Trial is a prospective multicenter nonrandomized open study on grade I hypertension, performed by General practitioners.\n\nThe study will be conducted in parallel in the Clinical Investigation Center Plurithematic (CIC-P)1433 of Nancy (the study coordinating center) by the general practitioners investigators of the CIC-P.\n\nThe main purpose of the study is to determine the factors associated with the rate of patients remaining normotensive one year after stopping their antihypertensive monotherapy or low dose dual therapy:\n\n* white coat hypertension\n* primary diagnosis by home blood pressure measurements (HBPM) /ambulatory blood pressure measurements (ABPM) /clinical measure\n* initial blood pressure level\n* compliance\n* therapeutic class versus others\n* age\n* gender\n* weight variation\n* modification of lifestyle\n* concomitant treatments and associated substances\n* ...\n\nThe primary endpoint will be the rate of normotensive patients at one year (i.e. HBPM values \\<135/85 mmHg).",
+          "detailedDescription": "HBPM should be performed by the patients twice a day for 7 consecutive days before each visit (ESH protocol), using a device clinically tested (ESH/international protocol).\n\nAt baseline (visit 1), for the patients included, the antihypertensive treatment will be stopped in 3 consecutive days (half dose then interruption), over a maximum period of 12 months corresponding to the length of the participation and the monitoring of the patients.\n\nFollow-up visits at day 30 (visit 2), day 90 (visit 3), day 180 (visit 4), day 270 (visit 5) and day 360 (visit 6). Will be performed at each visit:\n\n* Calculation of the average of HBPM values by the investigator\n* Measurements of office blood pressure (average of 3 consecutive measurements)\n* SF 36 scale at baseline (visit 1) and day 360 (visit 6)\n* During follow-up, the investigator will be free at any time to reintroduce an antihypertensive treatment if the average of HBPM values is greater than or equal to 135/85 mmHg on two consecutive visits, or greater than or equal to 155/95 mmHg regardless of the visit and regardless of the office blood pressure level.\n\nAt the end of study, the recovery of an antihypertensive treatment by the patients will be left to the discretion of the investigator."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 403,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Ambulatory patient above 18 years old.\n* Grade I hypertension at diagnosis.\n* Hypertension diagnosed and treated (whatever is its seniority and for at least 6 months) by antihypertensive drug.\n* Controlled hypertension (Clinical BP \\< 140/90 mmHg) or uncontrolled hypertension (Clinical BP \\> or equal to 140/90 mmHg) without modification of treatment for at least 6 months, by a monotherapy or a low dose dual therapy.\n* HBPM values \\< 135/85mmHg (in order to exclude masked hypertension).\n* Patient having signed the informed consent form.\n* Patient affiliated to a national insurance scheme.\n\nExclusion Criteria:\n\n* Personal cardiovascular history and/or necessity to take the antihypertensive treatment for another reason than hypertension (heart failure, migraine, peripheral arterial disease, coronary heart disease, stroke…).\n* Target organ damage (evidence of ventricular hypertrophy by ECG or cardiac echography and/or proteinuria and/or pathological micro-albuminuria presence showing a nephropathy, in the last year).\n* Poorly compliant patient, whose score of Girerd questionnaire is equal to or greater than 3.\n* Existence of a progressive disease likely to impact on the life expectancy in a short term.\n* Existence of a documented atrial fibrillation (contraindication of HBPM).\n* Patient under a legal protection measure.\n* Chronic alcohol or drug abuse, regular intake of vasopressor effect substances (licorice,cocaine,...).\n* Current known pregnancy or project of pregnancy within one year.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "07f86f00b659461284c37acb3f48626a",
+      "archived_job_sha256": "853bc9eb1a496e94951b0c92e8da61a053b5dd9c5eeaeef93661bbd636a28b5c",
+      "frozen_source_version": "ctgov-2023-06-22",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "417effdf1ff85347a1d58d21583b1d38af8628ec72407d6150b5d639545ec7a7",
+      "live_eligibility_sha256": "417effdf1ff85347a1d58d21583b1d38af8628ec72407d6150b5d639545ec7a7"
+    },
+    "NCT02769832": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT02769832",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT02769832",
+          "orgStudyIdInfo": {
+            "id": "201512799"
+          },
+          "organization": {
+            "fullName": "University of Iowa",
+            "class": "OTHER"
+          },
+          "briefTitle": "Nab-Paclitaxel With Gemcitabine for Relapsed Small Cell Cancer",
+          "officialTitle": "Phase II Study of Nab-Paclitaxel With Gemcitabine for Relapsed Small Cell Cancer or Those With Progression on First Line Therapy"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-07",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2016-08-29",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2021-09-23",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2022-07-07",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2016-01-20",
+          "studyFirstSubmitQcDate": "2016-05-10",
+          "studyFirstPostDateStruct": {
+            "date": "2016-05-12",
+            "type": "ESTIMATED"
+          },
+          "resultsFirstSubmitDate": "2023-04-07",
+          "resultsFirstSubmitQcDate": "2023-07-12",
+          "resultsFirstPostDateStruct": {
+            "date": "2023-07-21",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-07-16",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-07-29",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The purpose of this research study is to see if Abraxane and Gemcitabine given together will be effective in treating small cell cancer that has progressed after one line of treatment.",
+          "detailedDescription": "This study is designed as a second-line therapy for patients with histologically or cytologically confirmed small cell lung cancer or small cell cancer from other organs or poorly differentiated neuroendocrine tumors that are treated like small cell cancer. This study is for patients with metastatic or recurrent disease. Eligible patients will receive Nab-Paclitaxel (Abraxane), 100 mg/m2, IV over 30 minutes on Days 1 and 8 of a 21-day cycle followed by Gemcitabine, 1000 mg/m2, IV over 30 minutes on Days 1 and 8 of a 21-day cycle. Participants can continue receiving Nab-Paclitaxel and Gemcitabine until disease progression, unacceptable toxicity or withdrawal from the study. Tumor measurements will be done every 2 cycles."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 32,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion criteria\n\n1. Age ≥18 years old, both male and female\n2. Histologically or cytologically confirmed SCLC SCLC or small cell cancer from other organs or poorly differentiated neuroendocrine tumors that are treated like small cell cancer. This study is for patients with metastatic or recurrent disease.\n3. ECOG performance status 0-2\n4. Patients must have at least one measurable lesion as defined per RECIST 1.1\n5. Progression during or after prior first line chemotherapy. Prior maintenance therapy, targeted therapy and immunotherapy are allowed. Prior use of Rovalpituzumab or other ADC agent is allowed. Immunotherapy or targeted therapy if used as 2nd line therapy will not be considered as second line therapy as these are not true chemotherapeutic agents. Patients treated with definitive chemo-radiation will be eligible if they progressed within a year of definitive therapy (as definitive therapy will be considered 1st line therapy for these patients).\n6. Before study therapy, a minimum of 21 days must have elapsed since any prior chemotherapy and 2 weeks from the last dose of prior targeted or immunotherapy.\n7. Prior definitive XRT is allowed if it has been 2 weeks since the end of definitive XRT. For palliative XRT, protocol-specified treatment can begin at minimum 48 hours after completion of radiation. Lesions within the XRT field can only be used as target lesions if definite progression has been demonstrated since the completion of radiation.\n8. Adequate major organ function including the following:\n\n   * Hematologic function: Absolute neutrophil count (ANC) ≥ 1800 /mm3, platelet count ≥ 100,000/mm3, and Hgb ≥ 9.0 gm/dl.\n   * Hepatic function: bilirubin ≤ 1.5 x ULN, AST and ALT levels ≤ 2.5 x ULN. If liver metastases are present, then AST and ALT ≤ 5 x ULN.\n   * Renal function: serum creatinine ≤ 1.5 x ULN.\n9. Patients must be willing and able to sign informed consent for themselves\n10. If female: childbearing potential either terminated by surgery, radiation, or menopause, or attenuated by use of an approved contraceptive method (intrauterine device \\[IUD\\], birth control pills, or barrier device) during and for 6 months after trial. If male, use of an approved contraceptive method during the study and 6 months afterwards. Females with childbearing potential must have a urine negative hCG test within 7 days prior to the study therapy.\n\n    Females of child-bearing potential (defined as a sexually mature woman who (1) has not undergone hysterectomy \\[the surgical removal of the uterus\\] or bilateral oophorectomy \\[the surgical removal of both ovaries\\] or (2) has not been naturally postmenopausal for at least 24 consecutive months \\[i.e., has had menses at any time during the preceding 24 consecutive months\\]) must:\n\n    Either commit to true abstinence\\* from heterosexual contact (which must be reviewed on a monthly basis), or agree to use, and be able to comply with, effective contraception without interruption, 28 days prior to starting IP therapy (including dose interruptions), and while on study medication or for a longer period if required by local regulations following the last dose of IP; and\n\n    Have a negative serum pregnancy test (β -hCG) result at screening and agree to ongoing pregnancy testing during the course of the study, as per clinical judgement of the investigator, and after the end of study therapy. This applies even if the subject practices true abstinence\\* from heterosexual contact.\n11. Male subjects must practice true abstinence\\* or agree to use a condom during sexual contact with a pregnant female or a female of childbearing potential while participating in the study, during dose interruptions and for 6 months following IP discontinuation, even if he has undergone a successful vasectomy.\n\n    * True abstinence is acceptable when this is in line with the preferred and usual lifestyle of the subject. \\[Periodic abstinence (eg, calendar, ovulation, symptothermal, post-ovulation methods) and withdrawal are not acceptable methods of contraception\\].\n\nExclusion criteria\n\n1. Any of the following because this study involves an agent that has known genotoxic, mutagenic, and teratogenic effects:\n\n   * Pregnant women\n   * Nursing women\n   * Men or women of childbearing potential, who are unwilling to employ adequate contraception as determined by treating physician, while on this study and for 6 months after the end of treatment with the study drugs.\n2. History of the following within the prior 6 months: a myocardial infarction, severe/unstable angina pectoris, coronary/peripheral artery bypass graft, New York Heart Association (NYHA) Class III-IV heart failure, uncontrolled hypertension, clinically significant cardiac dysrhythmia or clinically significant ECG abnormality, cerebrovascular accident, transient ischemic attack, or seizure disorder\n3. Serious concurrent infection or nonmalignant illness that is uncontrolled or whose control may be jeopardized by complication of study therapy\n4. History of other invasive malignancy that is currently active and/or has been treated within 12 months prior to enrollment (notable exceptions include: basal cell carcinoma, squamous cell carcinoma of the skin, localized prostate cancer, in situe carcinomas of the cervix and breast, and superficial bladder cancers \\[non-muscle invasive\\]).\n5. Psychiatric disorder which, per treating physician discretion, may preclude compliance\n6. Major surgery in the last two weeks of starting study therapy. This does not include procedures like biopsy (needle or excisional) or port placement as these are not considered as major surgery.\n7. Individuals with the presence of symptomatic CNS metastasis requiring radiation, surgery, or ongoing use of corticosteroids. Untreated or brain metastasis causing any symptoms. Treated brain metastasis must be stable for 4 weeks prior to first dose of study drug and not require steroids for at least 7 days prior to study treatment.\n8. Pre-existing peripheral neuropathy \\> Grade 1 (using CTCAE v 4.3 criteria)\n9. Received any prior treatment with any taxane (docetaxel or paclitaxel) for small cell lung cancer.\n10. History of allergy or hypersensitivity to albumin-bound paclitaxel, or gemcitabine.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "maximumAge": "99 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {
+        "largeDocumentModule": {
+          "largeDocs": [
+            {
+              "typeAbbrev": "Prot_SAP",
+              "hasProtocol": true,
+              "hasSap": true,
+              "hasIcf": false,
+              "label": "Study Protocol and Statistical Analysis Plan",
+              "date": "2019-06-23",
+              "uploadDate": "2022-09-01T15:39",
+              "filename": "Prot_SAP_000.pdf",
+              "size": 793113
+            },
+            {
+              "typeAbbrev": "ICF",
+              "hasProtocol": false,
+              "hasSap": false,
+              "hasIcf": true,
+              "label": "Informed Consent Form",
+              "date": "2021-01-07",
+              "uploadDate": "2022-09-01T15:41",
+              "filename": "ICF_001.pdf",
+              "size": 287326
+            }
+          ]
+        }
+      },
+      "archived_job_id": "52d640f9f72b4548b772ef2a9cc8c46d",
+      "archived_job_sha256": "d46aabc40830b80e758e272fdb3334ba57a3692fd1d7f08939a6b0b26db2f8f0",
+      "frozen_source_version": "ctgov-2025-07-29",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "fd6c3ee7e5ffb92c13739d43d18a6d4be5b7486d630ca84a49b7a442aa28924c",
+      "live_eligibility_sha256": "fd6c3ee7e5ffb92c13739d43d18a6d4be5b7486d630ca84a49b7a442aa28924c"
+    },
+    "NCT04063033": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT04063033",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT04063033",
+          "orgStudyIdInfo": {
+            "id": "0290-19 RMB"
+          },
+          "organization": {
+            "fullName": "Rambam Health Care Campus",
+            "class": "OTHER"
+          },
+          "briefTitle": "IV Iron in Acute Decompensated Heart Failure",
+          "officialTitle": "Randomized Bilnded Controlled Trial Comparing The Effect of IV Sodium Ferric Gluconate Complex (FERRLECIT R) on Outcome Patients Admitted Due To Acute Decompansated Heart Failure With Iron Deficiency"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2023-04",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2019-09-01",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2021-12-31",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2021-12-31",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2019-08-18",
+          "studyFirstSubmitQcDate": "2019-08-19",
+          "studyFirstPostDateStruct": {
+            "date": "2019-08-20",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2023-04-10",
+          "lastUpdatePostDateStruct": {
+            "date": "2023-04-11",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The study aims Compare the effect of addition of IV FERRLECITR (ferric gluconate) to standard therapy to standard therapy alone (without any IV iron treatment) in patients admitted with acute decompensated heart failure.",
+          "detailedDescription": "Heart Failure (HF) constitutes one of the biggest burdens on the public health system, with incidence of 20 per 1000 persons above the age of 65 and up to 80 per 1000 persons above 85 years of age. Acute decompensated heart failure (ADHF) is the most common cause of hospitalizations among patients above the age of 65. Even with the advances in the treatment and management of HF, the prognosis of these patients remains poor. HF results in impaired quality of life (QoL), repeated hospitalizations and poor life expectancy.\n\nIron deficiency (ID) is a common comorbidity in HF patients, and is associated with poor outcome, worsening of New York Heart Association (NYHA) Class, and re-hospitalizations. While the mechanisms and pathophysiology of ID in HF is not well understood, it is presumed to be a combination of impaired absorption, renal dysfunction, hemodilution and drugs that are used for the treatment of HF.\n\nThe advantages of (intra-venous) IV ferric carboxymaltose to patients with reduced ejection fraction (HFrEF) with stable chronic heart failure and functional ID has been shown to reduce the risk of hospitalizations up to 60%, improve symptoms, exercise tolerance, functional capacity and overall QoL . Accordingly, the latest 2016 ESC Guidelines recommended the treatment in patients with HfrEF with reduced ejection fraction (HFrEF) and ID (Class IIA,LOC A).\n\nThe two major, placebo-controlled studies, mentioned above (CONFIRM-AF and FAIR-AF) have demonstrated the positive outcomes after correction of ID in stable HF patients, with a well-tolerated IV substance. However, there is no data today concerning the role of IV iron repletion in patients with decompensated HF and preserved EF. Furthermore, previous studies excluded a substantial portion of the HFrEF population recently admitted with (acute decompensated heart failure) ADHF and diagnosed with ID.\n\nThe effect of treating iron deficiency on quality of life an functional status has already been studied and found useful with various types of intravenous iron in the chronic kidney disease and inflammatory bowel disease.\n\nIn this study we aim to examine the effect of IV iron (ferric gluconate) which is a more affordable IV Iron on patients admitted due to acute heart failure with minimal exclusion criterias."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE4"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "interventionModelDescription": "Randomisation to two groups, One receiving IV Iron on top of standard therapy while admitted to the hospital and the other receiving only standard therapy for acute heart failure.",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "SINGLE",
+              "maskingDescription": "Two cardiologists will examine the participants after 12 and 24 weeks and evaluate functional status and volume status.",
+              "whoMasked": [
+                "OUTCOMES_ASSESSOR"
+              ]
+            }
+          },
+          "enrollmentInfo": {
+            "count": 34,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Patients admitted due to acute decompensated heart failure to internal medicine department H or cardiology department.\n\n   * Must meet two of the following criteria :\n\n     * NT pro BNP \\> 300 pg/ml (\\>800 pg/ml in the presence of Atrial Fibrillation).\n     * Peripheral pitting edema,\n     * Jugular Venous Distention,\n     * pulmonary edema/congestion according to physical examination or Chest X-ray.\n   * IV furosemide treatment on admission to ER or internal ward/cardiology department.\n2. Hb level 8-14 mg/dl on admission.\n3. Iron stores: Ferritin \\<100 or Ferritin 100-300 and Transferrin saturation \\< 20%.\n4. No evidence of active bleeding.\n5. Patient provided informed consent.\n\nExclusion Criteria:\n\n1. Cardiogenic shock or any other condition requiring IV vasopressors.\n2. Previous allergy or anaphylaxis due to IV Iron.\n3. Active malignancy undergoing treatment.\n4. Status post major surgery involving substantial blood loss in the past 3 months.\n5. Indication for Blood transfusion.\n6. Infection indicating IV antibiotics.\n7. History of acquired iron overload; known haemochromatosis or first relatives with hemochromatosis; and allergic disorders (asthma, eczema, and anaphylactic reactions).\n8. hemolytic anemia.\n9. History of chronic liver disease and/or alanine transaminase (ALT) or aspartate transaminase (AST) \\>3 times the upper limit of the normal range; chronic lung disease; myelodysplastic disorder; and known HIV/AIDS disease.\n10. Recipient of immunosuppressive therapy or renal dialysis. History of erythropoietin, IV iron therapy, and blood transfusion in previous 30 days.\n11. Unstable angina pectoris, as judged by the investigator; severe uncorrected valvular disease or left ventricular outflow obstruction; obstructive cardiomyopathy; uncontrolled fast atrial fibrillation or flutter (heart rate \\>110 beats per minute \\[bpm\\]); uncontrolled symptomatic brady- or tachyarrhythmias.\n12. Musculoskeletal limitation that, in the judgement of the investigator, would impair cardiopulmonary exercise testing.\n13. Pregnant or breastfeeding.\n14. Inability to comprehend study protocol.\n15. Parallel participation in another clinical trial.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "8d55bcc6d704447b9fcd8b6b5be52ab2",
+      "archived_job_sha256": "1d55836200c94d90299cf65c75a27340f10e3700432716c8dade0d4951f06584",
+      "frozen_source_version": "ctgov-2023-04-11",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "359c69e6cb9ce01494a45f4a2c34ae14f13f95651cf65c2628d4cc0a58347947",
+      "live_eligibility_sha256": "359c69e6cb9ce01494a45f4a2c34ae14f13f95651cf65c2628d4cc0a58347947"
+    },
+    "NCT00225212": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT00225212",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT00225212",
+          "orgStudyIdInfo": {
+            "id": "protocol97"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "73750",
+              "type": "OTHER",
+              "domain": "Stanford IRB, old system"
+            }
+          ],
+          "organization": {
+            "fullName": "Stanford University",
+            "class": "OTHER"
+          },
+          "briefTitle": "Rituximab After Autologous Stem Cell Transplant for Relapsed B-cell Non-Hodgkin's Lymphoma",
+          "officialTitle": "Clinical Trial Of C2B8 Monoclonal Antibody Following High Dose Therapy And Autografting In B-Cell Non-Hodgkin's Lymphoma"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2014-09",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "1997-11"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2003-03",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2003-03",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2005-09-21",
+          "studyFirstSubmitQcDate": "2005-09-21",
+          "studyFirstPostDateStruct": {
+            "date": "2005-09-23",
+            "type": "ESTIMATED"
+          },
+          "resultsFirstSubmitDate": "2014-08-26",
+          "resultsFirstSubmitQcDate": "2014-08-26",
+          "resultsFirstPostDateStruct": {
+            "date": "2014-09-05",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2014-09-04",
+          "lastUpdatePostDateStruct": {
+            "date": "2014-09-15",
+            "type": "ESTIMATED"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "Conventional therapy is effective for diffuse aggressive lymphomas and low grade lymphomas, but is limited by relapse occurs in 40 to 50% of subjects.\n\nThis study assesses autologous stem cell transplant (ASCT) supplemented with high-dose therapy increases the event-free survival in diffuse aggressive lymphomas and low grade lymphomas, as an alternative to the limitations of conventional therapy.\n\nPreliminary studies with rituximab in low grade lymphomas indicate a response rate of about 50% with very little toxicity. Rituximab is hypothesized to be a candidate for post-transplant therapy because the majority of malignant lymphomas express the CD20 antigen; rituximab has impressive independent anti-tumor activity; and the antibody has little toxicity outside of the acute administration.",
+          "detailedDescription": "The first 4 subjects received rituximab weekly for 4 weeks at the standard dose of 375 mg/m2, starting 6 weeks after ASCT transplant.\n\nAfter an observation period to assess acute and late toxicity for the first 4 subjects, subsequent subjects received induction as above followed by an additional 4 week course at 6-months post-ASCT."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 35,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* B-cell, CD20+ NHL\n* Evidence of engraftment post-autologous peripheral blood stem cell transplant (PBSC-T), aka autologous stem cell transplant (ASCT)\n* Eastern Cooperative Oncology Group (ECOG) performance status 0 to 1\n* Creatinine \\< 2 mg/dL\n* Bilirubin \\< 2.0 mg/dL\n* Liver function tests (LFTs) \\< 5 x upper limit of normal (ULN)\n\nExclusion Criteria:\n\n* Graft source from bone marrow\n* Non-responders \\[progressive disease (PD) or stable disease (SD)\\] to prior anti-CD20 therapy\n* PD after ASCT\n* Post-ASCT radiotherapy\n* Concomitant treatment with radiotherapy, chemotherapy or immunotherapy including rituximab\n* Evidence of active pneumonitis\n* Evidence of active infection\n* Concurrent prednisone or other systemic steroid medication\n* Nitrosourea therapy within 6 weeks of the first treatment with rituximab\n* Presence of anti-murine antibody (HAMA) reactivity",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "16 Years",
+          "maximumAge": "65 Years",
+          "stdAges": [
+            "CHILD",
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "89149b86ab3746f288594086c3189915",
+      "archived_job_sha256": "ca033b6c2b7b21cc1d54cb6c6239ca75870a4b92ca41c1fd807db2c64067b63d",
+      "frozen_source_version": "ctgov-2014-09-15",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "9aa1bac8449b31226115f58b876bacf0e9fb106803f5b9a48ebe2f507268c1b6",
+      "live_eligibility_sha256": "9aa1bac8449b31226115f58b876bacf0e9fb106803f5b9a48ebe2f507268c1b6"
+    },
+    "NCT02834611": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT02834611",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT02834611",
+          "orgStudyIdInfo": {
+            "id": "KNAN1001"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "R44CA195793",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/R44CA195793"
+            }
+          ],
+          "organization": {
+            "fullName": "Keystone Nano, Inc",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Ceramide NanoLiposome in Patients With Advanced Solid Tumors",
+          "officialTitle": "Phase I Study of C6 Ceramide NanoLiposome in Patients With Advanced Solid Tumors"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2024-05",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2017-03-15",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2023-08-03",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2023-11-01",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2016-07-11",
+          "studyFirstSubmitQcDate": "2016-07-12",
+          "studyFirstPostDateStruct": {
+            "date": "2016-07-15",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2024-05-27",
+          "lastUpdatePostDateStruct": {
+            "date": "2024-05-29",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "This study is a dose escalation study of Ceramide NanoLiposome in patients with advanced solid tumors."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE1"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 14,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Signed informed consent/authorization is obtained prior to conducting any study-specific screening procedures.\n* 18 years of age or order\n* Histologic or cytologic diagnosis of cancer\n* Patients without a curative therapy or whose tumor does not have standard chemotherapy\n* At least 4 weeks after the last dose of chemotherapy or radiation therapy; 6 weeks for mitoxantrone or mitomycin therapy\n* Eastern Cooperative Oncology Group (ECOG) performance status must be ≤2 (Appendix A).\n* Adequate hepatic, renal, and bone marrow function:\n\n  * Absolute neutrophil count ≥ 1,000/microliter (uL)\n  * Platelets ≥ 100,000/uL\n  * Total bilirubin ≤2.0\n  * AST(SGOT)/ALT(SGPT) ≤ 2.5 X institutional ULN\n  * Creatinine ≤1.2 mg/dL or clearance ≥50ml/min (Cockcroft-Gault)\n* All participants (male and female) with reproductive potential must practice an effective method of contraception while on this study in order to minimize risks to fetuses.\n* Radiographic evidence of measurable disease tumor lesion (≥ 1cm in greatest dimension) or nodal disease (\\>1.5cm in greatest dimension)\n* Men and women of all ethnic groups are eligible for this trial.\n* Females at reproductive age must have a negative urine pregnancy test prior to entry to this study\n* Life expectancy is greater than 12 weeks.\n* Patients with controlled CNS disease and off steroids are eligible.\n\nExclusion Criteria:\n\n* Uncontrolled intercurrent illness including, but not limited to, symptomatic congestive heart failure, unstable angina pectoris, cardiac arrhythmias not well controlled with medication, myocardial infarction within the previous 6 months, or psychiatric illness/social situations that would limit compliance with study requirements.\n* Patients may not be receiving any other concurrent investigational agents, or have received any investigational agent within four weeks of commencing this protocol.\n* Since the teratogenic potential of this combination is currently unknown, females who are pregnant or lactating are excluded. Males and females should perform abstinence or use barrier to prevent pregnancy.\n* History of any other malignancies in the last 2 years except in-situ cancer, non-muscle invasive bladder cancer, basal or squamous cell skin cancer are eligible\n* Patients known to be HIV(+), Hep BsAg(+), or Hep C(+) are excluded as the effect of the agent on immune system has not been assessed\n* Patients with history of hypersensitivity to liposomal products\n* Patients with primary CNS malignancies or leptomeningeal disease are excluded",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "2e6a4f454e5343e5971546ec69c23875",
+      "archived_job_sha256": "ed4ee4ca2904684868bac544f3437d606a6c703a061884004d7da192be4d82a3",
+      "frozen_source_version": "ctgov-2024-05-29",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "130ab96af1ca883a22086df33b3fce4b7c3ccf8cf8071ecac20cc092e65b3ef6",
+      "live_eligibility_sha256": "130ab96af1ca883a22086df33b3fce4b7c3ccf8cf8071ecac20cc092e65b3ef6"
+    },
+    "NCT01841736": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT01841736",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT01841736",
+          "orgStudyIdInfo": {
+            "id": "NCI-2013-00831"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "NCI-2013-00831",
+              "type": "REGISTRY",
+              "domain": "CTRP (Clinical Trial Reporting Program)"
+            },
+            {
+              "id": "ALLIANCE A021202"
+            },
+            {
+              "id": "CALGB-A021202"
+            },
+            {
+              "id": "A021202",
+              "type": "OTHER",
+              "domain": "Alliance for Clinical Trials in Oncology"
+            },
+            {
+              "id": "A021202",
+              "type": "OTHER",
+              "domain": "CTEP"
+            },
+            {
+              "id": "U10CA031946",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/U10CA031946"
+            },
+            {
+              "id": "U10CA180821",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/U10CA180821"
+            },
+            {
+              "id": "U10CA180830",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/U10CA180830"
+            }
+          ],
+          "organization": {
+            "fullName": "National Cancer Institute (NCI)",
+            "class": "NIH"
+          },
+          "briefTitle": "Pazopanib Hydrochloride in Treating Patients With Progressive Carcinoid Tumors",
+          "officialTitle": "Prospective Randomized Phase II Trial of Pazopanib (NSC #737754) Versus Placebo in Patients With Progressive Carcinoid Tumors"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2026-09",
+          "overallStatus": "ACTIVE_NOT_RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2013-09-20",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2019-03-05",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2027-09-10",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2013-04-24",
+          "studyFirstSubmitQcDate": "2013-04-24",
+          "studyFirstPostDateStruct": {
+            "date": "2013-04-26",
+            "type": "ESTIMATED"
+          },
+          "resultsFirstSubmitDate": "2020-02-14",
+          "resultsFirstSubmitQcDate": "2020-05-08",
+          "resultsFirstPostDateStruct": {
+            "date": "2020-06-01",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-09-11",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-10-06",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "This randomized phase II trial studies how well pazopanib hydrochloride works in treating patients with carcinoid tumors that are growing, spreading, or getting worse. Pazopanib hydrochloride may stop the growth of tumor cells by blocking some of the enzymes needed for cell growth.",
+          "detailedDescription": "PRIMARY OBJECTIVE:\n\nI. For patients with progressive carcinoid tumors, progression-free survival (PFS defined by central review according to Response Evaluation Criteria in Solid Tumors \\[RECIST\\] 1.1) will be compared between patients randomized to treatment with pazopanib (pazopanib hydrochloride) versus placebo.\n\nSECONDARY OBJECTIVES:\n\nI. Overall survival (OS) will be compared between treatment arms. II. Objective response rate, duration of response, and time to treatment failure will be compared between treatment arms.\n\nIII. Progression free survival (PFS) as assessed by central radiology review and local radiology review will be compared overall and within treatment arms.\n\nIV. Safety and tolerability of treatment with pazopanib/placebo will be evaluated within each treatment arm.\n\nV. PFS and other indicators of efficacy will be estimated in patients who crossover to pazopanib from placebo.\n\nVI. To determine the turn-around time for timely adjudicated central review. VII. To characterize the nature of discordance between local and central radiology review in assessment of progression.\n\nVIII. To characterize the type and rate of progression in carcinoid (at study entry, on-study, and at progression).\n\nIX. To develop new methods for modeling carcinoid growth and detecting treatment effects, and to perform simulations that advance new clinical trial designs to apply to future trials of carcinoid therapeutics.\n\nX. To assess for differences in quality of life (QOL)-related domains between the two treatment groups (pazopanib versus placebo).\n\nXI. To determine if the more brief measures of QOL-related domains provide comparable information to that which is provided by the longer assessments (European Organization for Research and Treatment of Cancer \\[EORTC\\], neuroendocrine tumors \\[NET\\]21).\n\nXII. To provide validation data for the EORTC NET21 module in terms of responsiveness over time and differences across arms.\n\nXIII. To determine whether components of the plasma angiome panel that have been shown to be predictive previously (interleukin-6 \\[IL-6\\] and vascular endothelial growth factor \\[VEGF\\]-D) are predictive of a therapeutic advantage for pazopanib treatment in baseline samples from the patients treated on A021202.\n\nXIV. To determine whether other components of the plasma angiome panel tested (not IL-6 and VEGF-D) are predictive of a therapeutic advantage for pazopanib treatment in baseline samples from the patients treated on A021202.\n\nXV. To evaluate the changes in the plasma angiome markers after treatment with or without pazopanib over time.\n\nEXPLORATORY OBJECTIVES:\n\nI. PFS at 6 months will be estimated within each treatment arm. II. Biochemical response (for chromogranin A, defined as a decrease of 50% or more in chromogranin A levels from baseline and for 5-hydroxyindoleacetic acid \\[5-HIAA\\], defined as a decrease of 50% or more in urinary 5-HIAA levels from baseline) will be compared between treatment arms among patients with elevated baseline levels of chromogranin A (CGA) and 5-HIAA.\n\nOUTLINE: Patients are randomized to 1 of 2 treatment arms.\n\nARM I: Patients receive pazopanib hydrochloride orally (PO) once daily (QD) on days 1-28. Cycles repeat every 28 days in the absence of disease progression or unacceptable toxicity. Patients undergo echocardiography (ECHO) or multigated acquisition scan (MUGA) during screening. Patients also undergo computed tomography (CT), magnetic resonance imaging (MRI), and chest x-ray throughout the trial. Patients may optionally undergo blood sample collection during screening and on study.\n\nARM II: Patients receive placebo PO QD on days 1-28. Cycles repeat every 28 days in the absence of disease progression or unacceptable toxicity. At the time of progressive disease, patients may cross-over to Arm I. Patients undergo ECHO or MUGA during screening. Patients also undergo CT, MRI, and chest x-ray throughout the trial. Patients may optionally undergo blood sample collection during screening and on study.\n\nAfter completion of study treatment, patients are followed up every 3-6 months for 5 years."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "CROSSOVER",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "DOUBLE",
+              "whoMasked": [
+                "PARTICIPANT",
+                "INVESTIGATOR"
+              ]
+            }
+          },
+          "enrollmentInfo": {
+            "count": 171,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Low- or intermediate-grade neuroendocrine carcinoma, including the following subtypes: carcinoid tumor, low- to intermediate-grade or well- to moderately-differentiated neuroendocrine carcinoma or tumor, atypical carcinoid tumor; documentation from a primary tumor or metastatic site is sufficient; patients with poorly differentiated neuroendocrine carcinoma, high-grade neuroendocrine carcinoma, adenocarcinoid tumor, or goblet cell carcinoid tumor are not eligible\n* Locally unresectable or metastatic carcinoid tumors\n* Patients must have histologic documentation or clinical evidence of a carcinoid tumor of primary site (including foregut, midgut, hindgut or other non-pancreatic site); tumors of unknown primary site are eligible provided the treating physician does not suspect medullary thyroid cancer, pancreatic neuroendocrine tumor, paraganglioma, or pheochromocytoma; unknown primary tumors will be classified as small bowel tumors for the purpose of stratification; functional (associated with a clinical syndrome) or nonfunctional tumors are allowed; target lesions must have shown disease progression if therapy included peptide receptor radiotherapy (PRRT) and PRRT must be completed at least 8 weeks prior to registration\n* Radiological evidence for progressive disease (measurable or non-measurable) within 12 months prior to registration; patients who have received anti-tumor therapy during the past 12 months (including octreotide analogs) must have had radiological documentation of progression of disease while on or after receiving therapy\n* No known endobronchial lesions and/or lesions infiltrating major pulmonary vessels that increase the risk of pulmonary hemorrhage; patients with lesions infiltrating major pulmonary vessels (contiguous tumor and vessels) are excluded; however, the presence of a tumor that is touching, but not infiltrating (abutting) the vessels is acceptable (computed tomography \\[CT\\] with contrast is strongly recommended to evaluate such lesions); patients with large protruding endobronchial lesions in the main or lobar bronchi are excluded; however, endobronchial lesions in the segmented bronchi are allowed\n* Patients must have measurable disease per RECIST 1.1 by computed tomography (CT) scan or magnetic resonance imaging (MRI); lesions must be accurately measured in at least one dimension (longest diameter to be recorded) as \\>= 1 cm with CT or MRI (or \\>= 1.5 cm for lymph nodes); index lesions for the purpose of RECIST 1.1 measurements will not be selected from within the radiation therapy treatment field; however, if there is evidence of disease progression within the radiation treatment field, measurement of the progressing lesions will be documented\n* No prior treatment with an inhibitor of vascular endothelial growth factor (VEGF) or vascular endothelial growth factor receptor (VEGFR)\n* Prior treatment (somatostatin analogs excepted) must be completed at least 2 weeks prior to registration; in addition, prior treatment (somatostatin analogs excepted) must be completed at least 4 weeks prior to initiation of study drug; treatment-related toxicities must have improved to =\\< grade 1 prior to registration, with the exception of alopecia\n* Concurrent use of somatostatin analogs (SSTa) is allowed, provided that the patient is on a stable dose for at least two months and progressive disease on somatostatin analog has been documented; progression on octreotide is required for patients with tumors arising in the midgut\n* Prior treatment with embolization (including bland embolization, chemoembolization, and selective internal radiation therapy) or ablative therapies is allowed if measurable disease remains outside of the treated area or there is documented disease progression in a treated site; there is no limit on the prior number of procedures; prior liver-directed or other ablative treatment must be completed at least 8 weeks prior to registration; index lesions for the purpose of RECIST 1.1 measurements will not be selected from within the radiation therapy treatment field; however, if there is evidence of disease progression within the radiation treatment field, measurement of the progressing lesions will be documented\n* Patients should have completed any major surgery \\>= 4 weeks prior to registration and must have completed any minor surgery \\>= 2 weeks prior to registration; patients must have fully recovered from the procedure\n\n  * The following are examples of procedures considered to be minor: port placement, laparoscopy, thoracoscopy, bronchoscopy, mediastinoscopy, skin biopsies, incisional biopsies, imaging-guided biopsy for diagnostic purposes, and dental extraction procedures\n  * Insertion of a vascular access device, thoracentesis, paracentesis, and endoscopic ultrasonographic procedures are not considered to be major or minor surgeries\n* No concurrent condition resulting in immune compromise, including chronic treatment with corticosteroids or other immunosuppressive agents\n* No clinical evidence of central nervous system (CNS) metastases (including carcinomatous meningitis) at baseline, with the exception of those patients who have previously-treated CNS metastases (surgery +/- radiotherapy, radiosurgery, or gamma knife) and who meet both of the following criteria: a) are asymptomatic and b) had no requirement for steroids or enzyme-inducing anticonvulsants within 6 months prior to registration\n* No history of abdominal fistula, gastrointestinal perforation, or intra-abdominal abscess within 28 days prior to registration\n* No clinically significant gastrointestinal abnormalities that may increase the risk for gastrointestinal bleeding within 28 days prior to registration including, but not limited to:\n\n  * Active peptic ulcer\n  * Known endoluminal metastatic lesion(s) with history of bleeding\n  * Inflammatory bowel disease (e.g. ulcerative colitis, Crohn's disease), or other gastrointestinal conditions with increased risk of perforation\n* No history of serious (i.e., requiring active medical therapy with medication or medical device under the supervision of a physician) non-healing wound, ulcer, trauma, or bone fracture within 28 days prior to study entry\n* Patients with a history of hypertension must have blood pressure that is adequately controlled on antihypertensives; (\\< 140/90 mm Hg)\n* No symptomatic congestive heart failure (New York Heart Association class II, III, or IV) within 6 months prior to registration\n* No arterial thrombotic events within 6 months of registration, including transient ischemic attack (TIA), cerebrovascular accident (CVA), peripheral arterial thrombus, myocardial infarction (MI), or unstable angina or angina requiring surgical or medical intervention in 6 months prior to registration; patients with clinically significant peripheral artery disease (i.e., claudication on less than one block) are ineligible; patients who have experienced a deep venous thrombosis or pulmonary embolus within 6 months prior to registration must be on stable therapeutic anticoagulation for at least 6 weeks prior to enrollment of this study\n* Patients on therapeutic anticoagulation with low molecular weight heparins, fondaparinux, rivaroxaban or warfarin are eligible, provided that they are on a stable dose of anticoagulants; patients who are currently receiving antiplatelet therapy of prasugrel or clopidogrel or antiaggregation agents (e.g., eptifibatide, epoprostenol, dipyridamole) or low doses of acetylsalicylic acid (up to 100 mg daily) are also eligible\n* No ongoing cardiac dysrhythmias, atrial fibrillation, or prolongation of corrected QT (QTc) interval to \\> 480 msec\n* No evidence of active bleeding, bleeding diathesis, or hemoptysis (\\>= 1/2 teaspoon of red blood) within 8 weeks prior to registration\n* No currently unstable angina and/or uncontrolled cardiac arrhythmias\n* Patients with symptomatic peripheral vascular disease are ineligible\n* Ejection fraction on echocardiogram (Echo) or multi gated acquisition scan (MUGA) \\> 50%\n* Chronic concomitant treatment with strong inhibitors of cytochrome P450, family 3, subfamily A, polypeptide 4 (CYP3A4) is not allowed on this trial; patients on strong CYP3A4 inhibitors must discontinue the drug 14 days prior to the start of study treatment\n* Women must not be pregnant or nursing; women of child bearing potential must have a negative serum or urine pregnancy test (minimum sensitivity 25 IU/L or equivalent units of human chorionic gonadotropin \\[HCG\\]) within 72 hours prior to registration; women of child-bearing potential include any female who has experienced menarche and who has not undergone surgical sterilization (hysterectomy, bilateral tubal ligation or bilateral oophorectomy) or is not postmenopausal (defined as amenorrhea \\>= 12 consecutive months; or women on hormone replacement therapy \\[HRT\\] with documented serum follicle stimulating hormone \\[FSH\\] level \\> 35 mIU/mL)\n* Age \\>= 18 years of age\n* Eastern Cooperative Oncology Group (ECOG) performance status 0-1\n* Granulocytes \\>= 1,500/mcL\n* Platelets \\>= 100,000/mcL\n* International normalized ratio (INR) =\\< 1.2 X upper limit of normal (ULN); only required for patients receiving anticoagulant therapy; patients are eligible if their INR is stable and within the recommended range for the desired level of anticoagulation\n* QTc =\\< 480 msecs\n* Thyroid stimulating hormone (TSH) within normal limits (WNL); medications for thyroid dysfunction are allowed as long as TSH is normal at registration; in patients with abnormal TSH, if the free thyroxine (free T4) and free thyroxine index (FTI) are normal and patient is clinically euthyroid, patient is eligible\n* Bilirubin =\\< 1.5 x ULN\n* Aspartate aminotransferase (AST) (serum glutamic oxaloacetic transaminase \\[SGOT\\]) \\& alanine aminotransferase (ALT) (serum glutamate pyruvate transaminase \\[SGPT\\]) =\\< 2.5 x ULN; concomitant elevations in bilirubin and AST/ALT above 1.0 X ULN are NOT permitted; also, if liver metastases are present, AST \\& ALT =\\< 5 x ULN is allowed\n* Serum creatinine =\\< 1.5 x ULN\n* Urine protein to creatinine ratio \\< 1, or, 24-hour urine protein \\< 1 g; if urine protein to creatinine (UPC) \\>= 1, then a 24-hour urine protein must be assessed; patients must have a 24-hour urine protein value \\< 1 g to be eligible; use of urine dipstick for renal function assessment is not acceptable",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {
+        "largeDocumentModule": {
+          "largeDocs": [
+            {
+              "typeAbbrev": "Prot_SAP",
+              "hasProtocol": true,
+              "hasSap": true,
+              "hasIcf": false,
+              "label": "Study Protocol and Statistical Analysis Plan",
+              "date": "2019-04-08",
+              "uploadDate": "2019-09-11T15:45",
+              "filename": "Prot_SAP_000.pdf",
+              "size": 1243091
+            }
+          ]
+        }
+      },
+      "archived_job_id": "009c4b4c751f4957be26001898047879",
+      "archived_job_sha256": "c822af9e9aad3b65bcab7f298376c21e0e468fe74ec624ba93dbcdc4e9517b33",
+      "frozen_source_version": "ctgov-2026-10-06",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "16e71a703bedb07ecb6ddf51f0650cdf9e0cd191ae7079291c73d91e8fea45e5",
+      "live_eligibility_sha256": "16e71a703bedb07ecb6ddf51f0650cdf9e0cd191ae7079291c73d91e8fea45e5"
+    },
+    "NCT01760291": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT01760291",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT01760291",
+          "orgStudyIdInfo": {
+            "id": "S2278"
+          },
+          "organization": {
+            "fullName": "Boston Scientific Corporation",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Continued Access to PREVAIL (CAP2) - WATCHMAN Left Atrial Appendage (LAA) Closure Technology",
+          "officialTitle": "Continued Access to PREVAIL (CAP2)- WATCHMAN Left Atrial Appendage (LAA) Closure Technology",
+          "acronym": "CAP2"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2022-03",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2012-09"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2019-04",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2019-04",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2012-11-06",
+          "studyFirstSubmitQcDate": "2013-01-02",
+          "studyFirstPostDateStruct": {
+            "date": "2013-01-04",
+            "type": "ESTIMATED"
+          },
+          "resultsFirstSubmitDate": "2021-10-27",
+          "resultsFirstSubmitQcDate": "2021-10-27",
+          "resultsFirstPostDateStruct": {
+            "date": "2021-11-24",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2022-03-17",
+          "lastUpdatePostDateStruct": {
+            "date": "2022-03-29",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "To provide additional information about the safety and efficacy of the WATCHMAN LAA Closure Technology",
+          "detailedDescription": "This Continued Access Protocol is a prospective, non-randomized, multicenter study to allow continued access to the WATCHMAN LAA Closure Technology during the data analysis, reporting and review of the PREVAIL pivotal study Pre-Market Application by FDA."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "PREVENTION",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 576,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria: A subject may be enrolled in the study if all of the following inclusion criteria are met:\n\n1. The subject is 18 years of age or older\n2. The subject has documented paroxysmal, persistent, or permanent non- valvular atrial fibrillation (i.e., the subject has not been diagnosed with rheumatic mitral valvular heart disease)\n3. The subject is eligible for long-term warfarin therapy\n4. The subject has a calculated CHADS2 score of 2 or greater; Subjects with a CHADS2 score of 1 may be included if any of the following apply (according to the ACC/AHA/ESC 2006 Guidelines for the Management of\n\n   Subjects with Atrial Fibrillation subjects requiring warfarin therapy):\n   * The subject is a female age 75 or older\n   * The subject has a baseline Left Ventricular Ejection Fraction (LVEF) \\> 30% and \\< 35%\n   * The subject is age 65-74 and has diabetes or coronary artery disease\n   * The subject is age 65 or greater and has documented congestive heart failure\n5. The subject or legal representative is able to understand and willing to provide written informed consent to participate in the trial\n6. The subject is able and willing to return for required follow-up visits and examinations\n\nExclusion Criteria:\n\nSubjects will be excluded from the study if they meet any of the following criteria:\n\n1. The subject requires long-term warfarin therapy (i.e., even if the device is implanted, the subjects would not be eligible to discontinue warfarin due to other medical conditions requiring chronic warfarin therapy). Additionally, a subject with any of the following is excluded:\n\n   * Thrombosis occurring at a young age (\\<40 years old)\n   * Idiopathic or recurrent venous thromboembolism\n   * Thrombosis at an unusual site (i.e., cerebral veins, hepatic veins,renal veins, inferior vena cava, mesenteric veins)\n   * Family history of venous thromboembolism or of inherited prothrombotic disorder\n   * Recurrence or extension of thrombosis while adequately anticoagulated\n2. The subject is contraindicated for warfarin therapy or cannot tolerate long-term warfarin therapy\n3. The subject is contraindicated or allergic to aspirin\n4. The subject is indicated for antiplatelet therapy other than aspirin (for example, a subject indicated for clopidogrel, prasugrel, ticlopidine or ticagrelor due to DES is excluded from enrollment during the dosing regimen). A subject completing a course of antiplatelet therapy may be enrolled after a 7 day washout period\n5. The subject had any interventional or surgical procedure within 30 days prior to enrollment or is planning to have an interventional or surgical procedure in the time between the WATCHMAN device implant and 45-day TEE (e.g., cardioversion, ablation, cataract surgery, dental surgery)\n6. The subject had a prior stroke or TIA within the 90 days prior to enrollment\n7. The subject has had an MI within 90 days prior to enrollment\n8. The subject has a history of atrial septal repair or has an ASD/PFO device\n9. The subject has an implanted mechanical valve prosthesis\n10. The subject suffers from New York Heart Association Class IV Congestive Heart Failure at the time of enrollment\n11. The subject has symptomatic carotid disease (defined as \\>50% stenosis with symptoms of ipsilateral transient or visual TIA evidenced by amaurosis fugax, ipsilateral hemispheric TIAs or ipsilateral stroke); if subject has a history of carotid stent or endarterectomy the subject is eligible if there is \\< 50% stenosis\n12. The subject's AF is defined by a single occurrence of AF\n13. The subject had a transient case of AF (i.e., secondary to CABG, interventional procedure, etc.)\n14. The subject's left atrial appendage is obliterated\n15. The subject has undergone heart transplantation\n16. The subject is currently treated with antibiotics for an active infection\n17. The subject has a resting heart rate \\> 110 bpm\n18. The subject has thrombocytopenia (defined as \\< 70,000 platelets/mm3) or anemia with hemoglobin concentration of \\< 10 g/dl (i.e., anemia as determined by the investigator which would require transfusion)\n19. The subject is actively enrolled in a concurrent clinical study of an investigational drug or investigational device (study specifics may be reviewed with the sponsor prior to enrollment to confirm a concurrent study will not interfere with the outcomes of this study)\n20. The subject participated in any of the following studies: PROTECT AF, CAP Registry, or PREVAIL. If the subject received a subject ID number for a prior WATCHMAN study, the subject may not be enrolled. PROTECT AF control subjects may be considered for participation if they have completed 5 year follow up\n21. The subject is pregnant or pregnancy is planned during the course of the investigation\n22. The subject has a life expectancy of less than two years\n23. The subject is unable to complete follow-up visits for the duration of the study\n\nEcho Exclusion Criteria\n\nA subject is excluded from the study if any of the following echocardiographic exclusion criteria (as assessed via TTE and TEE) are met:\n\n1. The subject has LVEF \\< 30%\n2. The subject has intracardiac thrombus or dense spontaneous echo contrast as visualized by TEE and determined by the echocardiographer within 2 days prior to implant\n3. The subject has an existing pericardial effusion \\> 2mm\n4. The subject has a high risk patent foramen ovale (PFO) with an atrial septal aneurysm excursion \\> 15mm or length \\> 15mm\n5. The subject has a high risk PFO with a large shunt defined as early, within 3 beats or substantial passage of bubbles\n6. The subject has significant mitral valve stenosis (i.e., MV \\<1.5 cm2)\n7. The subject has complex atheroma with mobile plaque of the descending aorta or aortic arch\n8. The subject has a cardiac tumor",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {
+        "largeDocumentModule": {
+          "largeDocs": [
+            {
+              "typeAbbrev": "Prot_SAP",
+              "hasProtocol": true,
+              "hasSap": true,
+              "hasIcf": false,
+              "label": "Study Protocol and Statistical Analysis Plan",
+              "date": "2012-12-12",
+              "uploadDate": "2021-08-27T11:51",
+              "filename": "Prot_SAP_000.pdf",
+              "size": 430332
+            }
+          ]
+        }
+      },
+      "archived_job_id": "ec6f4bc54be849e88cbd6a11fe5a9a69",
+      "archived_job_sha256": "8023e7a412c28f2ba61977c9a8a7fd6e418c696ca9aca7ea795b2cf1a053ad8f",
+      "frozen_source_version": "ctgov-2022-03-29",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "8f5ac67127ed6dc0bebb8716afb237d11e4ac0ef8058597a222ad95dcc7fb075",
+      "live_eligibility_sha256": "8f5ac67127ed6dc0bebb8716afb237d11e4ac0ef8058597a222ad95dcc7fb075"
+    },
+    "NCT03064867": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT03064867",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT03064867",
+          "orgStudyIdInfo": {
+            "id": "CASE2415"
+          },
+          "organization": {
+            "fullName": "Case Comprehensive Cancer Center",
+            "class": "OTHER"
+          },
+          "briefTitle": "Venetoclax Plus R-ICE Chemotherapy for Relapsed/Refractory Diffuse Large B-Cell Lymphoma",
+          "officialTitle": "Phase I/II Trial of Venetoclax in Combination With R-ICE (V+RICE) Chemotherapy for Relapsed/Refractory Diffuse Large B-Cell Lymphoma"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2022-11",
+          "overallStatus": "ACTIVE_NOT_RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2017-06-26",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2022-08-12",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2023-08-12",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2017-02-22",
+          "studyFirstSubmitQcDate": "2017-02-22",
+          "studyFirstPostDateStruct": {
+            "date": "2017-02-27",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2022-11-14",
+          "lastUpdatePostDateStruct": {
+            "date": "2022-11-16",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The purpose of this study is to determine the correct dose and safety of adding a new cancer drug, venetoclax, to a standard combination of chemotherapy drugs as a second treatment for relapsed/refractory DLBCL. In this study, venetoclax will be added to RICE (rituximab, ifosfamide, carboplatin, etoposide), a common set to cancer drugs used as a second line treatment for relapsed/refractory DLBCL.\n\nVenetoclax, is a new targeted anti-cancer drug, which works by mimicking a particular protein produced by the tumor and interrupting its normal processes, ultimately causing the tumor cells to die. Adding venetoclax to the standard RICE regimen is believed to increase the chance of getting cancer into remission.\n\nVenetoclax is experimental because it is not approved by the Food and Drug Administration (FDA) for the treatment of relapsed/refractory DLBCL. Venetoclax has been FDA approved for use in patients with chronic lymphocytic leukemia (CLL).",
+          "detailedDescription": "Primary Objective:\n\nEstablishment of safety of V+RICE in order to identify the recommended Phase II dose (RPD2)\n\nSecondary Objectives:\n\n1. Determine the overall response rate (ORR) of V+RICE relative to historical controls of RICE alone in r/r DLBCL.\n2. Determine the proportion of patients who proceed to autologous stem cell transplantation after V+RICE relative to historical controls.\n3. Describe the progression-free survival (PFS) and overall survival (OS) for patients treated with V + RICE who do and do not proceed to auto-Stem Cell Transplant, relative to historical controls.\n4. Measure total number of peripheral blood stem cells collected in patients treated with V + RICE who proceed to stem cell mobilization/harvesting, compared to historical controls."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE1",
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 65,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Histological confirmation of relapsed/refractory diffuse large B-cell lymphoma after prior rituximab and anthracycline-containing systemic treatment regimen such as R-CHOP (rituximab, cyclophosphamide, doxorubicin, vincristine, and prednisone), R-EPOCH (rituximab, etoposide phosphate, prednisone, vincristine sulfate, cyclophosphamide, doxorubicin hydrochloride), R-HyperCVAD (rituximab, cyclophosphamide, vincristine sulfate, doxorubicin hydrochloride, dexamethasone) etc. A biopsy immediately before enrollment is not required.\n* Subjects must have received no more than 2 prior systemic therapies for lymphoma. Prior therapy with systemic rituximab monotherapy or conventional chemotherapy (i.e. bendamustine, CVP (Cyclophosphamide, Vincristine Sulfate, Prednisone) or other) ± rituximab for indolent non-Hodgkin's lymphoma (NHL) ± maintenance/extended-use rituximab will count as 1 line of systemic therapy.\n* Eastern Cooperative Oncology Group (ECOG) Performance status ≤ 2\n* Subjects must have normal organ and marrow function as defined below:\n\n  * Hemoglobin ≥ 8.0 g/dl\n  * Absolute neutrophil count ≥ 1,000/mcL\n  * Platelet count ≥ 75,000/mcL\n  * Total bilirubin ≤ 1.5 X the upper limit of normal (ULN) unless a known history of impaired bilirubin conjugation such as Gilbert's, for whom the maximum will be 2.5 ULN.\n  * Aspartate transaminase (AST) (SGOT) ≤ 2.5 X institutional ULN\n  * Alanine transaminase (ALT) (SGPT) ≤ 2.5 X institutional ULN\n  * International normalized ratio (INR) ≤ 1.5 ×ULN\n  * Patients must have a calculated serum creatinine clearance \\> 50 mL/min using Cockcroft-Gault calculation or based on 24-hour urine collection performed within 7 days prior to treatment.\n* Specific guidelines will be followed regarding inclusion of relapsed/refractory DLBCL based on Hepatitis B serological testing as follow:\n\n  * HBsAg negative, HBcAb negative, HBsAb negative patients are eligible.\n  * HBsAg negative, HBcAb negative, HBsAb positive patients are eligible.\n  * Patients who test positive for HBsAg are ineligible\n  * Patients with HBsAg negative, but HBcAb positive (regardless of HBsAb status) should have a HBV DNA testing performed and protocol eligibility determined as follow:\n\n    * If HBV DNA is positive, the subject is ineligible.\n    * If HBV DNA is negative, the subject may be included but must undergo HBV DNA PCR testing monthly x 3 months beginning from the start of treatment\n* Subjects must have the ability to understand and the willingness to sign a written informed consent document.\n* For women of childbearing potential: agreement to remain abstinent (refrain from heterosexual intercourse) or use a contraceptive method with a failure rate of \\< 1% per year during the treatment period and for at least 30 days after the last dose of venetoclax or 18 months after the last dose of rituximab, whichever is longer.\n\nA woman is considered to be of childbearing potential if she is postmenarcheal, has not reached a postmenopausal state (\\< 12 continuous months of amenorrhea with no identified cause other than menopause), and has not undergone surgical sterilization (removal of ovaries and/or uterus).\n\n* For men: agreement to remain abstinent (refrain from heterosexual intercourse) or use contraceptive measures, and agreement to refrain from donating sperm, as defined below:\n\nWith female partners of childbearing potential, men must remain abstinent or use a condom plus an additional contraceptive method that together result in a failure rate of \\< 1% per year during the treatment period and for at least 6 months after the last dose of rituximab. Men must refrain from donating sperm during this same period.\n\nWith pregnant female partners, men must remain abstinent or use a condom during the treatment period and for at least 6 months after the last dose of rituximab to avoid exposing the embryo.\n\nExclusion Criteria:\n\n* Prior treatment toxicities have not resolved to ≤ Grade 2 according to NCI CTCAE Version 4.0 (except clinically insignificant toxicities such as alopecia).\n* Subjects receiving any other investigational agents.\n* Patients with active tumor lysis syndrome (TLS) either from laboratory or clinical changes.\n* Patients with active central nervous system (CNS) disease defined as symptomatic meningeal lymphoma or known CNS parenchymal lymphoma.\n* History of severe allergic reactions attributed to compounds of similar chemical or biologic composition to rituximab or other agents used in this study.\n* Subjects with uncontrolled intercurrent illness .\n* HIV-positive subjects on combination antiretroviral therapy are ineligible because of the potential for pharmacokinetic interactions with Venetoclax. In addition, these subjects are at increased risk of lethal infections when treated with marrow suppressive therapy. Appropriate studies will be undertaken in subjects receiving combination antiretroviral therapy when indicated. HIV testing prior to enrollment is not required for screening but strongly encouraged for patients with no documented prior HIV assessment.\n* Presence of positive test results for hepatitis B virus (HBV), hepatitis B surface antigen (HBsAg), or hepatitis C (HCV) antibody.\n\n  * Patients who are positive for HCV antibody must be negative for HCV by polymerase chain reaction (PCR) to be eligible for study participation\n  * Patients with occult or prior HBV infection (defined as positive total hepatitis B core antibody \\[HBcAb\\] and negative HBsAg) may be included if HBV DNA is undetectable. These patients must be willing to undergo monthly DNA testing.\n* Women who are pregnant or lactating\n* Malabsorption syndrome or other condition that precludes enteral route of administration\n* Chemotherapy or radiation within 3 weeks of the first scheduled study treatment.\n* Less than 2-year disease free from another primary malignancy (other than squamous or basal cell carcinoma of the skin, \"in-situ\" carcinoma of the cervix or breast, superficial bladder carcinoma, or previously treated localized prostate cancer with normal prostate specific antigen (PSA) levels). Patients who have had completed all anti-cancer treatment for another primary malignancy more than 2 years prior to screening are eligible if they are not considered to have a \"currently active\" malignancy based on having less than a 30% risk of relapse.\n* Major surgery, other than diagnostic surgery, within 2 weeks.\n* Medical condition requiring chronic use of high dose systemic corticosteroids (i.e., doses of prednisone higher than 10 mg/day or equivalent). Brief (\\<15 days) treatment with glucocorticoids (prednisone 100 mg by mouth daily, or equivalent) is acceptable.\n* Known allergy to both xanthine oxidase inhibitors and rasburicase.\n* Use of warfarin is prohibited. Anticoagulation with low-molecular weight heparin (i.e. enoxaparin) or direct thrombin inhibitors is permitted.\n* The following concomitant medications are not allowed from 7 days prior to the first dose of study drug and during venetoclax administration: Strong CYP3A4 inhibitors including but not limited to fluconazole, ketoconazole, and clarithromycin or strong CYP3A4 inducers included but not limited to rifampin, carbamazepine.\n* Receipt of live-virus vaccines within 28 days prior to the initiation of study treatment or need for live-virus vaccines at any time during study treatment.\n* Concomitant medications that fall into the categories below could potentially lead to adverse reactions and should be considered with caution.\n\n  * Moderate/Weak CYP3A inducers such as efavirenz and oxcarbazepine\n  * CYP2C8 substrates such as thiazolidinediones (glitazones) and select statins (because of expected inhibition of the metabolism of CYP2C8 substrates) by venetoclax\n  * CYP2C9 substrates such as tolbutamide (because of expected inhibition of the metabolism of CYP2C9 substrates by venetoclax. It is recommended to exclude CYP2C9 substrates with a narrow therapeutic index such as phenytoin.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "0b9eb116b6fd4fe495addf7288c58a61",
+      "archived_job_sha256": "5246b6435000909dd130c729c98ae36151615f541ef89d8b4a2447a0e88f714b",
+      "frozen_source_version": "ctgov-2022-11-16",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "65e952cae66e7f7c60488615f28e5459d3444c56ecff93a7567c129886fc3431",
+      "live_eligibility_sha256": "65e952cae66e7f7c60488615f28e5459d3444c56ecff93a7567c129886fc3431"
+    },
+    "NCT05379712": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT05379712",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT05379712",
+          "orgStudyIdInfo": {
+            "id": "IIT-0024"
+          },
+          "organization": {
+            "fullName": "AHS Cancer Control Alberta",
+            "class": "OTHER"
+          },
+          "briefTitle": "Nutritional Supplementation in Head and Neck Cancers",
+          "officialTitle": "A Randomized Open Label Trial of Multimodal Oral Nutritional Supplementation Versus Standard Care, to Prevent / Attenuate Malnutrition in Patients With Cancers of the Head and Neck Receiving (Chemo)-Radiotherapy Treatment."
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2026-10",
+          "overallStatus": "ACTIVE_NOT_RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2024-10-25",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2027-10",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2027-10",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2022-05-13",
+          "studyFirstSubmitQcDate": "2022-05-13",
+          "studyFirstPostDateStruct": {
+            "date": "2022-05-18",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-10-30",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-11-03",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The purpose of this study is to determine whether multimodal nutrition therapy (primary nutrition intervention + adjuvant nutrition therapy) will support patients to optimize their total caloric intake during cancer treatment by measuring the difference in mean cumulative energy intake between the intervention and control group over the duration of cancer treatment.",
+          "detailedDescription": "This will be an randomized, open label, parallel assignment study during cancer treatment (Baseline - Week 7 for Primary endpoint) comparing multimodal oral nutrition therapy versus standard care. Starting at Week 8, all patients receive the intervention arm until study ends at Week 14. Patients in the intervention arm continue the intervention, patients on the standard care arm cross over to the intervention (deferred nutrition intervention).\n\nThe primary objective is to assess a multimodal nutrition therapy with two Medical Foods (primary nutrition intervention+ adjuvant nutrition therapy) with features adapted for patients with cancers of the head and neck receiving chemo-radiotherapy treatment, to maintain oral dietary intake during treatment."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "CROSSOVER",
+            "interventionModelDescription": "Randomized (multimodal oral nutrition therapy versus standard care), open label, parallel assignment, during cancer treatment (Baseline - Week 7 for Primary endpoint). Starting at Week 8, all patients receive the intervention arm until study ends at Week 14. Patients in the intervention arm continue the intervention, patients on the standard care arm cross over to the intervention (deferred nutrition intervention).",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 81,
+            "type": "ESTIMATED"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Patients must have the ability to read, understand, and sign an informed consent and must be willing to comply with study treatment and follow-up.\n2. Male or female\n3. ≥18 years of age\n4. Histopathologically confirmed primary squamous cell carcinoma of the oral cavity and oropharynx, larynx or hypopharynx, who have agreed to receive radical intent radiotherapy as primary treatment or adjuvant treatment post-surgery, with or without platinum chemotherapy\n5. Capable of volitional oral nutritional intake at baseline.\n6. A diagnostic CT image taken with a maximum of 30 days before initiation of radical intent radiotherapy. If the CT scan history in the patient's clinical record does not include a study within this window, a baseline non-contrast enhanced CT abdomen will be conducted.\n7. An Eastern Cooperative Oncology Group Performance Status of ≤ 2\n\nExclusion Criteria:\n\n1. Fed by nasogastric tube, gastrostomy or total parenteral nutrition\n2. Cancer of the nasopharynx, thyroid or salivary gland\n3. Life expectancy \\<6 months.\n4. A known hypersensitivity / allergy to the investigational product or to any ingredient in their formulations (e.g. Milk/Lactose, Fish).\n5. Enrolment in any other clinical protocol or investigational study with an interventional agent or assessments that may interfere with study procedures.\n6. Patients with untreated brain metastases (patients with previously resected and/or radiated brain metastases without neurologic symptoms are permitted).\n7. Poorly controlled chronic illnesses or other inflammatory diseases (e.g. COPD, uncontrolled non-insulin dependent diabetes, rheumatoid arthritis).\n8. In the investigators' opinion, patients who have medical conditions that could interfere with nutrient metabolism or absorption (e.g., short bowel syndrome, Crohn's disease, etc.)",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "5a131003d4d24398a1441761da463860",
+      "archived_job_sha256": "bd9d90e2a247aeb66b4ab447e3babcf3e26464fb75d1deb3e68a5376180421e7",
+      "frozen_source_version": "ctgov-2025-03-28",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "4db6ddcbb666685f8e640a0ba3b8394f798abb7e3388e85234338f4d2b264aff",
+      "live_eligibility_sha256": "4db6ddcbb666685f8e640a0ba3b8394f798abb7e3388e85234338f4d2b264aff"
+    },
+    "NCT00025207": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT00025207",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT00025207",
+          "orgStudyIdInfo": {
+            "id": "NCI-2012-02414"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "CLB-30101"
+            },
+            {
+              "id": "U10CA031946",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/U10CA031946"
+            },
+            {
+              "id": "CDR0000068938",
+              "type": "REGISTRY",
+              "domain": "PDQ (Physician Data Query)"
+            }
+          ],
+          "organization": {
+            "fullName": "National Cancer Institute (NCI)",
+            "class": "NIH"
+          },
+          "briefTitle": "Gefitinib in Treating Patients With Malignant Mesothelioma",
+          "officialTitle": "A Phase II Study Of ZD 1839 (NSC 715055, IND 61187) In Patients With Malignant Mesothelioma"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2013-01",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2001-09"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2006-02",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2001-10-11",
+          "studyFirstSubmitQcDate": "2003-09-09",
+          "studyFirstPostDateStruct": {
+            "date": "2003-09-10",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2013-01-15",
+          "lastUpdatePostDateStruct": {
+            "date": "2013-01-17",
+            "type": "ESTIMATED"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "Phase II trial to study the effectiveness of gefitinib in treating patients who have malignant mesothelioma. Biological therapies such as gefitinib may interfere with the growth of the tumor cells and slow the growth of malignant mesothelioma",
+          "detailedDescription": "OBJECTIVES:\n\nI. Determine the activity of gefitinib, in terms of failure-free survival, in patients with malignant mesothelioma.\n\nII. Determine the response rate in patients treated with this drug. III. Determine the toxicity of this drug in these patients. IV. Determine the overall survival of patients treated with this drug. V. Determine whether overexpression of epidermal growth factor receptor and expression of cyclo-oxygenase-2 can predict the effectiveness of this drug in these patients.\n\nOUTLINE: This is a multicenter study.\n\nPatients receive oral gefitinib once daily on days 1-21. Courses repeat every 3 weeks in the absence of disease progression or unacceptable toxicity.\n\nPatients are followed every 2 months for 1 year and then every 6 months for up to 3 years.\n\nPROJECTED ACCRUAL: A total of 40 patients will be accrued for this study within 7-10 months."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 40,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Histologically confirmed malignant mesothelioma that is not amenable to curative surgery or radiotherapy\n\n  * Epithelial, sarcomatoid, or mixed subtype\n  * Any site of origin (including, but not limited to, the pleura, peritoneum, pericardium, or tunica vaginalis) allowed\n* Measurable disease, defined as lesions that can be accurately measured in at least 1 dimension (longest diameter) as at least 20 mm with conventional techniques or at least 10 mm with spiral CT scan\n\n  * Must be outside prior radiation port\n  * Lesions not considered measurable include the following:\n\n    * Bone lesions\n    * Leptomeningeal disease\n    * Ascites\n    * Pleural/pericardial effusion\n    * Inflammatory breast disease\n    * Lymphangitis cutis/pulmonis\n    * Abdominal masses not confirmed and followed by imaging techniques\n    * Cystic lesions\n* No known brain metastases\n* Performance status - CTC 0-1\n* Granulocyte count at least 1,500/mm\\^3\n* Platelet count at least 100,000/mm\\^3\n* Bilirubin no greater than 1.5 times upper limit of normal (ULN)\n* SGOT no greater than 2.5 times ULN\n* Creatinine no greater than 1.5 times ULN\n* No symptomatic congestive heart failure\n* No unstable angina pectoris\n* No cardiac arrhythmia\n* Not pregnant or nursing\n* Fertile patients must use effective contraception\n* No other concurrent active malignancy except nonmelanoma skin cancer\n\n  * Disease considered not currently active if completely treated with less than a 30% risk for relapse\n* No other concurrent uncontrolled illness\n* No ongoing or active infection\n* No psychiatric illness or social situation that would preclude study compliance\n* No prior epidermal growth factor receptor-inhibitor therapy\n* Prior intrapleural cytotoxic or sclerosing agents (including bleomycin) allowed\n* No prior systemic cytotoxic chemotherapy for malignant mesothelioma\n* No concurrent chemotherapy\n* At least 1 week since prior CYP3A4 inducers (e.g., dexamethasone, glucocorticoids, progesterone)\n* No concurrent CYP3A4 inducers (e.g., dexamethasone)\n* No concurrent hormonal therapy (e.g., tamoxifen) except steroids for adrenal failure or hormones for non disease-related conditions (e.g., insulin for diabetes)\n* See Disease Characteristics\n* At least 4 weeks since prior radiotherapy\n* No concurrent radiotherapy, including for palliation\n* See Disease Characteristics\n* At least 2 weeks since prior major surgery\n* At least 1 week since other prior CYP3A4 inducers (e.g., carbamazepine, ethosuximide, griseofulvin, nafcillin, nelfinavir mesylate, nevirapine, oxcarbazepine, phenobarbital, phenylbutazone, phenytoin, primidone, rifabutin, rifampin, rofecoxib, St. John's Wort, sulfadimidine, sulfinpyrazone, or troglitazone)\n* No other concurrent CYP3A4 inducers\n* No concurrent CYP3A4 substrates or inhibitors\n* No other concurrent investigational agent\n* No concurrent combination antiretroviral therapy for HIV-positive patients\n* No concurrent chlorpromazine, amiodarone, or chloroquine",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "5dce75d934a444619dda395798a5fc35",
+      "archived_job_sha256": "f2c5e442c8bb58b6cf9af61d0a173e125c1cff4bd6cdb02f764ecc76e51edd3b",
+      "frozen_source_version": "ctgov-2013-01-17",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "1eb4024c1d4adb7cd20bd321c803baa62f92654d16b4750e048298bb5022a0b0",
+      "live_eligibility_sha256": "1eb4024c1d4adb7cd20bd321c803baa62f92654d16b4750e048298bb5022a0b0"
+    },
+    "NCT01437098": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT01437098",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT01437098",
+          "orgStudyIdInfo": {
+            "id": "MDT-2111"
+          },
+          "organization": {
+            "fullName": "Medtronic Cardiovascular",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Clinical Evaluation of MDT-2111 in Subjects With Symptomatic Severe Aortic Stenosis",
+          "officialTitle": "Clinical Evaluation of MDT-2111 in Subjects With Symptomatic Severe Aortic Stenosis"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2018-10",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2011-10"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2013-04",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2018-11-27",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2011-09-16",
+          "studyFirstSubmitQcDate": "2011-09-19",
+          "studyFirstPostDateStruct": {
+            "date": "2011-09-20",
+            "type": "ESTIMATED"
+          },
+          "resultsFirstSubmitDate": "2015-10-02",
+          "resultsFirstSubmitQcDate": "2016-04-27",
+          "resultsFirstPostDateStruct": {
+            "date": "2016-06-06",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2019-01-31",
+          "lastUpdatePostDateStruct": {
+            "date": "2019-02-15",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The primary objective of the present trial is to demonstrate the effectiveness and safety of the MDT-2111 in the treatment of symptomatic severe aortic stenosis in subjects deemed difficult for surgical operation.",
+          "detailedDescription": "Non-randomized, prospective, multicenter, single-arm trial."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 55,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Subject must have co-morbidities such that one cardiologist and one cardiac surgeons agree that medical factors preclude operation, based on a conclusion that the probability of death or serious morbidity exceeds the probability of meaningful improvement.\n2. Subject has senile degenerative aortic valve stenosis with:\n\n   mean gradient \\> 40 mmHg or jet velocity greater than 4.0 m/s by either resting or dobutamine stress echocardiogram, or simultaneous pressure recordings at cardiac catheterization (either resting or dobutamine stress), AND an initial aortic valve area of ≤ 0.8 cm² (or aortic valve area index ≤ 0.5 cm²/m²) by resting echocardiogram.\n3. Subject is symptomatic from his/her aortic valve stenosis, as demonstrated by NYHA Functional Class Class III or greater. If screening committee agrees the eligibility of a patient with class II , based on medical factors, he/she can be enrolled.\n4. Subject has been informed of the nature of the trial and has signed an Informed Consent Form.\n5. Subject agrees to comply with specified follow-up evaluations and to return to the same investigational site where the procedure was performed.\n\nExclusion Criteria:\n\n1. Evidence of an acute myocardial infarction ≤ 30 days prior to the intended treatment.\n2. Any percutaneous coronary or peripheral interventional procedure performed within 30 days prior to the procedure.\n3. Blood dyscrasias as defined:\n\n   * Leukopenia (WBC count \\< 1,000 cells/mm³)\n   * Thrombocytopenia (platelet count \\<50,000 cells/mm³)\n   * History of bleeding diathesis or coagulopathy\n   * Hypercoagulable states\n4. Untreated clinically significant coronary artery disease requiring revascularization.\n5. Cardiogenic shock manifested by low cardiac output, vasopressor dependence, or mechanical hemodynamic support.\n6. Need for emergency surgery for any reason.\n7. Severe ventricular dysfunction with left ventricular ejection fraction (LVEF) \\< 20% as measured by resting echocardiogram.\n8. Recent (within 6 months) cerebrovascular accident (CVA) or transient ischemic attack(TIA).\n9. End stage renal disease requiring chronic dialysis.\n10. GI bleeding within the past 3 months.\n11. A known hypersensitivity or contraindication to any of the following which cannot be adequately pre-medicated:\n\n    * Aspirin\n    * Ticlopidine\n    * Heparin\n    * Contrast media\n    * Nitinol (titanium and nickel alloy)\n12. Ongoing sepsis, including active endocarditis.\n13. Subject refuses a blood transfusion.\n14. Life expectancy \\< 12 months due to associated non-cardiac co-morbid conditions.\n15. Other medical, social, or psychological conditions that in the opinion of an Investigator precludes the subject from appropriate consent.\n16. Severe dementia (resulting in either inability to provide informed consent for the trial/procedure, prevents independent lifestyle outside of a chronic care facility, or will fundamentally complicate rehabilitation from the procedure or compliance with follow-up visits).\n17. Currently participating in an investigational drug or another device trial. Note: Trials requiring extended follow-up for products that were investigational, but have since become commercially available, are not considered investigational trials.\n18. Symptomatic carotid or vertebral artery disease.\n19. Native aortic annulus size \\< 20 mm or \\> 27 mm per the screening diagnostic imaging.\n20. Pre-existing prosthetic heart valve in any position.\n21. Mixed aortic valve disease (aortic stenosis and aortic regurgitation with predominant aortic regurgitation).\n22. Mitral regurgitation (moderate to severe) or severe tricuspid regurgitation.\n23. Moderate to severe mitral stenosis.\n24. Hypertrophic obstructive cardiomyopathy.\n25. Echocardiographic evidence of intracardiac mass, thrombus or vegetation.\n26. Severe basal septal hypertrophy with an outflow gradient.\n27. Ascending aorta diameter \\> 43 mm (in case of the aortic annulus is 23-27 mm) unless the aortic annulus is 20-23 mm in which case the ascending aorta diameter \\> 40 mm.\n28. Congenital bicuspid or unicuspid valve verified by echocardiography.\n29. For patients with native coronary artery dependent circulation:\n\n    * Sinus of valsalva width \\< 29 mm unless the aortic annulus is 20-23 mm, in which case the sinus of valsalva width \\< 27 mm, OR\n    * Height of the left or right coronary sinus of valsalva (to the tubular aorta) \\< 15mm.\n30. Femoral or iliac artery of the first choice corresponding to any one of the followings:\n\n    * Angle at aortic root (the angle between aortic valve annulus plane and horizontal plane/vertebra) exceeds 70°.\n    * Vessel diameter of femoral or iliac artery is less than 6 mm.\n    * Aorta has severe calcification, excess tortuosity or severe atherosclerosis.\n    * Transarterial access not able to accommodate an 18Fr sheath.\n31. Subclavian artery of the second choice corresponding to any one of the followings:\n\n    * Angle at aortic root (the angle between aortic valve annulus plane and horizontal plane/vertebra) exceeds 70° (in the case of left subclavian artery) and 30° (in the case of right subclavian artery).\n    * Vessel diameter of subclavian artery is less than 6 mm.\n    * Transarterial access not able to accommodate an 18Fr sheath.\n32. Direct Aortic Artery as third line choice of access. Patients are excluded from Direct Aortic access if:\n\n    * Access site is less than 6 cm from the aortic valve basal plane\n    * Access site has calcification or porcelain aorta\n    * Access site and delivery trajectory contain RIMA or patent RIMA graft",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "stdAges": [
+            "CHILD",
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "0180feed0bd0440fa21e91f9d9230d03",
+      "archived_job_sha256": "6233ffe3df1e9248441e32e97513020ea8f4051541027ae05484670c480f02c2",
+      "frozen_source_version": "ctgov-2019-02-15",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "220a7daecf6a8349408617810f150bbf59e43fe8ab22acb548d9e2bebe498307",
+      "live_eligibility_sha256": "220a7daecf6a8349408617810f150bbf59e43fe8ab22acb548d9e2bebe498307"
+    },
+    "NCT06730230": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT06730230",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT06730230",
+          "orgStudyIdInfo": {
+            "id": "23-00746"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "1R01MD018520-01A1",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/1R01MD018520-01A1"
+            }
+          ],
+          "organization": {
+            "fullName": "NYU Langone Health",
+            "class": "OTHER"
+          },
+          "briefTitle": "Partners in Control, Phase II: Using Remote Monitoring Technology With Community Health Workers to Support Hypertension Management for Latinx Patients",
+          "officialTitle": "Partners in Control, Phase II: Using Remote Monitoring Technology With Community Health Workers to Support Hypertension Management for Latinx Patients"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-12",
+          "overallStatus": "RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2025-02-10",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2026-05-31",
+            "type": "ESTIMATED"
+          },
+          "completionDateStruct": {
+            "date": "2027-05-31",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2024-12-09",
+          "studyFirstSubmitQcDate": "2024-12-09",
+          "studyFirstPostDateStruct": {
+            "date": "2024-12-12",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-12-03",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-12-04",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "This study seeks to evaluate the impact of a remote patient monitoring (RPM)-specific tech-enabled community health worker workforce on the use of RPM for the management of hypertension among Latinx patients. This study is a step-wedge randomized controlled trial that aims to assess the effectiveness and implementation of RPM-enabled community health workers (CHWs) compared to standard of care RPM hypertension management on blood pressure reduction and evaluate the implementation of the RPM-enabled CHWs for hypertension (HTN) management. The study aims to examine adoption, acceptability, fidelity, cost, sustainability, and equity as outcomes of implementation effectiveness."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "NA"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "interventionModelDescription": "With the stepped-wedge design, each clinic will function as a control or \"usual care\" group prior to the implementation of the intervention. During this period, the clinic will prescribe and treat patients enrolled in the RPM hypertension program using usual protocols.",
+            "primaryPurpose": "SUPPORTIVE_CARE",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 300,
+            "type": "ESTIMATED"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Self-identify as Latinx\n2. Be fluent in English or Spanish\n3. Be age 18 years or older\n4. Receiving care at one of the 10 safety-net primary care clinics\n5. Have uncontrolled HTN documented in the electronic health record (EHR) on at least two visits in the past year (defined as an average BP ≥ 140/90 mmHg)\n6. Have been prescribed at least one anti-hypertensive medication and be non-adherent to their medications, defined as adherence \\<80% in the preceding 12 months, as determined by prescription orders obtained from the clinic EHR.\n\nExclusion Criteria:\n\n1. Being deemed unable to comply with the study protocol (either self-selected or by indicating during screening that s/he could not complete all requested tasks)\n2. Participation in other hypertension-related clinical trials\n3. Have significant psychiatric comorbidity or reports of substance abuse (as documented in the EHR)\n4. Plan to discontinue care at the clinic within the next 15 months",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "9965fa47c826455a8a420302365c418d",
+      "archived_job_sha256": "742de3f701c14315576eb7f3a2c752ddc694684ea4d38f2faa70512991ba0504",
+      "frozen_source_version": "ctgov-2025-12-04",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "ec7a83369384bfbea1914c2e9c0e29915812c2dd64274cf43b08dd075f470580",
+      "live_eligibility_sha256": "ec7a83369384bfbea1914c2e9c0e29915812c2dd64274cf43b08dd075f470580"
+    },
+    "NCT00154271": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT00154271",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT00154271",
+          "orgStudyIdInfo": {
+            "id": "CVAH631DUS02"
+          },
+          "organization": {
+            "fullName": "Novartis",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Effects of Blood Pressure Reduction on High Sensitivity C-Reactive Protein (hsCRP)",
+          "officialTitle": "Effects of Blood Pressure Reduction on High Sensitivity C-Reactive Protein (hsCRP)"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2006-08",
+          "overallStatus": "COMPLETED",
+          "startDateStruct": {
+            "date": "2004-01"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2005-06",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2005-06",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2005-09-08",
+          "studyFirstSubmitQcDate": "2005-09-08",
+          "studyFirstPostDateStruct": {
+            "date": "2005-09-12",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2011-11-07",
+          "lastUpdatePostDateStruct": {
+            "date": "2011-11-08",
+            "type": "ESTIMATED"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The study compares the efficacy of an aggressive versus a moderate initial antihypertensive regimen to reduce blood pressure in patients with Stage 2 hypertension. Additionally, the study examines the effects of blood pressure reduction on the levels of high sensitivity hsCRP. Although the main goal is to determine the overall effect of blood pressure reduction on hsCRP levels, analysis will also evaluate whether an aggressive antihypertensive regimen is more effective than a moderate one in reducing hsCRP levels."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE4"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 1677,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Stage 2 hypertension as defined by the mean of three (3) repeated seated BP measurements of: SBP of 160 to 185 mmHg, inclusive and/or DBP of 100 to 109 mmHg, inclusive.\n2. Patients must have documentation of serum creatinine equal or \\<2.0 mg/dL, serum potassium equal or \\>3.5 and equal or \\<5.5 mmol/L, and serum AST or ALT \\<2xULN obtained within 3 months prior to Visit 1.\n3. Patients must have documentation of HbA1C equal or \\<11.0 % obtained within 1 month prior to Visit 1.\n\nExclusion Criteria:\n\n1. History of secondary hypertension.\n2. Pharmacologic antihypertensive therapy with ACE inhibitors, angiotensin receptor blockers, or aldosterone blockers within 3 months prior to Visit 1, or with thiazide diuretics within 1 month prior to Visit 1. The use of other classes of agents which lower BP but are being used for other therapy or for HTN, are allowed as long as these agents are started at least 3 months prior to randomization, are not initiated after enrollment and doses remain unchanged during the study.\n\nOther protocol-defined inclusion/exclusion criteria may apply.",
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "maximumAge": "75 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "cd40b5396ad548e4975ff726b10b22ba",
+      "archived_job_sha256": "268c7391eae3a6de10f0a69087e39807e5985cafb5c000a99d4a58785bfbe47b",
+      "frozen_source_version": "ctgov-2011-11-08",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "bfac540ba63bfe0f4bbcd360998e79218aa1ac9265d83d598c2a6351f0542bd0",
+      "live_eligibility_sha256": "bfac540ba63bfe0f4bbcd360998e79218aa1ac9265d83d598c2a6351f0542bd0"
+    },
+    "NCT04747145": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT04747145",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT04747145",
+          "orgStudyIdInfo": {
+            "id": "PRO00039277"
+          },
+          "organization": {
+            "fullName": "Medical College of Wisconsin",
+            "class": "OTHER"
+          },
+          "briefTitle": "Analyzing Pulsed Reduced Dose Radiotherapy in Upfront Glioblastoma",
+          "officialTitle": "A Phase II Study Analyzing Pulsed Reduced Dose Radiotherapy in Upfront Glioblastoma (PRORADGLIO Study)"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-08",
+          "overallStatus": "ACTIVE_NOT_RECRUITING",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2021-06-03",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2025-03-05",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2027-09",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2021-02-06",
+          "studyFirstSubmitQcDate": "2021-02-06",
+          "studyFirstPostDateStruct": {
+            "date": "2021-02-10",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-08-15",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-08-21",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The primary protocol objective is to assess the impact of substituting pulsed reduced dose radiotherapy (pRDR) for standard radiation therapy in the upfront treatment of glioblastoma (GBM) on disease progression.",
+          "detailedDescription": "This is a single-arm, single-center phase 2 study designed to assess the efficacy of pulsed reduced dose-rate radiotherapy in the initial treatment of maximally safely resected glioblastoma. The primary endpoint will be progression-free survival at six months. Patients with pathologically confirmed GBM who are planned for six weeks of adjuvant chemoradiation followed by six to12 months of adjuvant chemotherapy will be screened and enrolled after surgery."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 38,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n1. Voluntary written consent must be given before performance of any study-related procedure that is not part of standard medical care, with the understanding that consent may be withdrawn by the subject at any time without prejudice to future medical care.\n2. Female or male subjects ≥ 18 years old at the time of informed consent.\n3. Histologically confirmed new diagnosis of GBM according to updated World Health Organization (WHO) classification criteria.\n4. Supratentorial tumor location.\n5. Recovered from maximal debulking surgery, if applicable (gross total resection, partial resection and biopsy-only patients are all acceptable).\n6. Planned for standard adjuvant chemoradiotherapy of approximately 60 Gy of radiation therapy (RT) , or biologically equivalent dose, according to local practice, and concomitant TMZ chemotherapy (75 mg/m\\^2 daily) Any other cytotoxic or biologic antitumor therapy received prior to enrollment will be considered an exclusion.\n7. Planned treatment with adjuvant/maintenance TMZ (150 to 200 mg/m\\^2 daily x 5 d, q 28 days).\n8. All patients with sufficient tissue must have had tissue submitted for O6-Methylguanine-DNA Methyltransferase (MGMT) promoter methylation determination prior to enrollment.\n9. Karnofsky Performance Status Scale ≥ 70.\n10. Life expectancy greater than at least three months.\n11. Study start date at least three weeks out from brain surgery.\n12. Stable or decreasing dose of corticosteroids for the last seven days prior to enrollment, if applicable.\n13. Complete blood count (CBC) /differential obtained within 28 days prior to registration, with adequate bone marrow function defined as follows: absolute neutrophil count (ANC) ≥ 1,500 cells/mm\\^3; platelets ≥ 100,000 cells/mm\\^3; hemoglobin ≥ 10.0 g/dL. (Note: the use of transfusion or other intervention to achieve Hgb ≥10.0 g/dL is acceptable.)\n14. Female subjects who:\n\n    1. Are postmenopausal for at least one year before the screening visit, OR\n    2. Are surgically sterile, OR\n\n    If they are of childbearing potential:\n\n    i. Agree to practice one highly effective method and one additional effective (barrier) method of contraception, at the same time, from the time of signing the informed consent through four months after the last study intervention (female and male condoms should not be used together), OR ii. Agree to practice true abstinence, when this is in line with the preferred and usual lifestyle of the subject. (Periodic abstinence \\[e.g., calendar, ovulation, symptothermal, postovulation methods\\] withdrawal, spermicides only, and lactational amenorrhea are not acceptable methods of contraception.)\n15. Male subjects, even if surgically sterilized (i.e., status postvasectomy), who:\n\n    1. Agree to practice effective barrier contraception during the entire study treatment period from the time of signing the informed consent through four months after the last study intervention (female and male condoms should not be used together), OR\n    2. Agree to practice true abstinence, when this is in line with the preferred and usual lifestyle of the subject. (Periodic abstinence \\[e.g., calendar, ovulation, symptothermal, postovulation methods for the female partner\\] withdrawal, spermicides only, and lactational amenorrhea are not acceptable methods of contraception.)\n\nExclusion Criteria:\n\n1. Prior invasive malignancy (except non-melanomatous skin cancer) unless disease free for a minimum of three years. (For example, carcinoma in situ of the breast, oral cavity, or cervix are all permissible).\n2. Recurrent or multifocal malignant gliomas.\n3. Any site of distant disease (i.e., leptomeningeal disease or drop metastases from the GBM tumor site).\n4. Prior radiotherapy to the head or neck (except for T1 glottic cancer), resulting in overlap of radiation fields.\n5. Severe, active comorbidity, defined as follows:\n\n   * Unstable angina at registration.\n   * Transmural myocardial infarction within the last six months prior to registration.\n   * Evidence of recent myocardial infarction or ischemia by the findings of S-T elevations of ≥ 2 mm using the analysis of an EKG performed within 28 days prior to registration. (Note: EKG to be performed only if clinical suspicion of cardiac issue.)\n   * New York Heart Association grade II or greater congestive heart failure requiring hospitalization within 12 months prior to.\n   * Active connective tissue disorders, such as lupus or scleroderma, that in the opinion of the treating physician may put the patient at high risk for radiation toxicity.\n   * New York Heart Association grade II or greater congestive heart failure requiring hospitalization within 12 months prior to registration.\n   * Active connective tissue disorders, such as lupus or scleroderma, that in the opinion of the treating physician may put the patient at high risk for radiation toxicity.\n   * End-stage renal disease (i.e., on dialysis or dialysis has been recommended).\n6. Pregnancy or women of childbearing potential and men who are sexually active and not willing/able to use medically acceptable forms of contraception; this exclusion is necessary because the treatment involved in this study may be significantly teratogenic.\n7. Patents treated on any other therapeutic clinical protocols within 30 days prior to registration.\n8. Inability to undergo MRI.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "d5902686d20d4bcda03b16d1d9bf07b6",
+      "archived_job_sha256": "d32015dec28464152faf56ae7b3deaf6d0df7837619cfb3007cdbeaaa0b3f526",
+      "frozen_source_version": "ctgov-2025-08-21",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "25b205c471dd6784dd7fb001a0b010fdb4ad5fa7baa4d9e5c7d333b3ff66213d",
+      "live_eligibility_sha256": "25b205c471dd6784dd7fb001a0b010fdb4ad5fa7baa4d9e5c7d333b3ff66213d"
+    },
+    "NCT01260545": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT01260545",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT01260545",
+          "orgStudyIdInfo": {
+            "id": "2010-PT015"
+          },
+          "organization": {
+            "fullName": "Janssen Research & Development, LLC",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "Study of CA-18C3 in Subjects With Advanced Hematologic Malignancies",
+          "officialTitle": "Phase I Study of CA-18C3 in Subjects With Advanced Hematologic Malignancies"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2021-02",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2011-04-30",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2012-06-30",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2012-09-30",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2010-12-10",
+          "studyFirstSubmitQcDate": "2010-12-13",
+          "studyFirstPostDateStruct": {
+            "date": "2010-12-15",
+            "type": "ESTIMATED"
+          },
+          "lastUpdateSubmitDate": "2021-02-12",
+          "lastUpdatePostDateStruct": {
+            "date": "2021-02-16",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "The purpose of this study is to examine the safety and tolerability of CA-18C3 in subjects with hematologic malignancies, as well as look at the preliminary efficacy of IL-1alpha blockade."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE1"
+          ],
+          "designInfo": {
+            "allocation": "NON_RANDOMIZED",
+            "interventionModel": "SINGLE_GROUP",
+            "primaryPurpose": "SUPPORTIVE_CARE",
+            "maskingInfo": {
+              "masking": "NONE"
+            }
+          },
+          "enrollmentInfo": {
+            "count": 14,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Male or female subjects age ≥ 18 years of age\n* Subject must have a relapsed/refractory leukemia for which no standard therapies are anticipated to result in a durable remission. Subjects with previously treated high-risk myelodysplasia (MDS) (Intermediate 2 or high-risk by IPSS) and chronic myelomonocytic leukemia-2 (CMML-2 by WHO classification) are also candidates for this protocol. Relapsed/refractory leukemias include acute non-lymphocytic leukemia (AML) by WHO classification, acute lymphocytic leukemia (ALL), chronic lymphocytic leukemia (CLL), or chronic myelogenous leukemia (CML) in blast crisis. Subjects with myelofibrosis are also eligible. Untreated patients with above diagnoses considered unfit for standard therapy will also be eligible.\n* Eastern Cooperative Oncology Group (ECOG) performance status of 0-3.\n* Women of child bearing potential (i.e., women who are pre-menopausal or not surgically sterile) must use acceptable contraceptive methods (abstinence, intrauterine device \\[IUD\\], oral contraceptive or double barrier device), and must have a negative urine pregnancy test within 2 weeks prior to beginning treatment on this trial. Nursing subjects are excluded. Sexually active men must also use acceptable contraceptive methods for the duration of time on study. Pregnant and nursing subjects are excluded because the effects of CA-18C3 on a fetus or nursing child are unknown.\n* In the absence of rapidly progressing disease, the interval from prior treatment to time of study drug administration should be at least 2 weeks for cytotoxic agents, or at least 5 half-lives for non-cytotoxic agents. If the subject is on hydroxyurea to control peripheral blood leukemic cell counts, the subject must be off hydroxyurea for at least ¬48 hours before initiation of treatment on this protocol. Persistent clinically significant toxicities from prior chemotherapy must not be greater than grade 1.\n* Subjects must have the following clinical laboratory values (unless out of range values are considered to be the result of leukemic organ involvement):\n\n  1. Serum creatinine ≤ 2.0 mg/dl.\n  2. Total bilirubin ≤ 1.5x the upper limit of normal unless considered due to Gilbert's syndrome.\n  3. Alanine aminotransferase (ALT), or aspartate aminotransferase (AST) ≤ 3x the upper limit of normal unless considered due to organ leukemic involvement.\n* Signed and dated institutional review board (IRB)-approved informed consent before any protocol-specific screening procedures are performed.\n\nExclusion Criteria:\n\n* Uncontrolled intercurrent illness including, but not limited to uncontrolled infection, symptomatic congestive heart failure, cardiac arrhythmia, or psychiatric illness/social situations that would limit compliance with study requirements.\n* Active heart disease including myocardial infarction within previous 3 months, symptomatic coronary artery disease, arrhythmias not controlled by medication, or uncontrolled congestive heart failure.\n* Subjects receiving any other standard or investigational treatment for their hematologic malignancy.\n* Subjects who at the time of evaluation for participation in the study have evidence of active leukemic involvement in the brain or spinal cord (CNS).\n* Dementia or altered mental status that would prohibit the understanding or rendering of informed consent\n* Subjects immunocompromised due to a process unrelated to leukemic disease or treatment, including subjects known to be infected with human immunodeficiency virus (HIV)\n* Subjects with detectable levels of endogenous antibodies to IL-1α at the time of screening.",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {},
+      "archived_job_id": "4a04ae56e05e46ffa46c93e6ff2bcbdb",
+      "archived_job_sha256": "730ab37d076597456b331158d5b0766cae3d5d4f5bbdab7c582abe7784660ca4",
+      "frozen_source_version": "ctgov-2021-02-16",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "3d232ebeda814a5020366438b67d775e4b1ddc046b8fe5ccf303141461da60a9",
+      "live_eligibility_sha256": "3d232ebeda814a5020366438b67d775e4b1ddc046b8fe5ccf303141461da60a9"
+    },
+    "NCT03153111": {
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT03153111",
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT03153111",
+          "orgStudyIdInfo": {
+            "id": "AC-055G202"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "2016-003653-15",
+              "type": "EUDRACT_NUMBER"
+            },
+            {
+              "id": "2016",
+              "type": "NIH",
+              "link": "https://reporter.nih.gov/quickSearch/2016"
+            }
+          ],
+          "organization": {
+            "fullName": "Actelion",
+            "class": "INDUSTRY"
+          },
+          "briefTitle": "A Study to Evaluate Whether Macitentan is an Effective and Safe Treatment for Patients With Heart Failure With Preserved Ejection Fraction and Pulmonary Vascular Disease",
+          "officialTitle": "A Multi-center, Double-blind, Placebo-controlled Phase 2b Study to Evaluate the Efficacy and Safety of Macitentan in Subjects With Heart Failure With Preserved Ejection Fraction and Pulmonary Vascular Disease",
+          "acronym": "SERENADE"
+        },
+        "statusModule": {
+          "statusVerifiedDate": "2025-03",
+          "overallStatus": "COMPLETED",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "startDateStruct": {
+            "date": "2017-07-11",
+            "type": "ACTUAL"
+          },
+          "primaryCompletionDateStruct": {
+            "date": "2021-03-12",
+            "type": "ACTUAL"
+          },
+          "completionDateStruct": {
+            "date": "2021-03-12",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2017-03-30",
+          "studyFirstSubmitQcDate": "2017-05-12",
+          "studyFirstPostDateStruct": {
+            "date": "2017-05-15",
+            "type": "ACTUAL"
+          },
+          "resultsFirstSubmitDate": "2022-03-09",
+          "resultsFirstSubmitQcDate": "2022-03-09",
+          "resultsFirstPostDateStruct": {
+            "date": "2022-04-04",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2025-03-28",
+          "lastUpdatePostDateStruct": {
+            "date": "2025-03-30",
+            "type": "ACTUAL"
+          }
+        },
+        "descriptionModule": {
+          "briefSummary": "This is a study to evaluate whether macitentan is an effective and safe treatment for patients with heart failure with preserved ejection fraction (HFpEF) and pulmonary vascular disease.\n\nThe primary objective is to evaluate whether macitentan 10 mg reduces N-terminal pro-brain natriuretic peptide (NT-pro-BNP) as compared to placebo in these patients."
+        },
+        "designModule": {
+          "studyType": "INTERVENTIONAL",
+          "phases": [
+            "PHASE2"
+          ],
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "primaryPurpose": "TREATMENT",
+            "maskingInfo": {
+              "masking": "QUADRUPLE",
+              "whoMasked": [
+                "PARTICIPANT",
+                "CARE_PROVIDER",
+                "INVESTIGATOR",
+                "OUTCOMES_ASSESSOR"
+              ]
+            }
+          },
+          "enrollmentInfo": {
+            "count": 143,
+            "type": "ACTUAL"
+          }
+        },
+        "eligibilityModule": {
+          "eligibilityCriteria": "Inclusion Criteria:\n\n* Signs or symptoms of Heart Failure (HF) (NYHA FC I I and II I ) requiring treatment with at least one oral diuretic (any type)\n* Left ventricular ejection fraction (LVEF) ≥ 40% (by echocardiography at Screening)\n* Structural heart disease consistent with heart failure with preserved ejection fraction (HFpEF) established by echocardiography at Screening\n* Elevated NT-proBNP\n* Pulmonary vascular disease or right ventricular dysfunction\n\nExclusion Criteria:\n\n* Any prior valid measurement of LVEF \\< 40%. An echocardiogram is considered valid if its quality is sufficient to allow accurate assessment of LVEF and if it is reflective of the true status of the subject\n* Cardiovascular co-morbidities (e.g., significant unrepaired structural valvular heart disease; acute coronary syndrome, coronary artery bypass graft (CABG) or percutaneous coronary intervention (PCI) within 3 months of Screening; uncontrolled heart rate from atrial fibrillation or atrial flutter, history of serious life-threatening or hemodynamically significant arrhythmia; history of or anticipated heart transplant or ventricular assist device implantation, etc)\n* Systolic blood pressure (SBP) ≥ 180 mmHg, or diastolic blood pressure (DBP) ≥ 110 mmHg during Screening\n* Hemoglobin \\< 100g/L (\\< 10 g/dl) at Screening\n* Significant parenchymal lung disease (e.g., severe COPD, moderate or severe restrictive lung disease, diffuse interstitial fibrosis or alveolitis, pulmonary thromboembolism)\n* Severe renal dysfunction with an estimated Glomerular Filtration Rate (eGFR) \\< 30 mL/min per 1.73 m2\n* Severe hepatic impairment, e.g., Child Pugh Class C\n\nOther protocol-defined inclusion/exclusion criteria may apply",
+          "healthyVolunteers": false,
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "stdAges": [
+            "ADULT",
+            "OLDER_ADULT"
+          ]
+        }
+      },
+      "documentSection": {
+        "largeDocumentModule": {
+          "largeDocs": [
+            {
+              "typeAbbrev": "Prot",
+              "hasProtocol": true,
+              "hasSap": false,
+              "hasIcf": false,
+              "label": "Study Protocol",
+              "date": "2020-07-16",
+              "uploadDate": "2022-03-09T05:21",
+              "filename": "Prot_000.pdf",
+              "size": 2898772
+            },
+            {
+              "typeAbbrev": "SAP",
+              "hasProtocol": false,
+              "hasSap": true,
+              "hasIcf": false,
+              "label": "Statistical Analysis Plan",
+              "date": "2020-04-02",
+              "uploadDate": "2022-03-09T05:21",
+              "filename": "SAP_001.pdf",
+              "size": 2659622
+            }
+          ]
+        }
+      },
+      "archived_job_id": "4ebc192f0a4847a0888301e2dcb98a12",
+      "archived_job_sha256": "fd90424b08a9258b5c83a394e4d9e270c0c21c93b45784e8582fd05c6a80861b",
+      "frozen_source_version": "ctgov-2025-03-30",
+      "live_text_identical_to_frozen": true,
+      "frozen_eligibility_sha256": "e52efa50f35aad4de4867bf02be4d852a80fd7e8465a6dbe40ab0055cb9274aa",
+      "live_eligibility_sha256": "e52efa50f35aad4de4867bf02be4d852a80fd7e8465a6dbe40ab0055cb9274aa"
+    }
+  }
+}

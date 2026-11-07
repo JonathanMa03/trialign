@@ -1,0 +1,497 @@
+{
+  "retrieved_at_utc": "2026-11-07T16:33:08.453231+00:00",
+  "studies": {
+    "NCT01182441": {
+      "protocolSection": {
+        "conditionsModule": {
+          "conditions": [
+            "Atrial Fibrillation",
+            "Stroke"
+          ],
+          "keywords": [
+            "atrial fibrillation",
+            "stroke",
+            "TIA",
+            "trans ischemic attack",
+            "warfarin",
+            "Coumadin"
+          ]
+        },
+        "descriptionModule": {
+          "briefSummary": "This was a prospective, randomized, multicenter study to provide additional information on the safety and efficacy of the WATCHMAN LAA Closure Technology. The purpose of the PREVAIL study was to confirm the efficacy endpoint as demonstrated in the PROTECT AF pivotal study and to further demonstrate that the WATCHMAN LAA Closure Technology is safe and effective in subjects with non-valvular atrial fibrillation who require anticoagulation therapy for potential thrombus formation."
+        },
+        "designModule": {
+          "designInfo": {
+            "allocation": "RANDOMIZED",
+            "interventionModel": "PARALLEL",
+            "maskingInfo": {
+              "masking": "NONE"
+            },
+            "primaryPurpose": "TREATMENT"
+          },
+          "enrollmentInfo": {
+            "count": 407,
+            "type": "ACTUAL"
+          },
+          "phases": [
+            "PHASE3"
+          ],
+          "studyType": "INTERVENTIONAL"
+        },
+        "identificationModule": {
+          "acronym": "PREVAIL",
+          "briefTitle": "Evaluation of the WATCHMAN Left Atrial Appendage (LAA) Closure Device in Patients With Atrial Fibrillation Versus Long Term Warfarin Therapy",
+          "nctId": "NCT01182441",
+          "officialTitle": "Prospective Randomized Evaluation of the WATCHMAN LAA Closure Device in Patients With Atrial Fibrillation (AF) Versus Long Term Warfarin Therapy",
+          "orgStudyIdInfo": {
+            "id": "CT1004"
+          },
+          "organization": {
+            "class": "INDUSTRY",
+            "fullName": "Boston Scientific Corporation"
+          }
+        },
+        "referencesModule": {
+          "references": [
+            {
+              "citation": "Dukkipati SR, Holmes DR Jr, Doshi SK, Kar S, Singh SM, Gibson D, Price MJ, Natale A, Mansour M, Sievert H, Houle VM, Allocco DJ, Reddy VY. Impact of Peridevice Leak on 5-Year Outcomes After Left Atrial Appendage Closure. J Am Coll Cardiol. 2022 Aug 2;80(5):469-483. doi: 10.1016/j.jacc.2022.04.062.",
+              "pmid": "35902169",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Friedman DJ, Du C, Wang Y, Agarwal V, Varosy PD, Masoudi FA, Holmes DR, Reddy VY, Price MJ, Curtis JP, Freeman JV. Patient-Level Analysis of Watchman Left Atrial Appendage Occlusion in Practice Versus Clinical Trials. JACC Cardiovasc Interv. 2022 May 9;15(9):950-961. doi: 10.1016/j.jcin.2022.02.029.",
+              "pmid": "35512918",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Brouwer TF, Whang W, Kuroki K, Halperin JL, Reddy VY. Net Clinical Benefit of Left Atrial Appendage Closure Versus Warfarin in Patients With Atrial Fibrillation: A Pooled Analysis of the Randomized PROTECT-AF and PREVAIL Studies. J Am Heart Assoc. 2019 Dec 3;8(23):e013525. doi: 10.1161/JAHA.119.013525. Epub 2019 Nov 22.",
+              "pmid": "31752643",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Price MJ, Reddy VY, Valderrabano M, Halperin JL, Gibson DN, Gordon N, Huber KC, Holmes DR Jr. Bleeding Outcomes After Left Atrial Appendage Closure Compared With Long-Term Warfarin: A Pooled, Patient-Level Analysis of the WATCHMAN Randomized Trial Experience. JACC Cardiovasc Interv. 2015 Dec 28;8(15):1925-1932. doi: 10.1016/j.jcin.2015.08.035. Epub 2015 Nov 25.",
+              "pmid": "26627989",
+              "type": "DERIVED"
+            }
+          ]
+        },
+        "sponsorCollaboratorsModule": {
+          "leadSponsor": {
+            "class": "INDUSTRY",
+            "name": "Boston Scientific Corporation"
+          },
+          "responsibleParty": {
+            "type": "SPONSOR"
+          }
+        },
+        "statusModule": {
+          "completionDateStruct": {
+            "date": "2017-11",
+            "type": "ACTUAL"
+          },
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "lastUpdatePostDateStruct": {
+            "date": "2018-07-26",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2018-07-25",
+          "overallStatus": "COMPLETED",
+          "primaryCompletionDateStruct": {
+            "date": "2013-01",
+            "type": "ACTUAL"
+          },
+          "resultsFirstPostDateStruct": {
+            "date": "2018-07-26",
+            "type": "ACTUAL"
+          },
+          "resultsFirstSubmitDate": "2017-04-03",
+          "resultsFirstSubmitQcDate": "2018-07-25",
+          "startDateStruct": {
+            "date": "2010-11",
+            "type": "ACTUAL"
+          },
+          "statusVerifiedDate": "2017-03",
+          "studyFirstPostDateStruct": {
+            "date": "2010-08-16",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2010-08-12",
+          "studyFirstSubmitQcDate": "2010-08-12"
+        }
+      },
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT01182441"
+    },
+    "NCT02601313": {
+      "protocolSection": {
+        "conditionsModule": {
+          "conditions": [
+            "Relapsed/Refractory Mantle Cell Lymphoma"
+          ]
+        },
+        "descriptionModule": {
+          "briefSummary": "The goal of this clinical study is to test how well the study drug, brexucabtagene autoleucel (KTE-X19), works in participants with relapsed/refractory (r/r) mantle cell lymphoma (MCL).",
+          "detailedDescription": "Study KTE-C19-102 enrolled participants with r/r MCL who have been treated with up to 5 prior regimens including a Bruton's tyrosine kinase inhibitor (BTKi) in Cohort 1 and Cohort 2. However, to fulfill FDA Postmarketing Requirement, Cohort 3 is added to the study. It will include participants with r/r MCL who have been treated with up to 5 prior regimens but have not received prior therapy with a BTKi.\n\nThe primary analysis in Cohort 1 and Cohort 2 is already completed. Data for Cohort 3 will be analyzed separately. Therefore, details for Cohort 3 were registered separately (NCT04880434) on ClinicalTrials.gov as this cohort will not be part of the main study analysis.\n\nAfter the end of KTE-C19-102, subjects who received an infusion of anti-CD19 CAR T cells will complete the remainder of the 15-year follow-up assessments in a separate long-term follow-up study, KT-US-982-5968"
+        },
+        "designModule": {
+          "designInfo": {
+            "allocation": "NA",
+            "interventionModel": "SINGLE_GROUP",
+            "maskingInfo": {
+              "masking": "NONE"
+            },
+            "primaryPurpose": "TREATMENT"
+          },
+          "enrollmentInfo": {
+            "count": 105,
+            "type": "ACTUAL"
+          },
+          "phases": [
+            "PHASE2"
+          ],
+          "studyType": "INTERVENTIONAL"
+        },
+        "identificationModule": {
+          "acronym": "ZUMA-2",
+          "briefTitle": "Study of Brexucabtagene Autoleucel (KTE-X19) in Participants With Relapsed/Refractory Mantle Cell Lymphoma (Cohort 1 and Cohort 2)",
+          "nctId": "NCT02601313",
+          "officialTitle": "A Phase 2 Multicenter Study Evaluating the Efficacy of KTE-X19 in Subjects With Relapsed/Refractory Mantle Cell Lymphoma",
+          "orgStudyIdInfo": {
+            "id": "KTE-C19-102"
+          },
+          "organization": {
+            "class": "INDUSTRY",
+            "fullName": "Gilead Sciences"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "2015-005008-27",
+              "type": "EUDRACT_NUMBER"
+            },
+            {
+              "domain": "European Medicines Agency",
+              "id": "2023-506641-35",
+              "type": "OTHER"
+            },
+            {
+              "id": "2023",
+              "link": "https://reporter.nih.gov/quickSearch/2023",
+              "type": "NIH"
+            },
+            {
+              "id": "2015",
+              "link": "https://reporter.nih.gov/quickSearch/2015",
+              "type": "NIH"
+            }
+          ]
+        },
+        "referencesModule": {
+          "references": [
+            {
+              "citation": "Michael Wang,1 Javier Munoz,2 Andre Goy,3 Frederick L. Locke,4 Caron A. Jacobson,5 Brian T. Hill,6 John M. Timmerman,7 Houston Holmes,8 Samantha Jaglowski,9 Ian W. Flinn,10 Peter A. McSweeney,11 David B. Miklos,12 John M. Pagel,13 Marie José Kersten,14 Noel Milpied,15 Henry Fung,16 Max S. Topp,17 Roch Houot,18 Amer Beitinjaneh,19 Weimin Peng,20 Lianqing Zheng,20 John M. Rossi,20 Rajul K. Jain,20 Arati V. Rao,20 and Patrick M. Reagan21",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Wang M, Munoz J, Goy A, Locke FL, Jacobson CA, Hill BT, Timmerman JM, Holmes H, Jaglowski S, Flinn IW, McSweeney PA,Miklos DB, Pagel JM, Kersten MJ, Peng W,Zheng L,Rossi JM, Jain RK, Rao AV, Reagan PM",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Wang, Michael L., MD(1); Munoz, Javier, MD(2); Goy, Andre, MD(3); Locke, Frederick L., MD(4); Jacobson, Caron A., MD, MMSc(5); Hill, Brian T., MD(6); Timmerman, John M., MD(7); Holmes, Houston, MD(8); Jaglowski, Samantha, MD, MPH(9); Flinn, Ian W., MD, PhD(10); McSweeney, Peter A., MD(11); Miklos, David B., MD, PhD(12); Pagel, John M., MD, PhD, DSc(13); Jose Kersten, Marie, MD, PhD(14); Peng, Weimin, MS(15); Zheng, Lianqing, PhD(15); Rossi, John M., MS(15); Jain, Rajul K., MD(15); Rao, Arati V., MD(15); Reagan, Patrick M, MD(16)",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Wang, Michael; Lundry Locke, Frederick; Munoz, Javier; Goy, Andre; Eccleston Holmes, Houston; Siddiqi, Tanya; Flinn, Ian; McSweeney, Peter A; Michael Reagan, Patrick; Thomas Hill, Brian; Jacobson, Caron A.; Rizzieri, David A.; Heffner, Leonard T.; Mary Jaglowski, Samantha; Bernard Miklos, David; Shaughnessy, Paul; Unabia, Sherry; Rossi, John M.; Jiang, Yizhou; Jain, Rajul K.",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Cheah CY, Chihara D, Romaguera JE, Fowler NH, Seymour JF, Hagemeister FB, Champlin RE, Wang ML. Patients with mantle cell lymphoma failing ibrutinib are unlikely to respond to salvage chemotherapy and have poor outcomes. Ann Oncol. 2015 Jun;26(6):1175-1179. doi: 10.1093/annonc/mdv111. Epub 2015 Feb 23.",
+              "pmid": "25712454",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Cheson BD, Fisher RI, Barrington SF, Cavalli F, Schwartz LH, Zucca E, Lister TA; Alliance, Australasian Leukaemia and Lymphoma Group; Eastern Cooperative Oncology Group; European Mantle Cell Lymphoma Consortium; Italian Lymphoma Foundation; European Organisation for Research; Treatment of Cancer/Dutch Hemato-Oncology Group; Grupo Espanol de Medula Osea; German High-Grade Lymphoma Study Group; German Hodgkin's Study Group; Japanese Lymphorra Study Group; Lymphoma Study Association; NCIC Clinical Trials Group; Nordic Lymphoma Study Group; Southwest Oncology Group; United Kingdom National Cancer Research Institute. Recommendations for initial evaluation, staging, and response assessment of Hodgkin and non-Hodgkin lymphoma: the Lugano classification. J Clin Oncol. 2014 Sep 20;32(27):3059-68. doi: 10.1200/JCO.2013.54.8800.",
+              "pmid": "25113753",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Dreyling M, Jurczak W, Jerkeman M, Silva RS, Rusconi C, Trneny M, Offner F, Caballero D, Joao C, Witzens-Harig M, Hess G, Bence-Bruckler I, Cho SG, Bothos J, Goldberg JD, Enny C, Traina S, Balasubramanian S, Bandyopadhyay N, Sun S, Vermeulen J, Rizo A, Rule S. Ibrutinib versus temsirolimus in patients with relapsed or refractory mantle-cell lymphoma: an international, randomised, open-label, phase 3 study. Lancet. 2016 Feb 20;387(10020):770-8. doi: 10.1016/S0140-6736(15)00667-4. Epub 2015 Dec 7.",
+              "pmid": "26673811",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Epperla N, Hamadani M, Cashen AF, Ahn KW, Oak E, Kanate AS, Calzada O, Cohen JB, Farmer L, Ghosh N, Tallarico M, Nabhan C, Costa LJ, Kenkre VP, Hari PN, Fenske TS. Predictive factors and outcomes for ibrutinib therapy in relapsed/refractory mantle cell lymphoma-a \"real world\" study. Hematol Oncol. 2017 Dec;35(4):528-535. doi: 10.1002/hon.2380. Epub 2017 Jan 8.",
+              "pmid": "28066928",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Fisher RI, Bernstein SH, Kahl BS, Djulbegovic B, Robertson MJ, de Vos S, Epner E, Krishnan A, Leonard JP, Lonial S, Stadtmauer EA, O'Connor OA, Shi H, Boral AL, Goy A. Multicenter phase II study of bortezomib in patients with relapsed or refractory mantle cell lymphoma. J Clin Oncol. 2006 Oct 20;24(30):4867-74. doi: 10.1200/JCO.2006.07.9665. Epub 2006 Sep 25.",
+              "pmid": "17001068",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Goy A, Sinha R, Williams ME, Kalayoglu Besisik S, Drach J, Ramchandren R, Zhang L, Cicero S, Fu T, Witzig TE. Single-agent lenalidomide in patients with mantle-cell lymphoma who relapsed or progressed after or were refractory to bortezomib: phase II MCL-001 (EMERGE) study. J Clin Oncol. 2013 Oct 10;31(29):3688-95. doi: 10.1200/JCO.2013.49.2835. Epub 2013 Sep 3.",
+              "pmid": "24002500",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Jain P, Kanagal-Shamanna R, Zhang S, Ahmed M, Ghorab A, Zhang L, Ok CY, Li S, Hagemeister F, Zeng D, Gong T, Chen W, Badillo M, Nomie K, Fayad L, Medeiros LJ, Neelapu S, Fowler N, Romaguera J, Champlin R, Wang L, Wang ML. Long-term outcomes and mutation profiling of patients with mantle cell lymphoma (MCL) who discontinued ibrutinib. Br J Haematol. 2018 Nov;183(4):578-587. doi: 10.1111/bjh.15567. Epub 2018 Sep 2.",
+              "pmid": "30175400",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Kratz A, Ferraro M, Sluss PM, Lewandrowski KB. Case records of the Massachusetts General Hospital. Weekly clinicopathological exercises. Laboratory reference values. N Engl J Med. 2004 Oct 7;351(15):1548-63. doi: 10.1056/NEJMcpc049016. No abstract available.",
+              "pmid": "15470219",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Lee DW, Gardner R, Porter DL, Louis CU, Ahmed N, Jensen M, Grupp SA, Mackall CL. Current concepts in the diagnosis and management of cytokine release syndrome. Blood. 2014 Jul 10;124(2):188-95. doi: 10.1182/blood-2014-05-552729. Epub 2014 May 29.",
+              "pmid": "24876563",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Locke FL, Ghobadi A, Jacobson CA, Miklos DB, Lekakis LJ, Oluwole OO, Lin Y, Braunschweig I, Hill BT, Timmerman JM, Deol A, Reagan PM, Stiff P, Flinn IW, Farooq U, Goy A, McSweeney PA, Munoz J, Siddiqi T, Chavez JC, Herrera AF, Bartlett NL, Wiezorek JS, Navale L, Xue A, Jiang Y, Bot A, Rossi JM, Kim JJ, Go WY, Neelapu SS. Long-term safety and activity of axicabtagene ciloleucel in refractory large B-cell lymphoma (ZUMA-1): a single-arm, multicentre, phase 1-2 trial. Lancet Oncol. 2019 Jan;20(1):31-42. doi: 10.1016/S1470-2045(18)30864-7. Epub 2018 Dec 2.",
+              "pmid": "30518502",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Martin P, Maddocks K, Leonard JP, Ruan J, Goy A, Wagner-Johnston N, Rule S, Advani R, Iberri D, Phillips T, Spurgeon S, Kozin E, Noto K, Chen Z, Jurczak W, Auer R, Chmielowska E, Stilgenbauer S, Bloehdorn J, Portell C, Williams ME, Dreyling M, Barr PM, Chen-Kiang S, DiLiberto M, Furman RR, Blum KA. Postibrutinib outcomes in patients with mantle cell lymphoma. Blood. 2016 Mar 24;127(12):1559-63. doi: 10.1182/blood-2015-10-673145. Epub 2016 Jan 13.",
+              "pmid": "26764355",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Rule S, Dreyling M, Goy A, Hess G, Auer R, Kahl B, Cavazos N, Liu B, Yang S, Clow F, Goldberg JD, Beaupre D, Vermeulen J, Wildgust M, Wang M. Outcomes in 370 patients with mantle cell lymphoma treated with ibrutinib: a pooled analysis from three open-label studies. Br J Haematol. 2017 Nov;179(3):430-438. doi: 10.1111/bjh.14870. Epub 2017 Aug 18.",
+              "pmid": "28832957",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Rule S, Dreyling M, Goy A, Hess G, Auer R, Kahl B, Hernandez-Rivas JA, Qi K, Deshpande S, Parisi L, Wang M. Ibrutinib for the treatment of relapsed/refractory mantle cell lymphoma: extended 3.5-year follow up from a pooled analysis. Haematologica. 2019 May;104(5):e211-e214. doi: 10.3324/haematol.2018.205229. Epub 2018 Nov 15. No abstract available.",
+              "pmid": "30442728",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Topp MS, Gokbuget N, Stein AS, Zugmaier G, O'Brien S, Bargou RC, Dombret H, Fielding AK, Heffner L, Larson RA, Neumann S, Foa R, Litzow M, Ribera JM, Rambaldi A, Schiller G, Bruggemann M, Horst HA, Holland C, Jia C, Maniar T, Huber B, Nagorsen D, Forman SJ, Kantarjian HM. Safety and activity of blinatumomab for adult patients with relapsed or refractory B-precursor acute lymphoblastic leukaemia: a multicentre, single-arm, phase 2 study. Lancet Oncol. 2015 Jan;16(1):57-66. doi: 10.1016/S1470-2045(14)71170-2. Epub 2014 Dec 16.",
+              "pmid": "25524800",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Wang M, Schuster SJ, Phillips T, Lossos IS, Goy A, Rule S, Hamadani M, Ghosh N, Reeder CB, Barnett E, Bravo MC, Martin P. Observational study of lenalidomide in patients with mantle cell lymphoma who relapsed/progressed after or were refractory/intolerant to ibrutinib (MCL-004). J Hematol Oncol. 2017 Nov 2;10(1):171. doi: 10.1186/s13045-017-0537-5.",
+              "pmid": "29096668",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Wang ML, Rule S, Martin P, Goy A, Auer R, Kahl BS, Jurczak W, Advani RH, Romaguera JE, Williams ME, Barrientos JC, Chmielowska E, Radford J, Stilgenbauer S, Dreyling M, Jedrzejczak WW, Johnson P, Spurgeon SE, Li L, Zhang L, Newberry K, Ou Z, Cheng N, Fang B, McGreivy J, Clow F, Buggy JJ, Chang BY, Beaupre DM, Kunkel LA, Blum KA. Targeting BTK with ibrutinib in relapsed or refractory mantle-cell lymphoma. N Engl J Med. 2013 Aug 8;369(6):507-16. doi: 10.1056/NEJMoa1306220. Epub 2013 Jun 19.",
+              "pmid": "23782157",
+              "type": "BACKGROUND"
+            },
+            {
+              "citation": "Munoz J, Locke FL, Reagan PM, Goy A, Jacobson CA, Hill BT, Timmerman JM, Flinn IW, Miklos DB, Pagel JM, Kersten MJ, Forcade E, Topp MS, Houot R, Beitinjaneh A, Zheng D, Chang M, Zhang W, Shen RR, Khalid RD, Kloos I, Wang ML. Five-year follow-up of patients with relapsed/refractory mantle cell lymphoma treated with anti-CD19 CAR T-cell therapy in ZUMA-2, Cohorts 1 and 2. J Hematol Oncol. 2026 Apr 27;19(1):39. doi: 10.1186/s13045-026-01797-4.",
+              "pmid": "42036693",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Darnell EP, Gallagher KME, Kanska J, Scarfo I, Balderrama-Gutierrez G, Berger TR, Budka J, Bozym DJ, Huang T, Shen R, Leick MB, Maus MV. Ibrutinib exposure correlates with improved efficacy of CAR T cells in patients with mantle cell lymphoma. Blood Adv. 2026 Feb 24;10(4):1023-1034. doi: 10.1182/bloodadvances.2025018137.",
+              "pmid": "41686452",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "van Meerten T, Kersten MJ, Iacoboni G, Hess G, Mutsaers P, Garcia-Sancho AM, Goy A, Gine E, Hill BT, Weng WK, Reagan PM, Patel K, Galal A, Herbaux C, Sanderson R, Forcade E, Topp MS, Houot R, Zheng D, Zhang W, Kanska J, Shen RR, Damico Khalid R, Kloos I, Dreyling M, Wang ML. Brexucabtagene autoleucel for BTKi-naive relapsed/refractory mantle cell lymphoma: primary analysis of ZUMA-2 cohort 3. Blood. 2026 Mar 19;147(12):1302-1314. doi: 10.1182/blood.2025029734.",
+              "pmid": "41160777",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Wang M, Munoz J, Goy A, Locke FL, Jacobson CA, Hill BT, Timmerman JM, Holmes H, Jaglowski S, Flinn IW, McSweeney PA, Miklos DB, Pagel JM, Kersten MJ, Bouabdallah K, Khanal R, Topp MS, Houot R, Beitinjaneh A, Peng W, Fang X, Shen RR, Siddiqi R, Kloos I, Reagan PM. Three-Year Follow-Up of KTE-X19 in Patients With Relapsed/Refractory Mantle Cell Lymphoma, Including High-Risk Subgroups, in the ZUMA-2 Study. J Clin Oncol. 2023 Jan 20;41(3):555-567. doi: 10.1200/JCO.21.02370. Epub 2022 Jun 4.",
+              "pmid": "35658525",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Wang M, Jain P, Chi TL, Chen SE, Heimberger A, Weathers SP, Zheng L, Rao AV, Rossi JM. Management of a patient with mantle cell lymphoma who developed severe neurotoxicity after chimeric antigen receptor T-cell therapy in ZUMA-2. J Immunother Cancer. 2020 Oct;8(2):e001114. doi: 10.1136/jitc-2020-001114.",
+              "pmid": "33067318",
+              "type": "DERIVED"
+            },
+            {
+              "citation": "Wang M, Munoz J, Goy A, Locke FL, Jacobson CA, Hill BT, Timmerman JM, Holmes H, Jaglowski S, Flinn IW, McSweeney PA, Miklos DB, Pagel JM, Kersten MJ, Milpied N, Fung H, Topp MS, Houot R, Beitinjaneh A, Peng W, Zheng L, Rossi JM, Jain RK, Rao AV, Reagan PM. KTE-X19 CAR T-Cell Therapy in Relapsed or Refractory Mantle-Cell Lymphoma. N Engl J Med. 2020 Apr 2;382(14):1331-1342. doi: 10.1056/NEJMoa1914347.",
+              "pmid": "32242358",
+              "type": "DERIVED"
+            }
+          ],
+          "seeAlsoLinks": [
+            {
+              "label": "Gilead Clinical Trials Website",
+              "url": "https://www.gileadclinicaltrials.com/study/?id=KTE-C19-102"
+            }
+          ]
+        },
+        "sponsorCollaboratorsModule": {
+          "leadSponsor": {
+            "class": "INDUSTRY",
+            "name": "Kite, A Gilead Company"
+          },
+          "responsibleParty": {
+            "type": "SPONSOR"
+          }
+        },
+        "statusModule": {
+          "completionDateStruct": {
+            "date": "2023-09-22",
+            "type": "ACTUAL"
+          },
+          "dispFirstPostDateStruct": {
+            "date": "2020-07-21",
+            "type": "ACTUAL"
+          },
+          "dispFirstSubmitDate": "2020-07-17",
+          "dispFirstSubmitQcDate": "2020-07-17",
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "lastUpdatePostDateStruct": {
+            "date": "2026-03-18",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-03-05",
+          "overallStatus": "COMPLETED",
+          "primaryCompletionDateStruct": {
+            "date": "2023-09-22",
+            "type": "ACTUAL"
+          },
+          "resultsFirstPostDateStruct": {
+            "date": "2020-09-10",
+            "type": "ACTUAL"
+          },
+          "resultsFirstSubmitDate": "2020-08-21",
+          "resultsFirstSubmitQcDate": "2020-08-21",
+          "startDateStruct": {
+            "date": "2015-11-09",
+            "type": "ACTUAL"
+          },
+          "statusVerifiedDate": "2026-03",
+          "studyFirstPostDateStruct": {
+            "date": "2015-11-10",
+            "type": "ESTIMATED"
+          },
+          "studyFirstSubmitDate": "2015-11-06",
+          "studyFirstSubmitQcDate": "2015-11-06"
+        }
+      },
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT02601313"
+    },
+    "NCT05041309": {
+      "protocolSection": {
+        "conditionsModule": {
+          "conditions": [
+            "Solid and Hematological Malignancies",
+            "Autoimmune Diseases"
+          ]
+        },
+        "descriptionModule": {
+          "briefSummary": "The goal of this clinical study is to learn more about the long-term safety, effectiveness and prolonged action of Kite study drugs, axicabtagene ciloleucel, brexucabtagene autoleucel, KITE-363, KITE-753, KITE-197, anitocabtagene autoleucel, INT2104, KITE-512, ACLX-001, and ACLX002 in participants of Kite-sponsored interventional studies.\n\nThe primary objectives of this study are to:\n\n* Evaluate the incidence and severity of related SAEs, late-onset targeted AEs/SAEs suspected to be possibly related to gene-modified cell therapy, including neurologic disorders, new autoimmune disorders (which are distinct from the study-treated disease), hematologic disorders, serious infections, as well as any new malignancies (regardless of causality)\n* Evaluate the growth, development, and sexual maturity of pediatric and adolescent participants treated with gene-modified cell therapy."
+        },
+        "designModule": {
+          "bioSpec": {
+            "description": "Fresh or archival tumor samples, bone marrow biopsy and/or aspirate and blood draws",
+            "retention": "SAMPLES_WITH_DNA"
+          },
+          "designInfo": {
+            "observationalModel": "COHORT",
+            "timePerspective": "PROSPECTIVE"
+          },
+          "enrollmentInfo": {
+            "count": 1500,
+            "type": "ESTIMATED"
+          },
+          "patientRegistry": false,
+          "studyType": "OBSERVATIONAL"
+        },
+        "identificationModule": {
+          "briefTitle": "Long-Term Follow-Up Study After Gene-Modified Cell Treatment in Kite Studies",
+          "nctId": "NCT05041309",
+          "officialTitle": "Long-term Follow-up Study for Participants of Kite-Sponsored Interventional Studies Treated With Gene-Modified Cells",
+          "orgStudyIdInfo": {
+            "id": "KT-US-982-5968"
+          },
+          "organization": {
+            "class": "INDUSTRY",
+            "fullName": "Gilead Sciences"
+          },
+          "secondaryIdInfos": [
+            {
+              "id": "2020-005843-21",
+              "type": "EUDRACT_NUMBER"
+            },
+            {
+              "domain": "Israel Clinical Research Site",
+              "id": "MOH_2022-08-21_010606",
+              "type": "REGISTRY"
+            },
+            {
+              "domain": "European Medicines Agency",
+              "id": "2023-507041-28",
+              "type": "OTHER"
+            },
+            {
+              "id": "2023",
+              "link": "https://reporter.nih.gov/quickSearch/2023",
+              "type": "NIH"
+            }
+          ]
+        },
+        "referencesModule": {
+          "references": [
+            {
+              "citation": "Munoz J, Locke FL, Reagan PM, Goy A, Jacobson CA, Hill BT, Timmerman JM, Flinn IW, Miklos DB, Pagel JM, Kersten MJ, Forcade E, Topp MS, Houot R, Beitinjaneh A, Zheng D, Chang M, Zhang W, Shen RR, Khalid RD, Kloos I, Wang ML. Five-year follow-up of patients with relapsed/refractory mantle cell lymphoma treated with anti-CD19 CAR T-cell therapy in ZUMA-2, Cohorts 1 and 2. J Hematol Oncol. 2026 Apr 27;19(1):39. doi: 10.1186/s13045-026-01797-4.",
+              "pmid": "42036693",
+              "type": "DERIVED"
+            }
+          ],
+          "seeAlsoLinks": [
+            {
+              "label": "Gilead Clinical Trials Website",
+              "url": "https://www.gileadclinicaltrials.com/study/?id=KT-US-982-5968"
+            }
+          ]
+        },
+        "sponsorCollaboratorsModule": {
+          "leadSponsor": {
+            "class": "INDUSTRY",
+            "name": "Kite, A Gilead Company"
+          },
+          "responsibleParty": {
+            "type": "SPONSOR"
+          }
+        },
+        "statusModule": {
+          "completionDateStruct": {
+            "date": "2040-12",
+            "type": "ESTIMATED"
+          },
+          "expandedAccessInfo": {
+            "hasExpandedAccess": false
+          },
+          "lastUpdatePostDateStruct": {
+            "date": "2026-09-21",
+            "type": "ACTUAL"
+          },
+          "lastUpdateSubmitDate": "2026-09-16",
+          "overallStatus": "ENROLLING_BY_INVITATION",
+          "primaryCompletionDateStruct": {
+            "date": "2040-12",
+            "type": "ESTIMATED"
+          },
+          "startDateStruct": {
+            "date": "2021-12-15",
+            "type": "ACTUAL"
+          },
+          "statusVerifiedDate": "2026-09",
+          "studyFirstPostDateStruct": {
+            "date": "2021-09-13",
+            "type": "ACTUAL"
+          },
+          "studyFirstSubmitDate": "2021-08-27",
+          "studyFirstSubmitQcDate": "2021-09-07"
+        }
+      },
+      "source_url": "https://clinicaltrials.gov/api/v2/studies/NCT05041309"
+    }
+  }
+}
