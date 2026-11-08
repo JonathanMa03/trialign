@@ -1,0 +1,21 @@
+{
+  "files": {
+    "duplicate_audit.json": "0ffbfde66999d3a56420a9cad02f10c3bf5c634d14ac51ca7f8195edb36f7b65",
+    "partitions.json": "9a8263d0567d382b57c7547b6df202bbfbd19484639eb47494b7ce3348b729c4"
+  },
+  "generator_sha256": "ff2060c18fcec3f30157f2c654c3d0c64ceada5929b2fe36c091cc30827ff097",
+  "partition_release_id": "trial100-family-partitions-v1",
+  "relevance_contract_sha256": "c14e01621d2a10afea6cb10f311436d747a0e522a53bc54c58430c6b50be40f9",
+  "source_sha256": {
+    "configs/evaluation_policy_v1.json": "ba9e9c751b5f17366bd1cb6cfecd566f04e9c95d2261141324985aa57fd22e1b",
+    "configs/family_audit_decisions_v1.json": "46cdf5b2c346cf1c05de5a5d3a58f5e544a769b26bdbf664ca30ca0326b5b4b2",
+    "configs/retrieval_relevance_v1.json": "941851abcb4d6ad43127891512abc0eb01f41be4c7ef0a5a33d6cb788dd3fd00",
+    "data/processed/family_audit_v1/family_mapping.json": "e45a49e02788e62d9c7a741a40e44c01c9ea60ad509c06f4f23180b0198b52b8",
+    "data/processed/family_audit_v1/trial_inventory.json": "86b5cc21a536498d12793c96ead45e5804dbf8b01a44a78a44bdfaf8a49f8043",
+    "data/processed/pair_pilot_v1/manifest.json": "b02f6dc552e1e0fde57e1f98eeb0ffc59163e955edd8758a308aa875f9142bdf",
+    "data/processed/pair_pilot_v1/release_v1/manifest.json": "13f992999d89f189d1b42644970b45f5b2c10e52dee1d38e1b05edef7e04804d",
+    "data/processed/trial100_v1.parquet": "8d194ef308bc55e5e05ce80d455633a03e225672e0e69b8abddcb762f3bad158",
+    "data/processed/trial100_v1.parquet.manifest.json": "fce5a956f715399bc6abbcefdf7421c408f20663d3a0ca0afb88ff8522bcb0b9"
+  },
+  "status": "frozen"
+}

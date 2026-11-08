@@ -1,0 +1,88 @@
+{
+  "allocation": "Largest remainder over non-quarantined split groups; cohort-stratified, fixed hash ordering, no score-based seed search.",
+  "corpus": "data/processed/trial100_v1.parquet",
+  "corpus_sha256": "8d194ef308bc55e5e05ce80d455633a03e225672e0e69b8abddcb762f3bad158",
+  "family_mapping": "data/processed/family_audit_v1/family_mapping.json",
+  "inventory": "data/processed/family_audit_v1/trial_inventory.json",
+  "owner_exposure_statement": "Owner reports the 75-pair pilot is the only manual pair-labeling work; no additional pair-quality review. Corpus extraction validation and automated retrieval checks are not relationship-label exposure.",
+  "policy_id": "trial100-family-partitions-v1",
+  "relationship_development_exposures": [
+    {
+      "evidence": "Distinct corpus trial IDs in saved runs and legacy run snapshots inspected on 2026-11-08.",
+      "reason": "saved_demo_or_runtime_development",
+      "trial_ids": [
+        "NCT00003187",
+        "NCT00025207",
+        "NCT01841736",
+        "NCT02769832",
+        "NCT02896595",
+        "NCT03064867",
+        "NCT04310007",
+        "NCT04603872",
+        "NCT04747145",
+        "NCT05379712",
+        "NCT06688201"
+      ]
+    },
+    {
+      "evidence": "Three infection/pregnancy query examples (top two per baseline) and the TF-IDF age-query preview (top five), inspected before freezing this contract.",
+      "reason": "inspected_baseline_examples_before_relevance_contract_freeze",
+      "trial_ids": [
+        "NCT00028587",
+        "NCT00260364",
+        "NCT00326599",
+        "NCT01643330",
+        "NCT01811992",
+        "NCT02605707",
+        "NCT02769832",
+        "NCT03054363",
+        "NCT03064867",
+        "NCT03319628",
+        "NCT03462628",
+        "NCT03653507",
+        "NCT03772899",
+        "NCT03938987",
+        "NCT04603872",
+        "NCT05508867",
+        "NCT06663137",
+        "NCT06688201",
+        "NCT06871228"
+      ]
+    }
+  ],
+  "release_date": "2026-11-08",
+  "relevance_contract": "configs/retrieval_relevance_v1.json",
+  "sampling": {
+    "criterion_reuse_cap": 6,
+    "development_strata": {
+      "agreement_top5": 120,
+      "model_disagreement_top5": 90,
+      "same_question_structured_contrasts": 60,
+      "uniform_random_controls": 30
+    },
+    "development_unique_pairs": 300,
+    "heldout_annotation_policy": "Judge the complete union for each selected query; no reuse caps or negative subsampling inside evaluation pools.",
+    "independent_double_review_fraction": 0.2,
+    "normalized_entity_share_cap": 0.15,
+    "pool_top_k_per_model": 5,
+    "queries_per_trial_cap": 2,
+    "query_cohort_quota": {
+      "cardiovascular": 10,
+      "oncology": 10
+    },
+    "test_queries": 20,
+    "test_release_gate": "Do not open test source packets for annotation until all models, prompts, input rendering and thresholds are locked; no subsequent tuning on test judgments.",
+    "trial_endpoint_cap": 20,
+    "trial_pair_reuse_cap": 12,
+    "validation_queries": 20
+  },
+  "schema_version": "1.0",
+  "seed": 20261011,
+  "target_ratios": {
+    "test": 0.15,
+    "train": 0.7,
+    "validation": 0.15
+  },
+  "technical_document": "docs/notes/trialign_technical.tex",
+  "unresolved_parentage_action": "quarantine_from_training_validation_and_test"
+}

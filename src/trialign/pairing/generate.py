@@ -8,6 +8,7 @@ from collections.abc import Iterable, Mapping
 
 import numpy as np
 
+from trialign.data.partitions import pair_partition
 from trialign.schemas import CriterionRecord, PairCandidate
 
 
@@ -26,15 +27,16 @@ def _pair(
 ) -> PairCandidate | None:
     if a.criterion_id == b.criterion_id or a.trial_id == b.trial_id:
         return None
-    split_a = split_by_trial.get(a.trial_id) if split_by_trial else None
-    split_b = split_by_trial.get(b.trial_id) if split_by_trial else None
-    if split_a and split_b and split_a != split_b:
-        return None
+    split = "unassigned"
+    if split_by_trial is not None:
+        split = pair_partition(a.trial_id, b.trial_id, split_by_trial)
+        if split is None:
+            return None
     return PairCandidate(
         pair_id=stable_pair_id(a.criterion_id, b.criterion_id),
         criterion_a_id=a.criterion_id,
         criterion_b_id=b.criterion_id,
-        split=split_a or split_b or "unassigned",
+        split=split,
         sampling_method=method,
     )
 
@@ -49,6 +51,13 @@ def generate_candidate_pairs(
 ) -> list[PairCandidate]:
     """Create random controls and same-entity candidates without split leakage."""
     rows = list(records)
+    if split_by_trial is None:
+        raise ValueError("Frozen partition assignments are required for candidate generation.")
+    if split_by_trial is not None:
+        if any(row.trial_id not in split_by_trial for row in rows):
+            raise ValueError("Missing frozen partition assignment for a criterion trial.")
+        if set(split_by_trial.values()) - {"train", "validation", "test", "quarantine"}:
+            raise ValueError("Unknown partition label.")
     rng = np.random.default_rng(seed)
     pairs: dict[str, PairCandidate] = {}
 
@@ -60,8 +69,10 @@ def generate_candidate_pairs(
         attempts += 1
         indexes = rng.choice(len(rows), size=2, replace=False)
         candidate = _pair(
-            rows[int(indexes[0])], rows[int(indexes[1])],
-            method="random_control", split_by_trial=split_by_trial,
+            rows[int(indexes[0])],
+            rows[int(indexes[1])],
+            method="random_control",
+            split_by_trial=split_by_trial,
         )
         if candidate:
             pairs.setdefault(candidate.pair_id, candidate)
@@ -84,4 +95,3 @@ def generate_candidate_pairs(
     for candidate in entity_candidates[:same_entity_pairs]:
         pairs[candidate.pair_id] = candidate
     return list(pairs.values())
-

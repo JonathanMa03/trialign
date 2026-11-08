@@ -332,3 +332,10 @@ data/processed/pair_pilot_v1/release_v1/*
 
 # Local comparison history, uploaded snapshots and review records.
 /runs/
+
+# Frozen family-aware partition release (source corpus remains unchanged).
+!data/processed/partitions_v1/
+data/processed/partitions_v1/*
+!data/processed/partitions_v1/partitions.json
+!data/processed/partitions_v1/duplicate_audit.json
+!data/processed/partitions_v1/manifest.json

@@ -1,0 +1,425 @@
+{
+  "cross_partition_groups": [
+    {
+      "criterion_ids": [
+        "criterion-0ed1e4f915dd22c7",
+        "criterion-50ffb64556f1fa09"
+      ],
+      "fingerprint": "2c95c6ef236886b774f0220580c29353682afe65a6b94f791d0c4e09b7233510",
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "trial_ids": [
+        "NCT00028587",
+        "NCT00077532"
+      ]
+    }
+  ],
+  "policy": "Report source-only and source-plus-scope duplication; retain original corpus. Secondary held-out pairs require both sides to be eligible.",
+  "secondary_eligible_counts": {
+    "test": 444,
+    "validation": 359
+  },
+  "source_text_overlap_groups": [
+    {
+      "criterion_ids": [
+        "criterion-b9be6245d5a40b10",
+        "criterion-f522bbbd1b98770c"
+      ],
+      "partitions": [
+        "test",
+        "train"
+      ],
+      "source_fingerprint": "00982ba39c62a971411b70444ed44e9a76f550185b508fcc7e068e43d927738c",
+      "trial_ids": [
+        "NCT06622434",
+        "NCT07010263"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-8b3fd30eaaf410616a94",
+        "criterion-9cece90b5a3c942b4de7"
+      ],
+      "partitions": [
+        "test",
+        "train"
+      ],
+      "source_fingerprint": "0a178cc5e4bb837433287e38c8d607a3f845a38a16a44dc6e465b0f1c759e8d1",
+      "trial_ids": [
+        "NCT03054363",
+        "NCT06490328"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-608c53face46436b",
+        "criterion-ade0ac231f8fb3ed"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "0bdb8bad42e7503a4b16d7a371bddc5de5b35423d4fd67a80ed27f1b6c17c933",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00225212"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-3974a560d1cb7112-a",
+        "criterion-3974a560d1cb7112-b",
+        "criterion-67f09ec4b1486e50-a",
+        "criterion-67f09ec4b1486e50-b",
+        "criterion-9ccd6a88721f09ca-a",
+        "criterion-9ccd6a88721f09ca-b",
+        "criterion-e0925ebfac8c92f0-a",
+        "criterion-e0925ebfac8c92f0-b"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "15141856d1dc7689d61678afa4dd10985ec728227afcd927269fc9e8a966c90e",
+      "trial_ids": [
+        "NCT00025207",
+        "NCT00028587",
+        "NCT00077532",
+        "NCT00326599"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-0d5b276986e7e802",
+        "criterion-2c6d75b2156e29fb"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "17930faba3b77e76c6fd1c51062d9cf974e6373633c3560e12b0369b71c98369",
+      "trial_ids": [
+        "NCT00858663",
+        "NCT01285544"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-6d4e4e9c6c880eec",
+        "criterion-bca6bfba638fef47"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "307f4d46c7e8bf98ed594285422aac7fb8e3f9c03c8d6a5544b86919ea15cde0",
+      "trial_ids": [
+        "NCT00028587",
+        "NCT00077532"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-265302c405eb674b",
+        "criterion-dcbd1cdc204ad3d9"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "344deec8dad4afcae378a0852b1cb26718e55f6b7c6a1b661e18a8212242036d",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00091377"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-306cc515b02ffc8db7eb",
+        "criterion-344047f0f39afbfa7deb",
+        "criterion-394f6d902c94db9aaa03",
+        "criterion-3a881d2e7dc15989-a",
+        "criterion-60d99dcc4c0c504e98df",
+        "criterion-f41b38010c08f9f735ff"
+      ],
+      "partitions": [
+        "test",
+        "train"
+      ],
+      "source_fingerprint": "376be72e38bba9182802afedc01055b389d210a3cb9081bf85927b89273b8767",
+      "trial_ids": [
+        "NCT01896128",
+        "NCT03319628",
+        "NCT03772899",
+        "NCT04062565",
+        "NCT06490328",
+        "NCT07020611"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-0e893b3825dc46fa-a",
+        "criterion-2be8e85e314bac36af67"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "43060190b45637a9acb7879563420cb3fdbce42be73d6ad29f44f5bd70f918ce",
+      "trial_ids": [
+        "NCT01995500",
+        "NCT07724899"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-57df4e2922d3cf61",
+        "criterion-6eec168c66df6aa1",
+        "criterion-c2b51699b5f8527eed42",
+        "criterion-dc943d057f9f848b"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "4a97a2620aef34538370fec30a5666e27b171f7310a669a7188c79ca680f7ac0",
+      "trial_ids": [
+        "NCT00260364",
+        "NCT02769832",
+        "NCT03772899",
+        "NCT07724899"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-b871af937a799f11-a",
+        "criterion-b871af937a799f11-b",
+        "criterion-d4cd15fc32f55497-a",
+        "criterion-d4cd15fc32f55497-b"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "548670a4290ed7fec375ef35c14ed6aea346a85ec4575f4e2ddc759054d31268",
+      "trial_ids": [
+        "NCT00858663",
+        "NCT03064867"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-7038ea8ad89b992d",
+        "criterion-71f8e78051c3a8c9"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "6d05c7764e6e1d3475bf4a47a32440c31b00822f5e689abd334ee5b62e09ffd0",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00326599"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-0ed1e4f915dd22c7",
+        "criterion-50ffb64556f1fa09",
+        "criterion-70f2a3a7ae269be3",
+        "criterion-9cf9d816523a8b88"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "6dec81b444373f760c902733ed2eb4856544415aea285812dd13da6fd359bd63",
+      "trial_ids": [
+        "NCT00028587",
+        "NCT00077532",
+        "NCT00091377",
+        "NCT00326599"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-872c37f469219b384e57",
+        "criterion-a0cbea7e156c03382382"
+      ],
+      "partitions": [
+        "test",
+        "train"
+      ],
+      "source_fingerprint": "7d4a91505b458ef3981439d6fa52c752f6e69d10e0a967f4665335d816cc5a7f",
+      "trial_ids": [
+        "NCT02594111",
+        "NCT06871228"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-105c819e56922e1e",
+        "criterion-51273a7a8a6782e6",
+        "criterion-cab9cb997dfdf9e6",
+        "criterion-ec092c671a0f69b6"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "a4f8699e614ce54cf26947a7256f1f1eca4ef1dabde9d8e7af1fe8dbaefeb26e",
+      "trial_ids": [
+        "NCT00025207",
+        "NCT00028587",
+        "NCT00077532",
+        "NCT00091377"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-59b81d4ea54a9335",
+        "criterion-65ce18ecae7b5bfa",
+        "criterion-d6bc913f26bdda1e"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "adf2ed3621dd314a1ffa16b589f1763846a79826febbe7ff0de0b787d73486fa",
+      "trial_ids": [
+        "NCT01995500",
+        "NCT03054363",
+        "NCT07724899"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-a3c4d32efc2edc1b",
+        "criterion-eca71845c6e01966"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "ccb3b90356c684f4bbde7021935410166e93495d8c082b8b83126e3a9c1d88e8",
+      "trial_ids": [
+        "NCT01841736",
+        "NCT02567409"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-22a8cb0651461fb6",
+        "criterion-a6ffea785c3b2fe0",
+        "criterion-b24803e74b4ec13f"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "e27ae617ead108c6e9ee943732547e7c449997b7f7c6be9d0d74ca60c28b2d46",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00260364",
+        "NCT00326599"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-1874e904b87467b3",
+        "criterion-44f48781ca55f94d"
+      ],
+      "partitions": [
+        "quarantine",
+        "validation"
+      ],
+      "source_fingerprint": "e4074e7404773e35f90f97676a017f45095a287a82c7649f78c1c8f7cc9d860b",
+      "trial_ids": [
+        "NCT06731244",
+        "NCT07172919"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-8c89f565deb7a4ac",
+        "criterion-bb018191c671c9b6"
+      ],
+      "partitions": [
+        "test",
+        "validation"
+      ],
+      "source_fingerprint": "e8bdd4370c420fa2cc47c39dc8f8b00620b677b9de55b7423beeed04dd84f36a",
+      "trial_ids": [
+        "NCT00858663",
+        "NCT06490328"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-74a47304150f9a0e",
+        "criterion-77ce479c4d7d0646"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "e91b795cdc2f7c9b96927b33769e8ea18db19d56223775eeb468befdef0a67bc",
+      "trial_ids": [
+        "NCT00025207",
+        "NCT00077532"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-556c1b80cb8b5393",
+        "criterion-c7fe79e524e91a7e0b25",
+        "criterion-dc283c7fa63a74da"
+      ],
+      "partitions": [
+        "test",
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "ec0f3b0bd1aa7fc2609054bc3ccd0d949fee6f768bb447842dc011fafa9740a7",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00091377",
+        "NCT06490328"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-66b68f3f57bef082",
+        "criterion-dc52e08fb151a6bc"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "f0fb27af2a6ede0931684a375494b53263f89ca19dcd145c796fb9916e5fa357",
+      "trial_ids": [
+        "NCT00077532",
+        "NCT00326599"
+      ]
+    },
+    {
+      "criterion_ids": [
+        "criterion-01b2c7a58b9890a3",
+        "criterion-04010c4c6777aa188558",
+        "criterion-68d2f2c424ba7c61"
+      ],
+      "partitions": [
+        "train",
+        "validation"
+      ],
+      "source_fingerprint": "f1d6a553546aa7a9682463059f40e5a2a737b53719f0301b93ddaae3fb8efaf6",
+      "trial_ids": [
+        "NCT02346565",
+        "NCT02896595",
+        "NCT03054363"
+      ]
+    }
+  ]
+}

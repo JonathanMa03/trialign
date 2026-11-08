@@ -1151,3 +1151,126 @@ def test_existing_run_is_renamed_and_manual_note_is_listed_without_changing_stat
     assert listed["file_name"].startswith("run_") and not legacy.exists()
     assert restarted.get(job["run_id"])["reviews"] == job["reviews"]
     assert restarted.get(job["run_id"])["cost_estimate"] == job["cost_estimate"]
+
+
+def test_frozen_partitions_cover_corpus_reservations_and_quarantine():
+    from trialign.data import load_parquet_corpus
+    from trialign.data.partitions import assign_partitions, load_partition_release, pair_partition
+
+    release = load_partition_release(ROOT)
+    assert {k: v["trials"] for k, v in release["counts"].items()} == {
+        "train": 68,
+        "validation": 15,
+        "test": 15,
+        "quarantine": 2,
+    }
+    assert len(release["criterion_assignments"]) == 3537
+    assert sum(v["criteria"] for v in release["counts"].values()) == 3537
+    assert set(release["quarantined_trial_ids"]) == {"NCT05419375", "NCT07172919"}
+    assert all(
+        release["assignments"][t] in {"train", "quarantine"}
+        for t in release["development_reserved_trial_ids"]
+    )
+    records = load_parquet_corpus(ROOT / "data/processed/trial100_v1.parquet")
+    family = json.loads((ROOT / "data/processed/family_audit_v1/family_mapping.json").read_text())
+    inventory = json.loads(
+        (ROOT / "data/processed/family_audit_v1/trial_inventory.json").read_text()
+    )
+    policy = json.loads((ROOT / "configs/evaluation_policy_v1.json").read_text())
+    sources_by_partition = {
+        part: {
+            " ".join(r.source.casefold().split())
+            for r in records
+            if release["assignments"][r.trial_id] == part
+        }
+        for part in ["train", "validation", "test"]
+    }
+    for record in records:
+        part = release["assignments"][record.trial_id]
+        previous = (
+            sources_by_partition["train"]
+            if part == "validation"
+            else (sources_by_partition["train"] | sources_by_partition["validation"])
+        )
+        expected = (
+            part in {"validation", "test"}
+            and " ".join(record.source.casefold().split()) not in previous
+        )
+        assert release["secondary_exact_source_eligible"][record.criterion_id] == expected
+
+    a, _, _ = assign_partitions(records, family, inventory, policy)
+    b, _, _ = assign_partitions(list(reversed(records)), family, inventory, policy)
+    assert a == b == release["assignments"]
+    with pytest.raises(ValueError, match="explicit"):
+        pair_partition("UNKNOWN", "NCT01841736", a)
+    assert pair_partition("NCT05419375", "NCT07172919", a) is None
+    train = next(t for t, p in a.items() if p == "train")
+    test = next(t for t, p in a.items() if p == "test")
+    assert pair_partition(train, test, a) is None
+    linked = [t for t in a if inventory[t]["cohort"] == "cardiovascular"][:2]
+    family["split_group_by_trial"][linked[1]] = family["split_group_by_trial"][linked[0]]
+    grouped, _, _ = assign_partitions(records, family, inventory, policy)
+    assert grouped[linked[0]] == grouped[linked[1]]
+
+
+def test_partition_release_rejects_modified_output_and_overwrite(tmp_path):
+    from trialign.data.partitions import freeze_partitions
+
+    output = tmp_path / "partition_release"
+    freeze_partitions(ROOT, output)
+    freeze_partitions(ROOT, output, verify=True)
+    with pytest.raises(ValueError, match="already exists"):
+        freeze_partitions(ROOT, output)
+    path = output / "partitions.json"
+    data = json.loads(path.read_text())
+    trial = next(t for t, p in data["assignments"].items() if p == "test")
+    data["assignments"][trial] = "train"
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="output changed"):
+        freeze_partitions(ROOT, output, verify=True)
+
+
+def test_pair_generation_rejects_missing_assignments_and_excludes_quarantine():
+    from trialign.pairing.generate import generate_candidate_pairs
+
+    records = [age("A"), age("B")]
+    with pytest.raises(ValueError, match="required"):
+        generate_candidate_pairs(records, seed=1)
+    with pytest.raises(ValueError, match="Missing"):
+        generate_candidate_pairs(records, seed=1, split_by_trial={"HARNESS-A": "train"})
+    for mapping in [
+        {"HARNESS-A": "train", "HARNESS-B": "test"},
+        {"HARNESS-A": "quarantine", "HARNESS-B": "quarantine"},
+    ]:
+        assert generate_candidate_pairs(records, seed=1, split_by_trial=mapping) == []
+    mapping = {"HARNESS-A": "train", "HARNESS-B": "train"}
+    pairs = generate_candidate_pairs(records, seed=1, split_by_trial=mapping)
+    assert len(pairs) == 1 and pairs[0].split == "train"
+
+
+def test_pair_cli_uses_training_only_and_rejects_unfrozen_assignments(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    import trialign.cli as cli
+    from trialign.data.partitions import load_partition_release
+
+    release = load_partition_release(ROOT)
+    captured = []
+
+    def generate(records, **kwargs):
+        captured.extend(records)
+        return []
+
+    monkeypatch.setattr(cli, "generate_candidate_pairs", generate)
+    output = tmp_path / "controls.parquet"
+    result = CliRunner().invoke(cli.app, ["pairs", "--output", str(output)])
+    assert result.exit_code == 0, result.output
+    assert len(captured) == 2665
+    assert all(release["assignments"][r.trial_id] == "train" for r in captured)
+    wrong = tmp_path / "wrong.json"
+    wrong.write_text(json.dumps({"assignments": {}}))
+    result = CliRunner().invoke(
+        cli.app, ["pairs", "--splits", str(wrong), "--output", str(tmp_path / "bad.parquet")]
+    )
+    assert result.exit_code != 0
+    assert not (tmp_path / "bad.parquet").exists()

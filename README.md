@@ -32,7 +32,7 @@ data/trial100_notreviewed.xlsx
 
 This workbook retains the **original unreviewed extraction**. The authoritative reviewed source is now `data/trial100_v1.xlsx`, frozen as `data/processed/trial100_v1.parquet`: 3,537 criteria from 100 trials. It preserves structured fields, original evidence, parent statements, trial identifiers and provenance. Corpus review and pair-relationship validation are separate steps.
 
-The frozen development pair-review release is in `data/processed/pair_pilot_v1/release_v1/`. It preserves all 75 decisions, exports 67 clean development comparisons, and queues seven unresolved relationships plus one source-role conflict. It is not a held-out clinical benchmark or an approved supervised training set. The [technical document](docs/trialign_technical.tex) records the comparison scopes, remaining actions and family exclusions.
+The frozen development pair-review release is in `data/processed/pair_pilot_v1/release_v1/`. It preserves all 75 decisions, exports 67 clean development comparisons, and queues seven unresolved relationships plus one source-role conflict. It is not a held-out clinical benchmark or an approved supervised training set. The [technical document](docs/notes/trialign_technical.tex) records the comparison scopes, remaining actions and family exclusions.
 
 ### Alternate source: Chia
 
@@ -114,7 +114,7 @@ Verify the committed corpus, workbook, decisions, source snapshots, family reser
 python scripts/freeze_pair_pilot.py --verify
 ```
 
-The command is read-only and fails on stale hashes, workbook/log disagreements, missing evidence, invalid labels or changed release dispositions. Generated data remain ignored by default; the selected corpus, pilot and family-audit release files are explicitly tracked. Final train/validation/test partitions are not assigned. The generic `trialign split` and `trialign pairs` commands remain scaffolding and do not enforce this release's family exclusions.
+The command is read-only and fails on stale hashes, workbook/log disagreements, missing evidence, invalid labels or changed release dispositions. Generated data remain ignored by default; the selected corpus, pilot and family-audit release files are explicitly tracked. Family-aware partitions are frozen separately in `data/processed/partitions_v1/`: 68 training trials, 15 validation, 15 test and 2 quarantined trials. Pilot, demo and inspected-example exposures remain in training or quarantine. `trialign split` exports the locked map, and `trialign pairs` generates training-only controls with strict assignment checks.
 
 ## Local working demo
 
@@ -303,8 +303,8 @@ trialign/
 ## Documentation
 
 Detailed project notes, labeling contracts, family audits, demonstration plans
-and substantive change history live in [the technical document](docs/trialign_technical.tex)
-and its [compiled PDF](docs/trialign_technical.pdf). Update that document for
+and substantive change history live in [the technical document](docs/notes/trialign_technical.tex)
+and its [compiled PDF](docs/notes/trialign_technical.pdf). Update that document for
 future work instead of creating separate Markdown notes or changelogs.
 The main README and Python/R Git guides remain standalone Markdown files.
 Machine-readable data, annotation workbooks and source code remain separate artifacts.
@@ -313,3 +313,30 @@ Machine-readable data, annotation workbooks and source code remain separate arti
 
 - [Modern AutoCrit](https://github.com/JonathanMa03/modern-autocrit/tree/main)
 - [Chia: an annotated corpus of clinical trial eligibility criteria](https://www.nature.com/articles/s41597-020-00620-0)
+
+
+## Family-aware evaluation and manual review
+
+The baselines used the frozen `data/processed/trial100_v1.parquet` corpus (3,537
+criteria, 100 trials). Their whole-corpus top-five rankings are exploration
+artifacts. For held-out evaluation, fit TF-IDF on training only and rerank each
+query against other trials in its own partition; do not filter the old global
+top-five lists as a substitute. Pinned dense embeddings can be reused when the
+input rendering is identical.
+
+```bash
+python scripts/freeze_partitions.py --verify
+```
+
+The relevance contract distinguishes direct counterparts (2), related topics
+(1), unrelated criteria (0), and uncertain evidence (unscored), independently of
+clinical relationship labels. The planned next wave is 300 training pairs from
+agreement, disagreement, structured contrasts and random controls, followed by
+complete pooled judgments for 20 validation and 20 sealed test queries. No new
+manual-labeling packet has been constructed yet. Definitions, reuse caps,
+blinding, metrics, duplicate handling and release gates are in the
+[technical document](docs/notes/trialign_technical.tex#sec:reviewsampling).
+
+The existing 75-pair workbook passes decision-cell reconciliation but differs
+in bytes from its historical release checksum. It and the old manifest are
+preserved; the partition freeze does not approve a new supervised label release.

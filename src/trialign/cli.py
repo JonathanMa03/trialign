@@ -14,7 +14,7 @@ from scipy.sparse import save_npz
 
 from trialign.config import load_settings
 from trialign.data import load_corpus, load_parquet_corpus, write_corpus
-from trialign.data.splits import assert_no_group_leakage, assign_group_splits
+from trialign.data.partitions import load_partition_release, sha
 from trialign.models import TfidfEncoder
 from trialign.models.retrieval import retrieve_neighbors
 from trialign.pairing import generate_candidate_pairs
@@ -120,50 +120,70 @@ def freeze_corpus(
 
 @app.command("split")
 def split_corpus(
-    corpus: Path = typer.Option(Path("data/processed/criteria_reviewed.parquet")),
-    output: Path = typer.Option(Path("data/processed/trial_splits.json")),
+    corpus: Path = typer.Option(Path("data/processed/trial100_v1.parquet")),
+    output: Path = typer.Option(Path("artifacts/splits/trial_splits.json")),
     config: Path = typer.Option(None, "--config"),
 ) -> None:
-    """Create trial-level train/validation/test assignments."""
+    """Export the frozen family-aware assignments; never reshuffle trials."""
     settings = load_settings(config)
-    records = load_parquet_corpus(settings.resolve(corpus))
-    assignments = assign_group_splits(
-        records,
-        seed=settings.seed,
-        train=settings.splits.train,
-        validation=settings.splits.validation,
+    release = load_partition_release(settings.resolve(Path(".")))
+    if sha(settings.resolve(corpus)) != release["corpus_sha256"]:
+        raise typer.BadParameter(
+            "This partition release applies only to the frozen trial100_v1 corpus."
+        )
+    _write_json(
+        settings.resolve(output),
+        {
+            "partition_release_id": release["partition_release_id"],
+            "seed": release["seed"],
+            "assignments": release["assignments"],
+            "corpus_sha256": release["corpus_sha256"],
+        },
     )
-    assert_no_group_leakage(assignments)
-    destination = settings.resolve(output)
-    _write_json(destination, {"seed": settings.seed, "assignments": assignments})
-    counts = pd.Series(assignments).value_counts().to_dict()
-    console.print(f"[green]Wrote trial splits to {destination}[/green] {counts}")
+    console.print(release["counts"])
 
 
 @app.command("pairs")
 def build_pairs(
-    corpus: Path = typer.Option(Path("data/processed/criteria_reviewed.parquet")),
-    splits: Path = typer.Option(Path("data/processed/trial_splits.json")),
+    corpus: Path = typer.Option(Path("data/processed/trial100_v1.parquet")),
+    splits: Path = typer.Option(Path("data/processed/partitions_v1/partitions.json")),
     output: Path = typer.Option(Path("data/processed/pair_candidates.parquet")),
     config: Path = typer.Option(None, "--config"),
 ) -> None:
-    """Generate random controls and same-entity candidate pairs."""
+    """Generate training-only random/same-entity controls under frozen partitions."""
     settings = load_settings(config)
-    records = load_parquet_corpus(settings.resolve(corpus))
-    split_payload = json.loads(settings.resolve(splits).read_text(encoding="utf-8"))
+    release = load_partition_release(settings.resolve(Path(".")))
+    if sha(settings.resolve(corpus)) != release["corpus_sha256"]:
+        raise typer.BadParameter(
+            "This partition release applies only to the frozen trial100_v1 corpus."
+        )
+    supplied = json.loads(settings.resolve(splits).read_text())
+    if supplied.get("assignments") != release["assignments"]:
+        raise typer.BadParameter(
+            "Supplied assignments differ from the frozen family-aware release."
+        )
+    records = [
+        r
+        for r in load_parquet_corpus(settings.resolve(corpus))
+        if release["assignments"][r.trial_id] == "train"
+    ]
+    destination = settings.resolve(output)
+    if destination.exists():
+        raise typer.BadParameter("Pair output already exists; choose a new output version.")
     pairs = generate_candidate_pairs(
         records,
-        seed=settings.seed,
+        seed=release["seed"],
         random_pairs=int(settings.pairing.get("random_pairs", 1000)),
         same_entity_pairs=int(settings.pairing.get("same_entity_pairs", 2000)),
-        split_by_trial=split_payload["assignments"],
+        split_by_trial=release["assignments"],
     )
-    destination = settings.resolve(output)
     destination.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame([pair.model_dump(mode="json") for pair in pairs]).to_parquet(
         destination, index=False
     )
-    console.print(f"[green]Wrote {len(pairs)} pair candidates to {destination}[/green]")
+    console.print(
+        f"[green]Wrote {len(pairs)} training-only control candidates to {destination}[/green]"
+    )
 
 
 @app.command("baseline-tfidf")

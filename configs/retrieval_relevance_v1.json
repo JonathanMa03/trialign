@@ -1,0 +1,52 @@
+{
+  "annotation_unit": "unordered criterion pair with selected source and governing context; retrieval query direction and ranks retained as provenance",
+  "contract_id": "retrieval-relevance-1.0",
+  "detailed_contract_section": "Retrieval relevance contract 1.0",
+  "graded_metric": "pooled nDCG@5 using gains 0,1,3; not full-corpus recall",
+  "human_guide": "docs/notes/trialign_technical.tex",
+  "labels": {
+    "direct_counterpart": {
+      "grade": 2,
+      "primary_relevant": true
+    },
+    "related_topic": {
+      "grade": 1,
+      "primary_relevant": false
+    },
+    "uncertain": {
+      "grade": null,
+      "primary_relevant": null
+    },
+    "unrelated": {
+      "grade": 0,
+      "primary_relevant": false
+    }
+  },
+  "primary_metric": "Precision@5 on the common query set whose entire pooled candidate union is fully adjudicated; retain unresolved-query bounds and coverage",
+  "relationship_labels_are_separate": true,
+  "required_annotation_fields": [
+    "pair_id",
+    "criterion_a_id",
+    "criterion_b_id",
+    "relevance_label",
+    "relevance_grade",
+    "clinical_question",
+    "source_quotes_a",
+    "source_quotes_b",
+    "governing_scope",
+    "rationale",
+    "reviewer_id",
+    "reviewed_at_utc",
+    "adjudication_status",
+    "source_issues"
+  ],
+  "status": "frozen_research_annotation_contract; independent clinical validation pending",
+  "uncertainty": {
+    "bootstrap_replicates": 2000,
+    "cohort_stratified": true,
+    "confidence_level": 0.95,
+    "paired_across_models": true,
+    "seed": 20261011,
+    "unit": "trial/split-group query clusters"
+  }
+}
