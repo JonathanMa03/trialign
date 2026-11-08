@@ -34,3 +34,29 @@ def read_run(directory: Path, run_id: str) -> dict:
     if not path.is_file():
         raise KeyError("Unknown run.")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def migrate_legacy_runs(root: Path, directory: Path) -> None:
+    """Copy old local history once, preserving originals and newer destinations."""
+    marker = directory / ".legacy-migration.json"
+    legacy = root / "artifacts/demo"
+    permanent_marker = legacy / ".runs-migration.json"
+    if permanent_marker.exists():
+        return
+    if marker.exists():
+        atomic_write(permanent_marker, {"completed": True})
+        return
+    copied = []
+    for source, target, pattern in [
+        (legacy / "runs", directory, "run-*.json"),
+        (legacy / "uploads", directory / "uploads", "upload-*.json"),
+        (legacy / "imports", directory / "imports", "import-*.json"),
+    ]:
+        for path in sorted(source.glob(pattern)):
+            destination = target / path.name
+            if not destination.exists():
+                atomic_write(destination, json.loads(path.read_text()))
+                copied.append(str(destination.relative_to(directory)))
+    payload = {"source": "artifacts/demo", "copied": copied}
+    atomic_write(permanent_marker, payload)
+    atomic_write(marker, payload)

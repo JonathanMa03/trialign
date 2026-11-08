@@ -170,16 +170,37 @@ Click **Compare trials** to run. The default processes all retrieved candidate
 pairs (up to 5,000), rather than stopping at 16. Criterion counts and candidate-pair
 counts differ: retrieval proposes likely counterparts rather than every possible
 cross-trial combination. Explicit pair/time limits are reported as limited runs;
-Provider settings controls a browser-persisted call budget: **200 calls per
-comparison by default**, or **Unlimited calls** to disable the call cap. There
+Provider settings controls session-configurable budgets: **15 minutes and 200 calls
+per comparison by default**, with a time setting of 1–60 minutes and an
+**Unlimited calls** option to disable the call cap. There
 is no separate 24-call ceiling. The time limit and Stop control still apply.
 An exhausted call budget can leave contextual cases unresolved. **Stop comparison** keeps
 completed results and starts no further comparisons. An in-flight model request
 may take up to 35 seconds to return.
 
-Saved runs, uploaded input snapshots and review histories live under
-`artifacts/demo/`, survive restarts, and can be exported as JSON. They do not
-modify the frozen corpus or annotation release.
+Startup and refresh open a blank comparison form. Choose trials, upload files,
+or explicitly select an entry from **Saved comparisons**. The app does not
+automatically reopen the last run or upload. Provider settings reset to defaults
+on page load; model names, budgets and optional USD token rates can be changed
+for the current session. Saved runs retain their own settings independently.
+
+Saved runs, uploaded input snapshots and review histories live under the
+Git-ignored repository directory `runs/` and survive restarts. Existing history
+from `artifacts/demo/` is copied there once without overwriting newer saved
+files or deleting the originals. **Export Excel report** downloads a readable
+workbook; JSON remains available through the export endpoint with `?format=json`.
+Deleting a completed `run-*.json` file removes that comparison from the list
+after refresh; deleted history is not imported again from the legacy folder.
+Stop an active comparison before deleting its file, since it continues saving
+while running. These files do not modify the frozen corpus or annotation release.
+
+New runs and Excel exports record effective provider/model settings, budgets,
+retrieval and execution wall time, local worker CPU time, API request latency,
+input/output/cached tokens, and per-request usage. Cost estimation uses the USD
+input, cached-input and output rates entered in Provider settings. Missing
+rates or usage are reported as unavailable/partial, not as zero. Estimates
+cover API model tokens only and exclude local compute and other fees.
+Historical runs keep their original metadata; unrecorded fields are not invented.
 
 The working workflow uses planner skills, allowlisted tools, source/quote hooks,
 a contextual LLM judge, a source-first blind critic, one bounded revision and explicit escalation.

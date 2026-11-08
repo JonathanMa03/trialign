@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -53,6 +54,7 @@ class OpenAIProvider:
             timeout=35,
             max_retries=0,
         )
+        self.usage_ledger = []
         self.calls = 0
         self.resolved_models = []
         self.usage = {"input_tokens": 0, "output_tokens": 0}
@@ -68,25 +70,52 @@ class OpenAIProvider:
     ) -> BaseModel:
         # Call and revision budgets are enforced by the orchestrator, not SDK retries.
         self.calls += 1
-        response = self.client.responses.create(
-            model=self.critic_model
-            if role in {"criterion_critic_assessment", "criterion_critique"}
-            else self.model,
-            instructions=instructions,
-            input=json.dumps(payload, ensure_ascii=False),
-            text={
-                "format": {
-                    "type": "json_schema",
-                    "name": role,
-                    "schema": schema.model_json_schema(),
-                    "strict": True,
-                }
-            },
-            max_output_tokens=1800,
-            store=False,
-            timeout=max(1, timeout_seconds),
+        started = time.perf_counter()
+        agent = (
+            "critic" if role in {"criterion_critic_assessment", "criterion_critique"} else "judge"
         )
+        entry = {
+            "agent": agent,
+            "role": role,
+            "requested_model": self.critic_model if agent == "critic" else self.model,
+            "resolved_model": None,
+            "usage": None,
+        }
+        try:
+            response = self.client.responses.create(
+                model=self.critic_model
+                if role in {"criterion_critic_assessment", "criterion_critique"}
+                else self.model,
+                instructions=instructions,
+                input=json.dumps(payload, ensure_ascii=False),
+                text={
+                    "format": {
+                        "type": "json_schema",
+                        "name": role,
+                        "schema": schema.model_json_schema(),
+                        "strict": True,
+                    }
+                },
+                max_output_tokens=1800,
+                store=False,
+                timeout=max(1, timeout_seconds),
+            )
+        except Exception as exc:
+            entry["error_type"] = type(exc).__name__
+            raise
+        finally:
+            entry["elapsed_seconds"] = round(time.perf_counter() - started, 6)
+            self.usage_ledger.append(entry)
+        entry["resolved_model"] = response.model
+        entry["response_status"] = response.status
         if response.usage:
+            details = getattr(response.usage, "input_tokens_details", None)
+            entry["usage"] = {
+                "input_tokens": response.usage.input_tokens,
+                "output_tokens": response.usage.output_tokens,
+                "cached_input_tokens": getattr(details, "cached_tokens", None),
+                "cache_write_tokens": getattr(details, "cache_write_tokens", 0),
+            }
             self.usage["input_tokens"] += response.usage.input_tokens
             self.usage["output_tokens"] += response.usage.output_tokens
         if response.model not in self.resolved_models:

@@ -9,3 +9,5 @@
 .trial-picker input[type="search"]{margin-bottom:4px}.trial-search-status{overflow-wrap:anywhere}.selection-summary{margin-top:15px;padding:10px 14px;background:var(--soft);border-radius:5px;font-size:13px}.selection-summary p{margin:3px 0;color:var(--ink)}.selectors .swap{margin-top:24px}
 
 #timeUsage{font-size:12px;color:var(--muted)}#settingsValidation{color:var(--wine);font-weight:600}
+
+.run-metadata{border-top:1px solid var(--line);margin-top:24px;padding-top:18px;font-size:13px}.run-metadata dl{display:grid;grid-template-columns:210px minmax(0,1fr);gap:8px 14px}.run-metadata dt{color:var(--muted)}.run-metadata dd{margin:0;overflow-wrap:anywhere}.pricing-settings{margin:18px 0}.pricing-settings .limit-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}@media(max-width:650px){.run-metadata dl{grid-template-columns:1fr}.run-metadata dd{margin-bottom:8px}.pricing-settings .limit-fields{grid-template-columns:1fr}}

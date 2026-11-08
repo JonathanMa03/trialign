@@ -5,8 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
 import re
 import threading
+import time
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -19,7 +21,8 @@ from trialign.agents.orchestrator import VERSION, AgentOrchestrator
 from trialign.agents.provider import OpenAIProvider, local_configuration
 from trialign.models import TfidfEncoder
 from trialign.runtime.catalog import Catalog
-from trialign.runtime.storage import atomic_write, read_run, run_path
+from trialign.runtime.metrics import estimate_api_cost, pricing_settings
+from trialign.runtime.storage import atomic_write, migrate_legacy_runs, read_run, run_path
 from trialign.schemas import HumanDecision, RelationshipLabel
 from trialign.tools.correspondence import VERSION as MATCHING_VERSION
 from trialign.tools.correspondence import correspondence
@@ -84,9 +87,12 @@ class ComparisonService:
     def __init__(self, root: Path, *, directory: Path | None = None, encoder_factory=None):
         self.root = root
         self.encoder_factory = encoder_factory or TfidfEncoder
-        self.directory = directory or root / "artifacts/demo/runs"
-        self.import_directory = self.directory.parent / "imports"
+        self.directory = directory or root / "runs"
+        self.import_directory = self.directory / "imports"
+        self.upload_directory = self.directory / "uploads"
         self.directory.mkdir(parents=True, exist_ok=True)
+        if directory is None:
+            migrate_legacy_runs(root, self.directory)
         self.catalog = Catalog(root)
         digest = hashlib.sha256()
         for directory in ["agents", "tools", "runtime", "web"]:
@@ -169,15 +175,13 @@ class ComparisonService:
             raise ValueError("Upload limit is 15 MB total per batch.")
         payload = parse_upload(files, **options)
         with self.lock:
-            atomic_write(
-                self.directory.parent / "uploads" / (payload["dataset_id"] + ".json"), payload
-            )
+            atomic_write(self.upload_directory / (payload["dataset_id"] + ".json"), payload)
         return self.upload(payload["dataset_id"])
 
     def upload(self, dataset_id):
         if not re.fullmatch(r"upload-[a-f0-9]{32}", dataset_id):
             raise ValueError("Invalid uploaded dataset identifier.")
-        path = self.directory.parent / "uploads" / (dataset_id + ".json")
+        path = self.upload_directory / (dataset_id + ".json")
         if not path.is_file():
             raise ValueError("Uploaded dataset was not found; upload the files again.")
         return json.loads(path.read_text())
@@ -207,6 +211,15 @@ class ComparisonService:
         else:
             a, b = self.catalog.for_trial(trial_a), self.catalog.for_trial(trial_b)
             titles = self.catalog.titles
+        configuration = local_configuration(self.root)
+        judge_model = request.get("judge_model", configuration["model"])
+        critic_model = request.get("critic_model", configuration["critic_model"])
+        for model in [judge_model, critic_model]:
+            if not isinstance(model, str) or not model.strip() or len(model) > 200 or "\n" in model:
+                raise ValueError("Provide a valid judge and critic model name.")
+        if request.get("retrieval_model", "tfidf") != "tfidf":
+            raise ValueError("This runtime currently supports TF-IDF retrieval only.")
+        pricing = pricing_settings(request.get("pricing"))
         requested_pairs = int(request.get("max_pairs", 0))
         max_pairs = requested_pairs
         raw_calls = request.get("max_model_calls", 200)
@@ -221,7 +234,11 @@ class ComparisonService:
         with self.lock:
             if any(r["status"] in {"queued", "running", "cancelling"} for r in self.list_runs()):
                 raise ValueError("A comparison is already running. Finish or cancel it first.")
+            retrieval_started = time.perf_counter()
+            retrieval_cpu_started = time.thread_time()
             candidates = alignment_candidates(a, b, encoder=self.encoder_factory())
+            retrieval_seconds = time.perf_counter() - retrieval_started
+            retrieval_cpu_seconds = time.thread_time() - retrieval_cpu_started
             max_pairs = min(5000, len(candidates)) if requested_pairs == 0 else requested_pairs
             max_pairs = max(1, max_pairs)
             run_id = "run-" + uuid4().hex
@@ -247,6 +264,27 @@ class ComparisonService:
                 "input_sha256": hashlib.sha256(
                     json.dumps(inputs, sort_keys=True).encode()
                 ).hexdigest(),
+                "provider_settings": {
+                    "provider": "openai",
+                    "judge_model": judge_model.strip(),
+                    "critic_model": critic_model.strip(),
+                    "retrieval_model": "tfidf",
+                    "use_llm": bool(request.get("use_llm", True)),
+                    "max_model_calls": calls,
+                    "max_seconds": seconds,
+                    "requested_pair_limit": requested_pairs,
+                    "pricing": pricing,
+                    "request_timeout_seconds": 35,
+                    "max_output_tokens": 1800,
+                },
+                "metrics": {
+                    "retrieval_seconds": round(retrieval_seconds, 6),
+                    "retrieval_cpu_seconds": round(retrieval_cpu_seconds, 6),
+                    "python_version": platform.python_version(),
+                    "platform": platform.system(),
+                    "machine": platform.machine(),
+                    "local_device": "CPU; contextual model inference is remote",
+                },
                 "runtime_version": VERSION,
                 "runtime_source_sha256": self.source_fingerprint,
                 "encoder": "TF-IDF baseline; trained encoder not available",
@@ -277,6 +315,9 @@ class ComparisonService:
             job = read_run(self.directory, run_id)
             job["status"] = "running"
             self._save(job)
+        execution_started = time.perf_counter()
+        execution_cpu_started = time.thread_time()
+        job["started_at"] = now()
         budget = RuntimeBudget(
             max_model_calls=job["max_model_calls"],
             max_seconds=job["max_seconds"],
@@ -286,6 +327,8 @@ class ComparisonService:
         provider = provider_override
         try:
             configuration = local_configuration(self.root)
+            configuration["model"] = job["provider_settings"]["judge_model"]
+            configuration["critic_model"] = job["provider_settings"]["critic_model"]
             if provider is None and job["use_llm"] and configuration["api_key"]:
                 provider = OpenAIProvider(configuration)
             runner = AgentOrchestrator(provider if job["use_llm"] else None)
@@ -293,6 +336,8 @@ class ComparisonService:
             job["critic_model"] = (
                 getattr(provider, "critic_model", job["model"]) if job["use_llm"] else None
             )
+            job["provider_settings"]["effective_judge_model"] = job["model"]
+            job["provider_settings"]["effective_critic_model"] = job["critic_model"]
             job["skill_version"] = runner.planner.skills.version
             job["skill_sha256"] = runner.planner.skills.digest
             records = {r["criterion_id"]: r for r in [*job["criteria_a"], *job["criteria_b"]]}
@@ -349,6 +394,29 @@ class ComparisonService:
                 job["usage"] = getattr(provider, "usage", job["usage"])
                 job["resolved_models"] = getattr(provider, "resolved_models", [])
                 job["finished_at"] = now()
+                job["usage_ledger"] = getattr(provider, "usage_ledger", [])
+                execution_seconds = time.perf_counter() - execution_started
+                job["metrics"].update(
+                    {
+                        "execution_seconds": round(execution_seconds, 6),
+                        "elapsed_seconds": round(
+                            job["metrics"]["retrieval_seconds"] + execution_seconds, 6
+                        ),
+                        "worker_thread_cpu_seconds": round(
+                            job["metrics"]["retrieval_cpu_seconds"]
+                            + time.thread_time()
+                            - execution_cpu_started,
+                            6,
+                        ),
+                        "api_request_seconds": round(
+                            sum(e["elapsed_seconds"] for e in job["usage_ledger"]), 6
+                        ),
+                    }
+                )
+                job["cost_estimate"] = estimate_api_cost(
+                    job["usage_ledger"], job["provider_settings"]["pricing"], budget.model_calls
+                )
+
                 self._save(job)
             if isinstance(provider, OpenAIProvider):
                 provider.client.close()

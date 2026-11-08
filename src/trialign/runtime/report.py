@@ -67,6 +67,52 @@ def comparison_workbook(job):
         ws.print_title_rows = "1:1"
         return ws
 
+    settings = job.get("provider_settings", {})
+    metrics = job.get("metrics", {})
+    cost = job.get("cost_estimate", {})
+    metadata_rows = [
+        ["Resolved API models", ", ".join(job.get("resolved_models", [])) or "None reported"],
+        ["Request timeout (seconds)", settings.get("request_timeout_seconds", "Not recorded")],
+        ["Maximum output tokens per call", settings.get("max_output_tokens", "Not recorded")],
+        ["Configured judge model", settings.get("judge_model", "Not recorded")],
+        ["Configured critic model", settings.get("critic_model", "Not recorded")],
+        ["Retrieval model", settings.get("retrieval_model", job.get("encoder", "Not recorded"))],
+        ["Contextual models enabled", job.get("use_llm")],
+        [
+            "Maximum model calls",
+            job.get("max_model_calls") if job.get("max_model_calls") is not None else "Unlimited",
+        ],
+        ["Time budget (seconds)", job.get("max_seconds")],
+        ["Candidate-pair limit", job.get("requested_pair_limit") or "All assigned counterparts"],
+        ["Total elapsed (seconds)", metrics.get("elapsed_seconds", "Not recorded")],
+        ["Retrieval (seconds)", metrics.get("retrieval_seconds", "Not recorded")],
+        ["Comparison execution (seconds)", metrics.get("execution_seconds", "Not recorded")],
+        ["Local worker CPU (seconds)", metrics.get("worker_thread_cpu_seconds", "Not recorded")],
+        ["API requests (seconds)", metrics.get("api_request_seconds", "Not recorded")],
+        ["Input tokens", job.get("usage", {}).get("input_tokens", "Not recorded")],
+        ["Output tokens", job.get("usage", {}).get("output_tokens", "Not recorded")],
+        [
+            "Estimated API cost (USD)",
+            cost.get("estimated_api_cost_usd")
+            if cost.get("estimated_api_cost_usd") is not None
+            else "Unavailable",
+        ],
+        ["Known API subtotal (USD)", cost.get("known_api_cost_usd", "Not recorded")],
+        ["Cost status", cost.get("status", "Not recorded")],
+        ["Cost limitations", " ".join(cost.get("reasons", []))],
+        ["Cost scope", cost.get("scope", "No cost metadata recorded for this historical run")],
+        ["Local compute", metrics.get("local_device", "Not recorded")],
+        [
+            "Platform / architecture",
+            f"{metrics.get('platform', '')} {metrics.get('machine', '')}".strip() or "Not recorded",
+        ],
+        ["Python version", metrics.get("python_version", "Not recorded")],
+    ]
+    for agent, rates in settings.get("pricing", {}).get("rates", {}).items():
+        for field, value in rates.items():
+            metadata_rows.append(
+                [f"{agent} {field} (USD)", value if value is not None else "Unknown"]
+            )
     summary = job["summary"]
     sheet(
         "Summary",
@@ -101,7 +147,8 @@ def comparison_workbook(job):
             ["Critic model", job.get("critic_model") or "No model used"],
             ["Runtime version", job.get("runtime_version", "")],
             ["Input SHA-256", job.get("input_sha256", "")],
-        ],
+        ]
+        + metadata_rows,
         [32, 115],
     )
     records = {r["criterion_id"]: r for r in job["criteria_a"] + job["criteria_b"]}
@@ -227,6 +274,42 @@ def comparison_workbook(job):
         ],
         history_rows,
         [35, 12, 30, 90, 28, 30, 24],
+    )
+    usage_rows = []
+    for entry in job.get("usage_ledger", []):
+        usage = entry.get("usage") or {}
+        usage_rows.append(
+            [
+                entry["agent"],
+                entry["role"],
+                entry["requested_model"],
+                entry.get("resolved_model"),
+                usage.get("input_tokens"),
+                usage.get("cached_input_tokens"),
+                usage.get("output_tokens"),
+                usage.get("cache_write_tokens"),
+                entry["elapsed_seconds"],
+                entry.get("response_status"),
+                entry.get("error_type"),
+            ]
+        )
+    sheet(
+        "API usage",
+        [
+            "Agent",
+            "Request role",
+            "Requested model",
+            "Resolved model",
+            "Input tokens",
+            "Cached input tokens",
+            "Output tokens",
+            "Cache-write tokens",
+            "API seconds",
+            "Response status",
+            "Error type",
+        ],
+        usage_rows,
+        [15, 35, 35, 35, 18, 22, 18, 22, 18, 22, 30],
     )
     stream = BytesIO()
     wb.save(stream)

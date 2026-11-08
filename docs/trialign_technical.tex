@@ -1113,8 +1113,9 @@ excluding shared parent paragraphs, and rank only eligible counterparts.
 Rankings and assignments propose comparisons; they do not determine clinical
 relationships. The temporary encoder is explicitly identified as
 TF--IDF. A compatible encoder factory can replace it later; no trained
-relationship head is fabricated. MPNet/BioLORD adapters remain on the teammate branch pending her PR;
-the local runtime uses the original main-branch TF--IDF encoder.
+relationship head is fabricated. MPNet/BioLORD baseline CLI commands are merged into main. The local runtime
+uses the merged sparse TF--IDF encoder; dense-model selection in the UI
+remains a separate integration task.
 
 \begin{enumerate}
 \item The planner selects a versioned numeric, clinical-context or source-resolution
@@ -1185,12 +1186,13 @@ remote text; the source view and human review remain necessary.
 
 By default, all retrieved candidate pairs are processed, with a 5,000-pair
 ceiling, 200 model calls and a 15-minute total run budget. Time and call
-controls are in Provider settings, with browser-persisted preferences and
+controls are in Provider settings, with session-configurable defaults and
 an Unlimited calls option. The time control accepts 1--60 whole minutes;
 the server accepts 10--3,600 seconds for API clients. The active run header
-displays its original time budget. Valid preferences save when the dialog
-is closed using Close, Escape or an outside click; invalid values keep it
-open for correction. These settings apply to new comparisons.
+displays its original time budget. Valid settings apply to the current page
+when the dialog is closed using Close, Escape or an outside click; invalid
+values keep it open for correction. Each page load restores defaults.
+These settings apply to new comparisons, whose effective configuration is saved.
 Unlimited is encoded as a null call cap; zero still permits no model calls.
 The former 24-call ceiling is removed. Time, cancellation and one-revision
 limits remain active. A configured pair cutoff reports a
@@ -1199,7 +1201,10 @@ from retrieved candidate-pair counts. The interface permits bounded adjustments 
 partial results survive interruption. A source snapshot, input hash, runtime
 source fingerprint, skill hash/version, requested and resolved model IDs,
 token usage, traces and append-only review history are saved atomically under
-\pathcode{artifacts/demo/}. The directory is ignored by Git. Imported files are
+\pathcode{runs/} in the repository root. This directory is ignored by Git;
+upload snapshots and legacy imports are stored inside it. A one-time migration
+copies prior history from \pathcode{artifacts/demo/}, preserving originals
+and existing destination files. Imported files are
 validated before persistence; the frozen corpus and pair release are never
 rewritten. Review saving requires a reviewer, rationale and current revision.
 
@@ -1214,6 +1219,15 @@ implementation patterns for strict JSON boundaries, atomic storage and the
 local browser server. A combined extraction/comparison application remains
 future work rather than a feature of this prototype.
 
+Startup and page refresh show an empty comparison form: no trials, upload,
+result filter text or saved run is restored automatically. Saved comparisons
+are listed from the local run files and open only after explicit selection.
+New uploads can still select their two trials automatically within that page
+session. Provider settings reset to defaults on page load; session overrides
+are independent of the immutable settings saved with historical comparisons.
+Refreshing a page does not cancel a background run; it remains accessible through
+the saved-comparison list.
+
 The corrected trial picker uses one searchable field per side, with suggestions
 by trial ID or title. An exact pasted ID selects that trial immediately;
 partial or unmatched text clears the selection and prevents comparison.
@@ -1221,7 +1235,7 @@ A selection summary displays the IDs, titles and criterion counts sent to the
 comparison endpoint. Historical result headers identify the displayed run
 separately from the editable selections for the next run.
 The default export is an Excel workbook with Summary, Pair decisions,
-Criterion coverage and Review history sheets. It includes unexamined assigned
+Criterion coverage, Review history and API usage sheets. It includes unexamined assigned
 pairs, all input criteria, model explanations and critic feedback, with the
 latest human decision distinguished from the proposed relationship and the
 full saved review history retained. Wrapped text, filters and frozen headers
@@ -1252,16 +1266,39 @@ extraction or atomicity validator. The visible Stop comparison control requests
 cancellation, preserves completed results and prevents subsequent calls; an
 in-flight provider request may finish within its bounded timeout.
 
-\paragraph{Provider settings entry point.}
-The local UI includes a Provider settings dialog showing the current TF--IDF
-retriever, requested contextual model and whether credentials are configured.
-It never displays secret values. The call budget is configurable here, with
-a default of 200 calls per comparison and an unlimited option. MPNet, BioLORD and a future trained TriAlign
-encoder are explicitly unavailable choices until integrated. Selecting and
-persisting another default is future work; the dialog does not pretend to
-switch to an uninstalled model. The presentation assumes criteria already
-extracted by Modern AutoCrit. Direct extraction within TriAlign is planned,
-while standalone file import and comparison remain supported.
+\paragraph{Provider settings and run metadata.}
+The dialog defaults to TF--IDF retrieval, environment-configured judge and
+critic models, 200 calls and 15 minutes on each page load. Judge/critic model
+names and budgets can be overridden for the session; closing by button,
+Escape or outside click validates the values. Credentials are never shown or
+persisted with a run. Dense retrieval remains unavailable in the UI until its
+separate integration, although the baseline CLI implementations are merged.
+
+Each new run snapshots the configured and effective model names, retrieval
+method, budgets, contextual-model toggle and optional USD prices per million
+input, cached-input and output tokens for each agent. The executor uses the
+snapshotted model names. It records retrieval and comparison wall time,
+worker-thread CPU time, API-request latency, platform/architecture and Python
+version. Worker CPU time excludes remote inference and other local threads;
+API latency includes network and provider waiting time. Each provider request
+records role, requested/resolved model, token usage, timing and response status;
+failed requests retain their error type without raw exception bodies.
+
+The estimate uses recorded usage and user-entered prices, following
+\href{https://developers.openai.com/api/docs/guides/prompt-caching}{OpenAI's token-accounting guidance}.
+Cached tokens are subtracted from ordinary input before applying their own
+rate; output totals are not supplemented with a second reasoning-token charge.
+Missing prices, missing usage or unsupported separately billed cache writes
+leave the full estimate unavailable, with any known subtotal marked separately.
+No bill is inferred from absent data. The estimate excludes local compute and
+other fees; it is not an invoice. Metadata and per-request usage appear in the
+UI and Excel export. Historical runs retain their original data and display
+unrecorded fields as unavailable rather than receiving fabricated measurements.
+
+Deleting a completed run JSON removes it from the next listing. A migration
+completion record outside the run directory prevents deleted history from
+being reimported even if the whole \pathcode{runs/} directory is removed.
+Active jobs must be stopped first because they continue saving their results.
 
 \paragraph{Judge/critic context independence: November 8 update.}
 In runtime \pathcode{agent-runtime-2}, the critic first receives only A/B source
@@ -1289,7 +1326,8 @@ lactation judgment used a synonym interpretation. This discrepancy requires
 review rather than treating either outcome as clinical ground truth.
 
 \paragraph{Verification and observed failure cases.}
-The automated suite passes 37 runtime tests, covering polarity, endpoint/unit handling, source conflicts,
+The automated suite passes 67 tests, covering baseline retrieval, run metadata,
+polarity, endpoint/unit handling, source conflicts,
 critic veto, bounded revision, invented quotes, cancellation, atomic imports,
 and durable review history. A separate 12-case constructed offline harness
 passes via \pathcode{python scripts/trialign.py harness}. These are engineering

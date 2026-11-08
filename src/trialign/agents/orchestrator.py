@@ -14,7 +14,7 @@ from trialign.schemas import RelationshipLabel
 from trialign.tools.correspondence import NoClinicalCounterpart, correspondence
 from trialign.tools.registry import ToolRegistry
 
-VERSION = "agent-runtime-4"
+VERSION = "agent-runtime-6"
 AgentResult = PairResult
 
 

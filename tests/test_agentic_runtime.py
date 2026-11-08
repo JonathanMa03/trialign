@@ -483,7 +483,7 @@ def test_explicit_header_mapping_and_invalid_batch_are_atomic(tmp_path):
     ]
     with pytest.raises(ValueError, match="column mapping"):
         service.import_files(files)
-    assert not list((tmp_path / "artifacts/demo/uploads").glob("*.json"))
+    assert not list((tmp_path / "runs/uploads").glob("*.json"))
     dataset = service.import_files(
         files, text_column="Original wording", trial_column="Protocol name", role="inclusion"
     )
@@ -870,7 +870,13 @@ def test_excel_report_preserves_sources_unexamined_pairs_and_review_history(tmp_
         },
     ]
     wb = load_workbook(BytesIO(comparison_workbook(job)))
-    assert wb.sheetnames == ["Summary", "Pair decisions", "Criterion coverage", "Review history"]
+    assert wb.sheetnames == [
+        "Summary",
+        "Pair decisions",
+        "Criterion coverage",
+        "Review history",
+        "API usage",
+    ]
     pairs = list(wb["Pair decisions"].values)
     assert len(pairs) == 3
     assert {row[5] for row in pairs[1:]} == {"Not examined", "Evidence-supported proposal"}
@@ -895,3 +901,180 @@ def test_visible_time_budget_default_and_extended_range(tmp_path):
     assert extended["max_seconds"] == 3600
     with pytest.raises(ValueError, match="between 10 and 3600"):
         service.create({**request, "max_seconds": 3601}, synchronous=True)
+
+
+def test_default_runs_directory_migrates_history_uploads_and_reviews_once(tmp_path):
+    from trialign.runtime.storage import atomic_write, read_run, run_path
+
+    legacy = ComparisonService(tmp_path, directory=tmp_path / "artifacts/demo/runs")
+    rows = [age("A").model_dump(mode="json"), age("B").model_dump(mode="json")]
+    legacy.import_file("criteria.json", json.dumps(rows).encode())
+    uploaded = legacy.import_files(
+        [
+            {
+                "filename": "criteria.csv",
+                "content": (
+                    b"trial_id,source,type\n"
+                    b"Trial A,Age at least 18 years,inclusion\n"
+                    b"Trial B,Age at least 21 years,inclusion\n"
+                ),
+                "side": "",
+            }
+        ]
+    )
+    job = legacy.create(
+        {
+            "trial_a": uploaded["trials"][0]["trial_id"],
+            "trial_b": uploaded["trials"][1]["trial_id"],
+            "dataset_id": uploaded["dataset_id"],
+            "use_llm": False,
+        },
+        synchronous=True,
+    )
+    assert len(job["results"]) == 1
+    job = legacy.review(
+        job["run_id"],
+        {
+            "pair_id": job["results"][0]["pair_id"],
+            "reviewer_id": "Test reviewer",
+            "final_label": "ambiguous",
+            "rationale": "Test migration preserves this review",
+            "status": "ambiguous",
+            "expected_revision": job["revision"],
+        },
+    )
+    # Reproduce the previous sibling layout for upload snapshots and imports.
+    for folder in ["uploads", "imports"]:
+        for source in (legacy.directory / folder).glob("*.json"):
+            destination = legacy.directory.parent / folder / source.name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, destination)
+    original = run_path(legacy.directory, job["run_id"]).read_bytes()
+    service = ComparisonService(tmp_path)
+    assert service.directory == tmp_path / "runs"
+    assert service.upload(uploaded["dataset_id"])["records"] == uploaded["records"]
+    assert service.get(job["run_id"])["reviews"] == job["reviews"]
+    assert len(service.catalog.records) == 2
+    assert run_path(legacy.directory, job["run_id"]).read_bytes() == original
+    assert not (tmp_path / "uploads").exists()
+    assert not (tmp_path / "imports").exists()
+    saved = read_run(service.directory, job["run_id"])
+    saved["message"] = "Newer saved result"
+    atomic_write(run_path(service.directory, job["run_id"]), saved)
+    assert ComparisonService(tmp_path).get(job["run_id"])["message"] == "Newer saved result"
+    run_path(service.directory, job["run_id"]).unlink()
+    assert not ComparisonService(tmp_path).list_runs()
+    shutil.rmtree(service.directory)
+    assert not ComparisonService(tmp_path).list_runs()
+
+
+def test_run_records_effective_settings_timing_and_zero_api_cost_without_secrets(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-secret-never-save")
+    service = ComparisonService(tmp_path)
+    service.catalog.add([age("A"), age("B")], origin="test")
+    job = service.create(
+        {
+            "trial_a": "HARNESS-A",
+            "trial_b": "HARNESS-B",
+            "use_llm": False,
+            "judge_model": "session-judge",
+            "critic_model": "session-critic",
+            "max_seconds": 1200,
+            "max_model_calls": 300,
+        },
+        synchronous=True,
+    )
+    settings = job["provider_settings"]
+    assert settings["judge_model"] == "session-judge"
+    assert settings["critic_model"] == "session-critic"
+    assert settings["max_seconds"] == 1200 and settings["max_model_calls"] == 300
+    assert settings["retrieval_model"] == "tfidf"
+    assert job["metrics"]["elapsed_seconds"] >= job["metrics"]["retrieval_seconds"] >= 0
+    assert job["metrics"]["worker_thread_cpu_seconds"] >= 0
+    assert job["cost_estimate"]["estimated_api_cost_usd"] == 0
+    assert "test-secret-never-save" not in json.dumps(job)
+    assert ComparisonService(tmp_path).get(job["run_id"])["provider_settings"] == settings
+
+
+def test_usage_ledger_prices_judge_critic_and_cached_input_and_retains_failures():
+    from types import SimpleNamespace
+
+    from trialign.agents.provider import OpenAIProvider
+    from trialign.runtime.metrics import estimate_api_cost, pricing_settings
+
+    provider = OpenAIProvider(
+        {"api_key": "fake-key", "model": "judge-model", "critic_model": "critic-model"}
+    )
+    provider.client.close()
+    a, b = contextual()
+    responses = [
+        SimpleNamespace(
+            model="judge-snapshot",
+            status="completed",
+            output_text=proposal(a, b).model_dump_json(),
+            usage=SimpleNamespace(
+                input_tokens=1000,
+                output_tokens=100,
+                input_tokens_details=SimpleNamespace(cached_tokens=200),
+            ),
+        ),
+        SimpleNamespace(
+            model="critic-snapshot",
+            status="completed",
+            output_text=proposal(a, b).model_dump_json(),
+            usage=SimpleNamespace(
+                input_tokens=500,
+                output_tokens=50,
+                input_tokens_details=SimpleNamespace(cached_tokens=0),
+            ),
+        ),
+    ]
+    provider.client = SimpleNamespace(
+        responses=SimpleNamespace(create=lambda **kwargs: responses.pop(0))
+    )
+    for role in ["criterion_judgment", "criterion_critic_assessment"]:
+        provider.generate(role, "Test", {}, Judgment)
+    pricing = pricing_settings(
+        {
+            "judge": {
+                "input_per_million": 2,
+                "cached_input_per_million": 1,
+                "output_per_million": 10,
+            },
+            "critic": {"input_per_million": 4, "output_per_million": 20},
+        }
+    )
+    estimate = estimate_api_cost(provider.usage_ledger, pricing, provider.calls)
+    assert estimate["estimated_api_cost_usd"] == pytest.approx(0.0058)
+    assert [e["resolved_model"] for e in provider.usage_ledger] == [
+        "judge-snapshot",
+        "critic-snapshot",
+    ]
+
+    def failed(**kwargs):
+        raise TimeoutError("Do not persist this raw exception body")
+
+    provider.client.responses.create = failed
+    with pytest.raises(TimeoutError):
+        provider.generate("criterion_judgment", "Test", {}, Judgment)
+    estimate = estimate_api_cost(provider.usage_ledger, pricing, provider.calls)
+    assert estimate["estimated_api_cost_usd"] is None
+    assert estimate["known_api_cost_usd"] == pytest.approx(0.0058)
+    assert provider.usage_ledger[-1]["error_type"] == "TimeoutError"
+    assert "raw exception body" not in json.dumps(provider.usage_ledger)
+    assert (
+        estimate_api_cost(provider.usage_ledger[:1], pricing_settings(), 1)[
+            "estimated_api_cost_usd"
+        ]
+        is None
+    )
+
+
+@pytest.mark.parametrize("rate", [-1, float("nan"), float("inf"), True])
+def test_invalid_cost_rates_are_rejected(rate):
+    from trialign.runtime.metrics import pricing_settings
+
+    with pytest.raises(ValueError):
+        pricing_settings({"judge": {"input_per_million": rate, "output_per_million": 1}})

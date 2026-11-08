@@ -329,3 +329,6 @@ data/processed/pair_pilot_v1/release_v1/*
 !data/processed/pair_pilot_v1/release_v1/resolved_pairs.jsonl
 !data/processed/pair_pilot_v1/release_v1/review_queue.jsonl
 ~$*.xlsx
+
+# Local comparison history, uploaded snapshots and review records.
+/runs/
