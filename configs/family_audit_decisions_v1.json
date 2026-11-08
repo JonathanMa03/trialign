@@ -1,0 +1,413 @@
+{
+  "audit_version": "family-audit-0.1",
+  "reviewer": "Codex (AI-assisted evidence audit)",
+  "review_date": "2026-11-07",
+  "status": "proposed_grouping; not final train/validation/test assignments",
+  "candidate_edges_sha256": "d15ec1f7c73ca357bdc2d4670c90bbf132096efce91bd4b0c271e250daa86a7b",
+  "registry_snapshot_sha256": "94bc0627dda17885c5619ed269046a2b8c4b888599ab33eed6d66a4258e969a2",
+  "in_cohort_reviews": [
+    {
+      "candidate_id": "edge-NCT01995500-NCT02073565",
+      "trial_a": "NCT01995500",
+      "trial_b": "NCT02073565",
+      "decision": "no_merge_evidence",
+      "rationale": "NIREUS BioNIR-002/Medinol evaluates BioNIR versus Resolute; HARMONEE VP-0601/OrbusNeich evaluates Combo versus everolimus stents. Shared PCI language does not establish a common protocol or cohort.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT01995500",
+        "https://clinicaltrials.gov/api/v2/studies/NCT02073565"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00025207-NCT00028587",
+      "trial_a": "NCT00025207",
+      "trial_b": "NCT00028587",
+      "decision": "no_merge_evidence",
+      "rationale": "Different NCI study identifiers and treatments/diseases (gefitinib mesothelioma versus PS-341 solid tumors). Rare 8-gram coverage is 13%, below the declared copy threshold. No explicit lineage found.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00025207",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00028587"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00028587-NCT00091377",
+      "trial_a": "NCT00028587",
+      "trial_b": "NCT00091377",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00028587",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00091377"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00028587-NCT00326599",
+      "trial_a": "NCT00028587",
+      "trial_b": "NCT00326599",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00028587",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00326599"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00028587-NCT00077532",
+      "trial_a": "NCT00028587",
+      "trial_b": "NCT00077532",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00028587",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00077532"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00091377-NCT00326599",
+      "trial_a": "NCT00091377",
+      "trial_b": "NCT00326599",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00091377",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00326599"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT03064867-NCT03938987",
+      "trial_a": "NCT03064867",
+      "trial_b": "NCT03938987",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT03064867",
+        "https://clinicaltrials.gov/api/v2/studies/NCT03938987"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00077532-NCT00091377",
+      "trial_a": "NCT00077532",
+      "trial_b": "NCT00091377",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00077532",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00091377"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00025207-NCT00326599",
+      "trial_a": "NCT00025207",
+      "trial_b": "NCT00326599",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00025207",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00326599"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00025207-NCT00091377",
+      "trial_a": "NCT00025207",
+      "trial_b": "NCT00091377",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00025207",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00091377"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT02769832-NCT04747145",
+      "trial_a": "NCT02769832",
+      "trial_b": "NCT04747145",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT02769832",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04747145"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT01841736-NCT04310007",
+      "trial_a": "NCT01841736",
+      "trial_b": "NCT04310007",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT01841736",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04310007"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00077532-NCT00326599",
+      "trial_a": "NCT00077532",
+      "trial_b": "NCT00326599",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00077532",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00326599"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00260364-NCT00326599",
+      "trial_a": "NCT00260364",
+      "trial_b": "NCT00326599",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00260364",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00326599"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT03054363-NCT03653507",
+      "trial_a": "NCT03054363",
+      "trial_b": "NCT03653507",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT03054363",
+        "https://clinicaltrials.gov/api/v2/studies/NCT03653507"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT00025207-NCT00077532",
+      "trial_a": "NCT00025207",
+      "trial_b": "NCT00077532",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT00025207",
+        "https://clinicaltrials.gov/api/v2/studies/NCT00077532"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT02769832-NCT04310007",
+      "trial_a": "NCT02769832",
+      "trial_b": "NCT04310007",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT02769832",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04310007"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT02769832-NCT03938987",
+      "trial_a": "NCT02769832",
+      "trial_b": "NCT03938987",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT02769832",
+        "https://clinicaltrials.gov/api/v2/studies/NCT03938987"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT07445360-NCT07724899",
+      "trial_a": "NCT07445360",
+      "trial_b": "NCT07724899",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT07445360",
+        "https://clinicaltrials.gov/api/v2/studies/NCT07724899"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT03054363-NCT04310007",
+      "trial_a": "NCT03054363",
+      "trial_b": "NCT04310007",
+      "decision": "no_merge_evidence",
+      "rationale": "Different organization protocol identifiers and distinct study descriptions/interventions; no shared protocol identity, explicit lineage or substantial rare copied eligibility block was found. Similarity is insufficient to merge. This is no-merge evidence at screening, not proof of independence.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT03054363",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04310007"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT01811992-NCT04747145",
+      "trial_a": "NCT01811992",
+      "trial_b": "NCT04747145",
+      "decision": "no_merge_evidence",
+      "rationale": "UMCC 2015.024/University of Michigan tests gene-transfer therapy; PRO00039277/Medical College of Wisconsin tests pulsed radiotherapy. Shared glioma eligibility wording does not establish a common trial family.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT01811992",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04747145"
+      ]
+    },
+    {
+      "candidate_id": "edge-NCT01760291-NCT04641611",
+      "trial_a": "NCT01760291",
+      "trial_b": "NCT04641611",
+      "decision": "no_merge_evidence",
+      "rationale": "WATCHMAN continued access and a venous-cannulation CABG pilot are different protocols, sponsors and interventions. Shared consent/clinical wording is not a family link.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT01760291",
+        "https://clinicaltrials.gov/api/v2/studies/NCT04641611"
+      ]
+    }
+  ],
+  "external_links": [
+    {
+      "a": "NCT01760291",
+      "b": "NCT01182441",
+      "relationship": "continued_access_parent",
+      "clinical_family_link": true,
+      "split_link": true,
+      "status": "source_supported",
+      "evidence": "CAP2 registry description explicitly identifies continued access during PREVAIL analysis/review. The external record identifies PREVAIL and Boston Scientific.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT01760291",
+        "https://clinicaltrials.gov/api/v2/studies/NCT01182441"
+      ]
+    },
+    {
+      "a": "NCT04880434",
+      "b": "NCT02601313",
+      "relationship": "same_protocol_separately_registered_cohort",
+      "clinical_family_link": true,
+      "split_link": true,
+      "status": "source_supported",
+      "evidence": "Cohort 3 description explicitly names KTE-C19-102/NCT02601313 for Cohorts 1/2. External record has matching KTE-C19-102, ZUMA-2 and EudraCT ID.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT04880434",
+        "https://clinicaltrials.gov/api/v2/studies/NCT02601313"
+      ]
+    },
+    {
+      "a": "NCT04880434",
+      "b": "NCT05041309",
+      "relationship": "participant_followup_overlap",
+      "clinical_family_link": false,
+      "split_link": true,
+      "status": "source_supported",
+      "evidence": "Cohort 3 description explicitly transfers remaining 15-year follow-up to KT-US-982-5968/NCT05041309. This creates a participant-overlap split constraint, not identity of all Kite protocols.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT04880434",
+        "https://clinicaltrials.gov/api/v2/studies/NCT05041309"
+      ]
+    }
+  ],
+  "unresolved_links": [
+    {
+      "trial_id": "NCT05419375",
+      "relationship": "master_screening_linked_studies",
+      "status": "unresolved_parent_ids",
+      "action": "exclude_from_heldout_until_linked_protocols_identified",
+      "evidence": "BX43361 master screening study identifies eligibility for linked Roche trials but does not enumerate their IDs in the screened source. Already in the pilot-development reservation.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT05419375"
+      ]
+    },
+    {
+      "trial_id": "NCT07172919",
+      "relationship": "rollover_multiple_parent_studies",
+      "status": "unresolved_parent_ids",
+      "action": "exclude_from_heldout_until_parent_studies_identified",
+      "evidence": "Rollover protocol 20250089 requires ongoing benefit from a closing Amgen sotorasib parent study. Parent IDs are not enumerated in the screened source. Add a conservative held-out exclusion.",
+      "source_urls": [
+        "https://clinicaltrials.gov/api/v2/studies/NCT07172919"
+      ]
+    }
+  ],
+  "rejected_secondary_id_links": [
+    {
+      "identifier": "2016",
+      "entries": [
+        {
+          "id": "2016",
+          "link": "https://reporter.nih.gov/quickSearch/2016",
+          "trial_id": "NCT02964949",
+          "type": "NIH"
+        },
+        {
+          "id": "2016",
+          "link": "https://reporter.nih.gov/quickSearch/2016",
+          "trial_id": "NCT03153111",
+          "type": "NIH"
+        }
+      ],
+      "decision": "do_not_merge",
+      "rationale": "Shared funding/grant identifier or year-like low-information secondary ID does not establish common protocol identity."
+    },
+    {
+      "identifier": "2018",
+      "entries": [
+        {
+          "id": "2018",
+          "link": "https://reporter.nih.gov/quickSearch/2018",
+          "trial_id": "NCT03653507",
+          "type": "NIH"
+        },
+        {
+          "id": "2018",
+          "link": "https://reporter.nih.gov/quickSearch/2018",
+          "trial_id": "NCT03735901",
+          "type": "NIH"
+        }
+      ],
+      "decision": "do_not_merge",
+      "rationale": "Shared funding/grant identifier or year-like low-information secondary ID does not establish common protocol identity."
+    },
+    {
+      "identifier": "2023",
+      "entries": [
+        {
+          "id": "2023",
+          "link": "https://reporter.nih.gov/quickSearch/2023",
+          "trial_id": "NCT04880434",
+          "type": "NIH"
+        },
+        {
+          "id": "2023",
+          "link": "https://reporter.nih.gov/quickSearch/2023",
+          "trial_id": "NCT05508867",
+          "type": "NIH"
+        }
+      ],
+      "decision": "do_not_merge",
+      "rationale": "Shared funding/grant identifier or year-like low-information secondary ID does not establish common protocol identity."
+    },
+    {
+      "identifier": "2025",
+      "entries": [
+        {
+          "id": "2025",
+          "link": "https://reporter.nih.gov/quickSearch/2025",
+          "trial_id": "NCT07172919",
+          "type": "NIH"
+        },
+        {
+          "id": "2025",
+          "link": "https://reporter.nih.gov/quickSearch/2025",
+          "trial_id": "NCT07584967",
+          "type": "NIH"
+        }
+      ],
+      "decision": "do_not_merge",
+      "rationale": "Shared funding/grant identifier or year-like low-information secondary ID does not establish common protocol identity."
+    },
+    {
+      "identifier": "u10ca031946",
+      "entries": [
+        {
+          "id": "U10CA031946",
+          "link": "https://reporter.nih.gov/quickSearch/U10CA031946",
+          "trial_id": "NCT00025207",
+          "type": "NIH"
+        },
+        {
+          "id": "U10CA031946",
+          "link": "https://reporter.nih.gov/quickSearch/U10CA031946",
+          "trial_id": "NCT01841736",
+          "type": "NIH"
+        }
+      ],
+      "decision": "do_not_merge",
+      "rationale": "Shared funding/grant identifier or year-like low-information secondary ID does not establish common protocol identity."
+    }
+  ],
+  "external_registry_snapshot_sha256": "d8b022625b36aaea66417fe027419e494990d87e43c06a781bd15f9423c9159f"
+}

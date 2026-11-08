@@ -1,0 +1,212 @@
+{
+  "annotation_contract_sha256": "d4ad0d6ec5a11ff43c4cc9b0c1448cfe646c5000e03d27eaf9fff37df6d6b4ee",
+  "annotation_guide": "pair-guide-0.2",
+  "construction_guide": "pair-guide-0.1",
+  "corpus_version": "trial100_v1",
+  "counts": {
+    "all_pairs": 75,
+    "clean_development_comparisons": 67,
+    "label_changes_from_initial_round": 10,
+    "labels_all_pairs": {
+      "a_more_restrictive": 14,
+      "ambiguous": 7,
+      "b_more_restrictive": 10,
+      "equivalent": 15,
+      "partial_overlap": 4,
+      "related_not_comparable": 15,
+      "unrelated": 10
+    },
+    "labels_clean_comparisons": {
+      "a_more_restrictive": 14,
+      "b_more_restrictive": 10,
+      "equivalent": 15,
+      "partial_overlap": 4,
+      "related_not_comparable": 15,
+      "unrelated": 9
+    },
+    "resolved_relationships": 68,
+    "review_queue": 8,
+    "unresolved_relationships": 7
+  },
+  "created_at_utc": "2026-11-07T18:04:33.991476+00:00",
+  "family_holdout_excluded_trial_ids": [
+    "NCT00025207",
+    "NCT00091377",
+    "NCT00154271",
+    "NCT00225212",
+    "NCT01260545",
+    "NCT01437098",
+    "NCT01760291",
+    "NCT01841736",
+    "NCT02268071",
+    "NCT02769832",
+    "NCT02834611",
+    "NCT03064867",
+    "NCT03153111",
+    "NCT04063033",
+    "NCT04747145",
+    "NCT05379712",
+    "NCT05419375",
+    "NCT05681702",
+    "NCT06730230",
+    "NCT07172919",
+    "NCT07584967"
+  ],
+  "family_mapping_status": "proposed_grouping; not final train/validation/test assignments",
+  "files": {
+    "configs/family_audit_decisions_v1.json": {
+      "bytes": 20163,
+      "sha256": "46cdf5b2c346cf1c05de5a5d3a58f5e544a769b26bdbf664ca30ca0326b5b4b2"
+    },
+    "data/processed/family_audit_v1/all_pair_scores.json": {
+      "bytes": 905795,
+      "sha256": "b0a57f7c1f9448b8f9d904c8c81bfb4343bbf66d76d9d9be01959d94752e8158"
+    },
+    "data/processed/family_audit_v1/candidate_edges.json": {
+      "bytes": 14677,
+      "sha256": "d15ec1f7c73ca357bdc2d4670c90bbf132096efce91bd4b0c271e250daa86a7b"
+    },
+    "data/processed/family_audit_v1/external_registry_snapshot.json": {
+      "bytes": 29344,
+      "sha256": "d8b022625b36aaea66417fe027419e494990d87e43c06a781bd15f9423c9159f"
+    },
+    "data/processed/family_audit_v1/family_mapping.json": {
+      "bytes": 43350,
+      "sha256": "e45a49e02788e62d9c7a741a40e44c01c9ea60ad509c06f4f23180b0198b52b8"
+    },
+    "data/processed/family_audit_v1/registry_snapshot.json": {
+      "bytes": 627920,
+      "sha256": "94bc0627dda17885c5619ed269046a2b8c4b888599ab33eed6d66a4258e969a2"
+    },
+    "data/processed/family_audit_v1/screening_manifest.json": {
+      "bytes": 1212,
+      "sha256": "f688e5de5d79449de428446c29db8754fd471686112887a6b1e05024046e759e"
+    },
+    "data/processed/family_audit_v1/shared_secondary_identifiers.json": {
+      "bytes": 1568,
+      "sha256": "5cb4d975b99db50014feabd7b90e4a505d592238e0a2435abf6140459e9135cf"
+    },
+    "data/processed/family_audit_v1/trial_inventory.json": {
+      "bytes": 1354171,
+      "sha256": "86b5cc21a536498d12793c96ead45e5804dbf8b01a44a78a44bdfaf8a49f8043"
+    },
+    "data/processed/pair_pilot_v1/adjudication_2026-11-07.jsonl": {
+      "bytes": 199079,
+      "sha256": "38796675ea051a54057d56121c9a70795d1ccc5bfb2e4eeee7a9d23c2db20b00"
+    },
+    "data/processed/pair_pilot_v1/annotations_ai_draft_2026-11-07.jsonl": {
+      "bytes": 79540,
+      "sha256": "58b38a5f91b9a90cb595315e59f296a3c01f1c5570744cd327df79b8d027ec47"
+    },
+    "data/processed/pair_pilot_v1/manifest.json": {
+      "bytes": 2058,
+      "sha256": "b02f6dc552e1e0fde57e1f98eeb0ffc59163e955edd8758a308aa875f9142bdf"
+    },
+    "data/processed/pair_pilot_v1/pairs.jsonl": {
+      "bytes": 475680,
+      "sha256": "defff0703cee560ff424601476f7e27a5cf7bcd0de322bd748332fc83a3c92cb"
+    },
+    "data/processed/pair_pilot_v1/release_v1/annotations.jsonl": {
+      "bytes": 245551,
+      "sha256": "daa6fde0e4becf59dbca677fdf3b2f4bff33d760e9a321f75fb5970b0142777a"
+    },
+    "data/processed/pair_pilot_v1/release_v1/resolved_pairs.jsonl": {
+      "bytes": 217285,
+      "sha256": "d07ac2e1b95ff1500334331c29747f1dc6cfde159e2f7a71cd032706e3c30f1c"
+    },
+    "data/processed/pair_pilot_v1/release_v1/review_queue.jsonl": {
+      "bytes": 29133,
+      "sha256": "f3d91e824d7cbec6be08874a2fd276b8f3cc45a4393c6525ab57f1a9b8dc36d5"
+    },
+    "data/processed/pair_pilot_v1/source_checks_2026-11-07.json": {
+      "bytes": 164637,
+      "sha256": "cf28e17d03ca405308219c9c1b8c60855a1b1b8ea6c96b6f1a0239c79b2f8c8f"
+    },
+    "data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx": {
+      "bytes": 97753,
+      "sha256": "400a54268fbddddb16367f5bc0f126a6e9bb64cc3def419181a052104ad4055b"
+    },
+    "data/processed/trial100_v1.parquet": {
+      "bytes": 1363368,
+      "sha256": "8d194ef308bc55e5e05ce80d455633a03e225672e0e69b8abddcb762f3bad158"
+    },
+    "data/processed/trial100_v1.parquet.manifest.json": {
+      "bytes": 2681,
+      "sha256": "fce5a956f715399bc6abbcefdf7421c408f20663d3a0ca0afb88ff8522bcb0b9"
+    },
+    "data/trial100_v1.xlsx": {
+      "bytes": 1280610,
+      "sha256": "88dcf453843bd7ecaf6d922ae81137c14a22acea35d49dd4658791929113b0f3"
+    }
+  },
+  "final_partitions_assigned": false,
+  "final_pass_pair_numbers": [
+    3,
+    4,
+    8,
+    10,
+    15,
+    16,
+    18,
+    24,
+    34,
+    47,
+    48,
+    50,
+    52,
+    53,
+    61,
+    65,
+    70
+  ],
+  "freeze_script_sha256": "962e6f579410d439912a8fb211861f0dbcd9a9143ff52142f825ef7f286bcc41",
+  "held_out_evaluation_eligible": false,
+  "historical_packet_note": "The original manifest references review.md, now archived in docs/trialign_technical.tex. Its original checksum is retained.",
+  "limitations": [
+    "This is a frozen development review, not independent clinical validation.",
+    "Resolved comparisons retain their stated frame; abstract thresholds do not align dates.",
+    "Owner validation is required before promoting labels to supervised training targets.",
+    "Family mappings remain proposed; all pilot exposures remain excluded from holdout.",
+    "Seven unresolved relations and the source-role conflict are outside resolved_pairs.jsonl.",
+    "The original sampler is absent; this command verifies and freezes, not resamples."
+  ],
+  "pilot_development_trial_ids": [
+    "NCT00025207",
+    "NCT00091377",
+    "NCT00154271",
+    "NCT00225212",
+    "NCT01260545",
+    "NCT01437098",
+    "NCT01760291",
+    "NCT01841736",
+    "NCT02268071",
+    "NCT02769832",
+    "NCT02834611",
+    "NCT03064867",
+    "NCT03153111",
+    "NCT04063033",
+    "NCT04747145",
+    "NCT05379712",
+    "NCT05419375",
+    "NCT05681702",
+    "NCT06730230",
+    "NCT07584967"
+  ],
+  "release_id": "trial100_v1_pair_review_v1",
+  "reviewer_id": "Codex",
+  "schema_version": "pair-review-release-1",
+  "source_role_quarantine_pair_numbers": [
+    10
+  ],
+  "status": "frozen_development_review",
+  "supervised_training_approved": false,
+  "unresolved_pair_numbers": [
+    16,
+    18,
+    24,
+    47,
+    48,
+    50,
+    52
+  ]
+}

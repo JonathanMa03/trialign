@@ -32,7 +32,7 @@ class CriterionRecord(VersionedRecord):
     source: str
     parent_statement: str
     surrounding_context: str | None = None
-    criterion_type: Literal["inclusion", "exclusion"]
+    criterion_type: Literal["inclusion", "exclusion", "unspecified"]
     domain: str
     entity: str
     comparator: str | None = None
@@ -57,7 +57,7 @@ class CriterionRecord(VersionedRecord):
     protocol_hash: str | None = None
 
     @model_validator(mode="after")
-    def interval_is_ordered(self) -> "CriterionRecord":
+    def interval_is_ordered(self) -> CriterionRecord:
         if self.lower_bound is not None and self.upper_bound is not None:
             if self.lower_bound > self.upper_bound:
                 raise ValueError("lower_bound cannot exceed upper_bound")
@@ -116,8 +116,7 @@ class HumanDecision(VersionedRecord):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @model_validator(mode="after")
-    def decided_rows_have_label(self) -> "HumanDecision":
+    def decided_rows_have_label(self) -> HumanDecision:
         if self.status in {"accepted", "corrected"} and self.final_label is None:
             raise ValueError("accepted or corrected decisions require final_label")
         return self
-

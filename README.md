@@ -30,7 +30,9 @@ The primary project data come from the 100-trial oncology and cardiovascular coh
 data/trial100_notreviewed.xlsx
 ```
 
-This workbook is an **unreviewed extraction**, not a gold-standard dataset. It contains atomic structured criteria together with original evidence, parent statements, trial identifiers, normalization fields, extraction confidence, validation findings, and provenance. Criteria must be human-reviewed before they are frozen for pair construction, model training, or evaluation.
+This workbook retains the **original unreviewed extraction**. The authoritative reviewed source is now `data/trial100_v1.xlsx`, frozen as `data/processed/trial100_v1.parquet`: 3,537 criteria from 100 trials. It preserves structured fields, original evidence, parent statements, trial identifiers and provenance. Corpus review and pair-relationship validation are separate steps.
+
+The frozen development pair-review release is in `data/processed/pair_pilot_v1/release_v1/`. It preserves all 75 decisions, exports 67 clean development comparisons, and queues seven unresolved relationships plus one source-role conflict. It is not a held-out clinical benchmark or an approved supervised training set. The [technical document](docs/trialign_technical.tex) records the comparison scopes, remaining actions and family exclusions.
 
 ### Alternate source: Chia
 
@@ -106,17 +108,108 @@ trialign inspect
 python scripts/trialign.py inspect
 ```
 
-After all criteria have been accepted or corrected, the initial reproducible pipeline is:
+Verify the committed corpus, workbook, decisions, source snapshots, family reservations and frozen pair-review exports with:
 
 ```bash
-trialign freeze --input data/trial100_reviewed.xlsx
-trialign split
-trialign pairs
-trialign baseline-tfidf
-trialign export-schemas
+python scripts/freeze_pair_pilot.py --verify
 ```
 
-These commands create a versioned reviewed corpus, trial-level splits, auditable pair candidates, and a lexical reference baseline. Generated data and experiment artifacts are ignored by Git by default; manifests and selected release artifacts should be committed intentionally. Run the current test suite with `pytest`.
+The command is read-only and fails on stale hashes, workbook/log disagreements, missing evidence, invalid labels or changed release dispositions. Generated data remain ignored by default; the selected corpus, pilot and family-audit release files are explicitly tracked. Final train/validation/test partitions are not assigned. The generic `trialign split` and `trialign pairs` commands remain scaffolding and do not enforce this release's family exclusions.
+
+## Local working demo
+
+TriAlign runs independently: no Modern AutoCrit checkout, server, environment
+file or Python package is required. Its bundled frozen corpus contains the
+reviewed extraction outputs. You can also import compatible criterion records
+from other sources. A combined extraction/comparison interface remains future work.
+
+From the repository root, create and activate a Python 3.11 or 3.12 environment
+and install the application dependencies (first-time setup):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[app,dev]"
+```
+
+To start the webapp, activate the environment and run:
+
+```bash
+source .venv/bin/activate
+python scripts/trialign.py serve --open-browser
+```
+
+Keep that terminal open while using the app. Open http://127.0.0.1:8766 if the
+browser does not open automatically. Press **Control + C** in the running
+terminal to stop the server; closing the browser tab does not stop it. To
+restart, run the same start commands. Restart after editing `.env` so the new
+configuration is loaded. Saved comparisons and reviews persist across restarts.
+
+If port 8766 is already in use, stop the existing instance or choose another port:
+
+```bash
+python scripts/trialign.py serve --port 8767 --open-browser
+```
+
+Click **Import criteria**, then choose either a combined workbook/files or
+separate uploads for Trial A and Trial B. Click **Use uploaded criteria** to
+see the input counts and source preview. A two-trial upload selects both trials
+automatically and limits the selectors to those uploaded inputs. Comparisons
+use exactly those uploaded rows, including subsets of trials already in the
+saved corpus. Use **Use saved corpus instead** to return to the bundled data.
+
+XLSX, CSV, Parquet, JSON and JSONL are supported. A workbook may put the trials
+on separate sheets, or use a trial-ID column in one sheet. Common criterion-text
+headers such as `Criteria`, `Criterion` and `Text` are recognized; optional column
+mapping accepts other headers. Files without trial IDs use their sheet or file
+names, or their explicitly assigned A/B side. Missing clinical fields remain
+unreviewed. Missing inclusion/exclusion roles are marked `unspecified` and need
+source review; importing text does not certify extraction or atomicity.
+
+Click **Compare trials** to run. The default processes all retrieved candidate
+pairs (up to 5,000), rather than stopping at 16. Criterion counts and candidate-pair
+counts differ: retrieval proposes likely counterparts rather than every possible
+cross-trial combination. Explicit pair/time limits are reported as limited runs;
+Provider settings controls a browser-persisted call budget: **200 calls per
+comparison by default**, or **Unlimited calls** to disable the call cap. There
+is no separate 24-call ceiling. The time limit and Stop control still apply.
+An exhausted call budget can leave contextual cases unresolved. **Stop comparison** keeps
+completed results and starts no further comparisons. An in-flight model request
+may take up to 35 seconds to return.
+
+Saved runs, uploaded input snapshots and review histories live under
+`artifacts/demo/`, survive restarts, and can be exported as JSON. They do not
+modify the frozen corpus or annotation release.
+
+The working workflow uses planner skills, allowlisted tools, source/quote hooks,
+a contextual LLM judge, a source-first blind critic, one bounded revision and explicit escalation.
+The critic first makes its own assessment without receiving the judge output,
+then reviews the proposal against that fixed assessment. Contextual pairs use
+three calls initially, with up to two more for one revision.
+The temporary retrieval encoder is TF–IDF; no fine-tuned model or trained
+relationship head is being simulated. Disable contextual judge/critic for
+local tools-only operation; contextual cases then remain unresolved.
+
+For contextual reasoning, configure `OPENAI_API_KEY` and optionally
+`TRIALIGN_JUDGE_MODEL` (default `gpt-4o-mini`). Set `TRIALIGN_CRITIC_MODEL`
+to configure a different critic model; otherwise it uses the judge model.
+The initial source assessments use separate stateless contexts. Shared model
+errors can remain correlated; this is not independent clinical validation. Configuration precedence is the
+process environment over an explicitly selected `TRIALIGN_ENV_FILE`, otherwise
+the repository `.env`. Copy `.env.example` to `.env` on a fresh checkout and
+supply your key. TriAlign does not read Modern AutoCrit configuration. Credentials are read
+locally and excluded from run exports. External model calls require connectivity
+and incur API usage costs. The UI exposes pair, call and time limits and cancellation.
+
+```bash
+python scripts/trialign.py harness
+python -m pytest
+python scripts/freeze_pair_pilot.py --verify
+```
+
+The harness checks constructed routing and constraint cases; passing these and
+integration checks does not establish clinical accuracy. See the technical guide
+for architecture, provenance, limitations and the remaining evaluation work.
 
 ## Repository structure
 
@@ -137,7 +230,7 @@ trialign/
 │   ├── schemas/                        # Versioned Pydantic records
 │   └── cli.py                         # Command-line workflows
 ├── app/
-│   └── review_app.py                   # Initial Streamlit review surface
+│   └── review_app.py                   # Local browser UI launcher
 ├── scripts/
 │   └── trialign.py                     # Source-checkout CLI launcher
 ├── tests/                                  # Unit and pipeline smoke tests
@@ -149,8 +242,8 @@ trialign/
 │   ├── proposal_presentation.pdf       # Compiled proposal presentation
 │   ├── Python_git.md                    # Python/Git collaboration notes
 │   ├── R_git.md                         # R/Git collaboration notes
-│   ├── logging/
-│   │   └── CHANGELOG.md                 # Project change history
+│   ├── trialign_technical.tex           # Canonical technical notes, contracts, audits and change history
+│   ├── trialign_technical.pdf           # Compiled technical document
 │   ├── notes/
 │   │   └── main.tex                     # Working notes
 │   └── references/
@@ -163,6 +256,15 @@ trialign/
 ├── requirements.txt                    # Complete development environment
 └── README.md
 ```
+
+## Documentation
+
+Detailed project notes, labeling contracts, family audits, demonstration plans
+and substantive change history live in [the technical document](docs/trialign_technical.tex)
+and its [compiled PDF](docs/trialign_technical.pdf). Update that document for
+future work instead of creating separate Markdown notes or changelogs.
+The main README and Python/R Git guides remain standalone Markdown files.
+Machine-readable data, annotation workbooks and source code remain separate artifacts.
 
 ## References
 

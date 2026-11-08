@@ -151,17 +151,10 @@ Tip: Always check that your `.gitignore` file isn’t excluding your new folder 
 
 After making changes:
 
-1.	Open docs/CHANGELOG.md.
-2.	Under "Added" or "Changed", add a bullet for your update:
+1. Open `docs/trialign_technical.tex` and update the relevant project section.
+2. Record substantive documentation changes in its documentation policy and change-history appendix.
+3. Rebuild the technical PDF. Keep implementation, research and workflow notes in that document rather than creating another Markdown file.
 
-```markdown
-### Added
-- JM 11/7: Initial Repository Creation, added directories for docs and data.
-- JM 11/8: Added data files and Project Initialization
-
-### Changed
-- JM 11/8: Changed formatting and instructions in Contributions.md.
-```
 
 **TL;DR Workflow**
 

@@ -1,0 +1,72 @@
+{
+  "2016": [
+    {
+      "id": "2016",
+      "link": "https://reporter.nih.gov/quickSearch/2016",
+      "trial_id": "NCT02964949",
+      "type": "NIH"
+    },
+    {
+      "id": "2016",
+      "link": "https://reporter.nih.gov/quickSearch/2016",
+      "trial_id": "NCT03153111",
+      "type": "NIH"
+    }
+  ],
+  "2018": [
+    {
+      "id": "2018",
+      "link": "https://reporter.nih.gov/quickSearch/2018",
+      "trial_id": "NCT03653507",
+      "type": "NIH"
+    },
+    {
+      "id": "2018",
+      "link": "https://reporter.nih.gov/quickSearch/2018",
+      "trial_id": "NCT03735901",
+      "type": "NIH"
+    }
+  ],
+  "2023": [
+    {
+      "id": "2023",
+      "link": "https://reporter.nih.gov/quickSearch/2023",
+      "trial_id": "NCT04880434",
+      "type": "NIH"
+    },
+    {
+      "id": "2023",
+      "link": "https://reporter.nih.gov/quickSearch/2023",
+      "trial_id": "NCT05508867",
+      "type": "NIH"
+    }
+  ],
+  "2025": [
+    {
+      "id": "2025",
+      "link": "https://reporter.nih.gov/quickSearch/2025",
+      "trial_id": "NCT07172919",
+      "type": "NIH"
+    },
+    {
+      "id": "2025",
+      "link": "https://reporter.nih.gov/quickSearch/2025",
+      "trial_id": "NCT07584967",
+      "type": "NIH"
+    }
+  ],
+  "u10ca031946": [
+    {
+      "id": "U10CA031946",
+      "link": "https://reporter.nih.gov/quickSearch/U10CA031946",
+      "trial_id": "NCT00025207",
+      "type": "NIH"
+    },
+    {
+      "id": "U10CA031946",
+      "link": "https://reporter.nih.gov/quickSearch/U10CA031946",
+      "trial_id": "NCT01841736",
+      "type": "NIH"
+    }
+  ]
+}

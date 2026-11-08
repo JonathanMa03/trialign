@@ -1,0 +1,31 @@
+{
+  "all_trial_pairs_screened": 4950,
+  "candidate_edges": 22,
+  "candidate_thresholds": {
+    "rare_8gram_coverage": 0.2,
+    "rare_shared_parents": 3,
+    "shared_rare_8grams": 20,
+    "whole_text_cosine": 0.6
+  },
+  "cohort_counts": {
+    "cardiovascular": 50,
+    "oncology": 50
+  },
+  "cohort_manifest_sha256": "528d43381df8884701b242426b5dbfb0f5d4eafc6f33d0df759cc889b2470c31",
+  "corpus_manifest_sha256": "fce5a956f715399bc6abbcefdf7421c408f20663d3a0ca0afb88ff8522bcb0b9",
+  "corpus_sha256": "8d194ef308bc55e5e05ce80d455633a03e225672e0e69b8abddcb762f3bad158",
+  "criteria": 3537,
+  "family_links_are_not_inferred_from_similarity_alone": true,
+  "generator_sha256": "3e852f2fafb988b6c3a1b1a4c23ee61b4afdfb4c06aede136d01f580d45ff55a",
+  "rare_paragraph_document_frequency": [
+    2,
+    5
+  ],
+  "rare_paragraph_min_tokens": 12,
+  "registry_metadata_may_postdate_frozen_eligibility": true,
+  "registry_retrieved_at_utc": "2026-11-07T16:29:03.812085+00:00",
+  "registry_snapshot_sha256": "94bc0627dda17885c5619ed269046a2b8c4b888599ab33eed6d66a4258e969a2",
+  "split_assignments_created": false,
+  "trial_inventory_sha256": "86b5cc21a536498d12793c96ead45e5804dbf8b01a44a78a44bdfaf8a49f8043",
+  "trials": 100
+}
