@@ -40,8 +40,9 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-TriAlign compares clinical-trial eligibility rules using structured constraints,
-dense representations, and contextual reasoning. This document defines what constitutes a clinically meaningful criterion relationship,
+TriAlign has two tasks: identify candidate criterion pairs across trials, then
+compare their clinical relationships using structured constraints, learned
+representations and contextual reasoning. This document defines what constitutes a clinically meaningful criterion relationship,
 how source evidence and normalization are retained, how an agent selects and
 reconciles comparison tools, and how a clinician could inspect and correct a
 result. The frozen criterion release contains 3,537 records from 100 trials.
@@ -101,20 +102,63 @@ presentation.
 \caption{Intended workflow: a clinician compares two trials through
 source-grounded criterion comparisons. A relationship between two rules
 does not establish a relationship between the complete trial populations.
-Trial alignment and the comparison interface remain planned.}
+Candidate-pair identification and the local comparison interface are implemented;
+trained components and direct extraction integration remain planned.}
 \label{fig:trialworkflow}
 \end{figure}
 
 The encoder retrieves potentially corresponding criteria; the relationship
 component and contextual review determine how selected pairs compare.
-Criterion-pair labels train and evaluate those components. A trial view then
-assembles their results, with support for one-to-many or grouped matches
-where Boolean scope requires it. A retrieved neighbor is not automatically
+Criterion-pair labels train and evaluate those components. The current trial view assembles candidate-pair results. Group-level alignment
+across different extraction granularities is deferred research
+(Section~\ref{sec:deferrednovelty}). A retrieved neighbor is not automatically
 a semantic match, and no match found is not proof that a requirement is
 absent from the other protocol. This workflow does not yet define a validated
 single whole-trial similarity score. A future combined application could
 remove the manual file handoff while retaining the review checkpoint and
 separate component modes (Section~\ref{sec:combinedtool}).
+
+\subsection{Two tasks: pair identification and relationship comparison}
+\label{sec:twotasks}
+\textbf{Use these terms consistently throughout the project.} TriAlign identifies
+candidate counterparts between trials and then determines their clinical
+relationships. Modern AutoCrit is the upstream extraction component in the
+demo; TriAlign also runs independently on imported criterion records. Extraction,
+pair identification and relationship comparison are distinct operations.
+
+\begin{longtable}{L{.20\linewidth}L{.36\linewidth}L{.35\linewidth}}
+\toprule Task & Question and output & Current and planned methods\\\midrule
+\endhead
+1. Pair identification & Which criteria across Trial A and Trial B should be compared? Output ranked candidate pairs with source IDs. & TF--IDF plus entity priority in the current demo; Jiatong's TF--IDF, MPNet and BioLORD backends establish baseline pair-similarity rankings. A trained clinical encoder is planned.\\
+2. Relationship comparison & How do a selected pair's allowed populations relate? Output a directional/categorical relationship, evidence and uncertainty or an unresolved review disposition. & Exact tools and contextual LLM judge/critic in the current demo. A separately trained ordered relationship head is planned.\\\bottomrule
+\end{longtable}
+
+For example, Task 1 identifies ``age at least 18'' and ``age at least 21'' as
+candidate counterparts. Task 2 determines that the second inclusion rule is
+more restrictive within a shared age frame. Candidate identification does not
+certify equivalence: even ``age at least 18'' versus ``age below 18'' may be
+important counterparts because their conflict is useful to expose. Relevance
+for comparison and clinical equivalence must therefore be distinguished in
+annotation and training.
+
+In this document, \textbf{baseline pair-similarity methods} refers to TF--IDF,
+MPNet and BioLORD as used to score/rank candidate pairs. TF--IDF is a lexical
+method; MPNet and BioLORD supply embeddings for similarity scoring. None is
+an extraction model in this workflow. The term \textbf{relationship model}
+refers to a classifier/head that predicts the clinical relationship for an
+ordered A/B input; a symmetric similarity score alone does not supply the
+A-more-restrictive versus B-more-restrictive distinction. Prefer these terms
+to the ambiguous phrase ``pair model'' without qualification.
+
+Reviewed pairs support evaluation and potential training of both tasks, with
+separate target definitions. Evaluate pair identification by whether relevant
+counterparts appear in the ranked candidates; evaluate relationship comparison
+on the same fixed reviewed pairs across methods, so retrieval misses do not
+confound classifier performance. In end-to-end evaluation, account for both
+missed counterparts and wrong relationships. The teammate's baseline ranking
+work is part of Task 1 and remains required for evaluating an improved encoder.
+When a user supplies exactly two criteria, Task 1 is already supplied and only
+Task 2 needs to run; the trial-versus-trial interface requires both tasks.
 
 \subsection{Why textual similarity is insufficient}
 The clinical meaning of a rule depends on more than its entity name.
@@ -514,11 +558,11 @@ release rather than silently changing a running model.
   box/.style={draw=accent,rounded corners=2pt,fill=pale,align=center,
     text width=31mm,minimum height=12mm,font=\small},
   arrow/.style={-{Stealth},thick,draw=accent}]
-\node[box](input) at (0,0) {Source-grounded\\query and candidates};
+\node[box](input) at (0,0) {1. Pair identification\\rank candidates};
 \node[box](gate) at (4,0) {Validation, context\\and comparability gates};
-\node[box](router) at (8,0) {Router selects\\tools and budget};
+\node[box](router) at (8,0) {2. Relationship\\comparison: route};
 \node[box](exact) at (0,-2.1) {Exact comparison\\supported fragment};
-\node[box](encoder) at (4,-2.1) {Encoder retrieval\\and directional head};
+\node[box](encoder) at (4,-2.1) {Relationship head\\(planned)};
 \node[box](llm) at (8,-2.1) {Contextual judge\\and independent critic};
 \node[box,text width=46mm](reconcile) at (4,-4.2) {Reconcile evidence, conflicts,\\uncertainty and stopping rules};
 \node[box,text width=46mm](output) at (4,-5.9) {Relationship + evidence + trace\\or review / abstention};
@@ -530,8 +574,8 @@ release rather than silently changing a running model.
 \draw[arrow](encoder)--(reconcile);\draw[arrow](llm.south)|-(reconcile.east);
 \draw[arrow](reconcile)--(output);
 \end{tikzpicture}
-\caption{Proposed runtime. Retrieval proposes comparisons; routing decides
-which additional reasoning is required. A route can use several tools without
+\caption{Proposed runtime. Task 1 supplies candidate pairs; the remaining
+routes perform Task 2, relationship comparison. Routing selects the required reasoning. A route can use several tools without
 making every request execute the same fixed chain.}
 \end{figure}
 
@@ -1061,9 +1105,13 @@ when registry links cannot be opened. The current local browser application impl
 \label{sec:workingruntime}
 \textbf{Operational prototype.} The application now compares two selected trials
 from the checksum-verified frozen corpus, or reviewed imported criterion files.
-It uses bidirectional TF--IDF neighbors with entity prioritization to construct
-candidate alignments. Rankings propose comparisons; they do not determine
-clinical relationships. The temporary encoder is explicitly identified as
+The November 8 matching update replaces bidirectional neighbor unions with
+conservative clinical gating followed by maximum-weight one-to-one assignment.
+Each criterion ID can occur in at most one selected pair per run; unmatched
+criteria are permitted. TF--IDF scores use the selected entity and source,
+excluding shared parent paragraphs, and rank only eligible counterparts.
+Rankings and assignments propose comparisons; they do not determine clinical
+relationships. The temporary encoder is explicitly identified as
 TF--IDF. A compatible encoder factory can replace it later; no trained
 relationship head is fabricated. MPNet/BioLORD adapters remain on the teammate branch pending her PR;
 the local runtime uses the original main-branch TF--IDF encoder.
@@ -1083,11 +1131,47 @@ source review rather than model repair of the frozen corpus.
 retain strict endpoints, support explicit unit conversions and discrete ECOG
 scores, and abstain on unsupported scope, timing, exceptions or source conflicts.
 The exact critic is a deterministic rule audit, clearly distinguished from an LLM.
-\item Contextual cases invoke a structured-output judge followed by a critic.
-The orchestrator permits at most one revision, reserves budget for the critic,
+\item Contextual cases invoke a structured-output judge. The critic separately
+makes a blind source-only assessment before receiving the judge proposal, then
+reviews both against the source. The blind assessment is fixed across revision.
+The orchestrator permits at most one revision, reserves budget for all three calls,
 and publishes no clinical label after provider failure, budget exhaustion or
 critic veto. Operational failure is distinct from the clinical label ambiguous.
 \end{enumerate}
+
+\paragraph{Clinical counterpart policy and its limits.}
+The gate requires the same normalized clinical concept or an explicit
+correspondence alias. Pregnancy and lactation are distinct concepts; neither
+can be paired with bilirubin. Known entity names take precedence over shared
+source wording. For untyped imports, only an unambiguous source-local concept
+is inferred; identical selected wording can otherwise propose a pair, with
+clinical scope still subject to review. Unknown or differently named concepts
+without a supported mapping remain unassigned. This policy favors precision
+and can miss valid synonyms; ontology expansion and retrieval recall evaluation
+remain necessary. It is an operational alignment policy, not a revision of the
+frozen pair-labeling contract or an accuracy claim.
+
+Assignment uses a global maximum-weight bipartite optimization with explicit
+unmatched options, rather than greedily reusing each query's top neighbors.
+Different atomic criterion IDs can share a parent sentence, such as pregnancy
+and lactation children, and remain separate units. The one-to-one restriction
+also means one broad criterion cannot currently align to several narrower
+criteria; grouped comparison requires a future explicit design. An orchestrator
+hook repeats the clinical gate before any judge or critic call. Role instructions
+forbid deriving partial overlap simply from a joint state of unrelated clinical
+features. Parent context is retained for scope and evidence review, even though
+it is excluded from retrieval features.
+
+Coverage distinguishes assigned but unexamined pairs, examined pairs needing
+review, unassigned criteria with no supported concept mapping, and criteria
+whose compatible counterparts were assigned elsewhere. A time-limited run
+preserves completed results and states the number of assigned pairs processed;
+no decision is supplied for an unexamined pair. Historical runs retain their
+original outputs and carry an earlier-matcher warning in the interface.
+An offline replay of the problematic 11-versus-51 uploaded snapshot selected
+two counterparts, pregnancy--pregnancy and lactation--lactation, compared with
+24 candidates from the prior matcher. This checks selection behavior only;
+no new live clinical adjudication was performed for that replay.
 
 The provider uses the OpenAI Responses API with a strict JSON schema,
 \pathcode{store=False}, bounded timeouts and no SDK retries. The adapter follows
@@ -1099,8 +1183,19 @@ and retain governing OR groups. Quote validation establishes textual grounding,
 not semantic correctness. Context windows are bounded and may omit relevant
 remote text; the source view and human review remain necessary.
 
-Default job limits are 16 candidate comparisons, eight model calls and 150
-seconds. The interface permits bounded adjustments and cancellation; completed
+By default, all retrieved candidate pairs are processed, with a 5,000-pair
+ceiling, 200 model calls and a 15-minute total run budget. Time and call
+controls are in Provider settings, with browser-persisted preferences and
+an Unlimited calls option. The time control accepts 1--60 whole minutes;
+the server accepts 10--3,600 seconds for API clients. The active run header
+displays its original time budget. Valid preferences save when the dialog
+is closed using Close, Escape or an outside click; invalid values keep it
+open for correction. These settings apply to new comparisons.
+Unlimited is encoded as a null call cap; zero still permits no model calls.
+The former 24-call ceiling is removed. Time, cancellation and one-revision
+limits remain active. A configured pair cutoff reports a
+limited run rather than successful full completion. Criterion counts differ
+from retrieved candidate-pair counts. The interface permits bounded adjustments and cancellation; completed
 partial results survive interruption. A source snapshot, input hash, runtime
 source fingerprint, skill hash/version, requested and resolved model IDs,
 token usage, traces and append-only review history are saved atomically under
@@ -1110,7 +1205,7 @@ rewritten. Review saving requires a reviewer, rationale and current revision.
 
 The interface implements trial selection, file import, live progress, candidate
 filtering, side-by-side evidence and parent context, rationale, critic feedback,
-executed traces, saved-run reload, review history and JSON export. Criterion
+executed traces, saved-run reload, review history and Excel report export. Criterion
 coverage distinguishes a supported candidate, a case needing review, an
 unexamined case due to limits, and no retrieved candidate. None of these proves
 that a requirement is absent from the other trial. The browser is local; only
@@ -1119,8 +1214,82 @@ implementation patterns for strict JSON boundaries, atomic storage and the
 local browser server. A combined extraction/comparison application remains
 future work rather than a feature of this prototype.
 
+The corrected trial picker uses one searchable field per side, with suggestions
+by trial ID or title. An exact pasted ID selects that trial immediately;
+partial or unmatched text clears the selection and prevents comparison.
+A selection summary displays the IDs, titles and criterion counts sent to the
+comparison endpoint. Historical result headers identify the displayed run
+separately from the editable selections for the next run.
+The default export is an Excel workbook with Summary, Pair decisions,
+Criterion coverage and Review history sheets. It includes unexamined assigned
+pairs, all input criteria, model explanations and critic feedback, with the
+latest human decision distinguished from the proposed relationship and the
+full saved review history retained. Wrapped text, filters and frozen headers
+support manual inspection. JSON remains available through the export endpoint
+with \pathcode{?format=json} for programmatic use; downloaded reports are
+snapshots and do not write edits back into the application.
+
+
+\paragraph{Upload workflow update, November 8.}
+The interface supports combined workbooks/files and separate Trial A/B uploads.
+A two-trial upload selects both inputs automatically; its selectors contain
+only trials in that upload. Each comparison uses an isolated persisted input
+snapshot, even when uploaded criterion IDs also occur in the frozen corpus.
+It never expands an uploaded subset to the catalog's complete trial. Switching
+back to the saved corpus is an explicit action. Before comparison, source files,
+per-trial counts and source previews identify the active inputs.
+
+Workbooks can contain a trial-ID column or separate trial sheets. Common text,
+trial-ID and role aliases are recognized, with explicit text/trial-column mapping
+available for other headers. Eligible sheets are combined. Human Review or Validated Criteria rows take
+priority for repeated criterion IDs within a workbook; skipped sheets and
+repeated records are disclosed. Without trial IDs, file/sheet names
+or explicit A/B assignments define the inputs. Generic rows retain source text
+and provenance without invented numeric fields, entities or review approval.
+Unknown eligibility role is represented as \pathcode{unspecified}, blocks exact
+comparison and requires source review. This import adapter is not a new clinical
+extraction or atomicity validator. The visible Stop comparison control requests
+cancellation, preserves completed results and prevents subsequent calls; an
+in-flight provider request may finish within its bounded timeout.
+
+\paragraph{Provider settings entry point.}
+The local UI includes a Provider settings dialog showing the current TF--IDF
+retriever, requested contextual model and whether credentials are configured.
+It never displays secret values. The call budget is configurable here, with
+a default of 200 calls per comparison and an unlimited option. MPNet, BioLORD and a future trained TriAlign
+encoder are explicitly unavailable choices until integrated. Selecting and
+persisting another default is future work; the dialog does not pretend to
+switch to an uninstalled model. The presentation assumes criteria already
+extracted by Modern AutoCrit. Direct extraction within TriAlign is planned,
+while standalone file import and comparison remain supported.
+
+\paragraph{Judge/critic context independence: November 8 update.}
+In runtime \pathcode{agent-runtime-2}, the critic first receives only A/B source
+records in a fresh structured-output request. No judge label, rationale,
+feedback or conversation history is supplied. Its independently produced
+relationship, frame, assumptions and quotes are validated and retained. A
+subsequent critic-review request sees that fixed assessment and the judge's
+proposal; accepting incompatible labels is blocked. One revision reuses the
+original blind assessment rather than regenerating it after feedback. This
+requires three initial calls and up to two additional calls for revision.
+Supported exact-tool cases continue to use a deterministic rule audit.
+
+The model for both critic requests is configurable using
+\pathcode{TRIALIGN_CRITIC_MODEL}; it defaults to the requested judge model.
+Both roles' requested model IDs are logged, and the settings dialog displays
+them separately. Isolation of initial input contexts prevents direct anchoring
+on the judge's answer; it does not guarantee statistically independent errors
+or correct clinical interpretation. Using different models is possible but
+also does not establish independent clinical validation. A fresh live run of
+this updated workflow is pending; earlier saved examples remain historical
+results and must not be presented as outputs of the blind-critic workflow.
+The earlier pregnancy judgment cited unresolved equivalence of nursing and
+lactation and the negation scope in the compressed OR phrase; the displayed
+lactation judgment used a synonym interpretation. This discrepancy requires
+review rather than treating either outcome as clinical ground truth.
+
 \paragraph{Verification and observed failure cases.}
-The automated suite passes 18 runtime tests, covering polarity, endpoint/unit handling, source conflicts,
+The automated suite passes 37 runtime tests, covering polarity, endpoint/unit handling, source conflicts,
 critic veto, bounded revision, invented quotes, cancellation, atomic imports,
 and durable review history. A separate 12-case constructed offline harness
 passes via \pathcode{python scripts/trialign.py harness}. These are engineering
@@ -1263,7 +1432,7 @@ incompletely judged, call recall relative to that judged pool and disclose
 that it is not exhaustive corpus-wide recall.
 
 \Needspace{12\baselineskip}
-\subsection{Baseline Embedding Comparisons}
+\subsection{Task 1: Baseline Pair Identification and Embedding Comparisons}
 \label{sec:baselines}
 \begin{longtable}{L{.22\linewidth}L{.37\linewidth}L{.32\linewidth}}
 \toprule Baseline & Fixed implementation / role & Key controls\\\midrule
@@ -1272,7 +1441,7 @@ Lexical & TF--IDF with lowercase word unigrams/bigrams and cosine ranking. & Fit
 General encoder & Frozen \pathcode{sentence-transformers/all-mpnet-base-v2}. & Pin revision, pooling, truncation and input rendering.\\
 Biomedical encoder & Frozen \pathcode{FremyCompany/BioLORD-2023}. & Same candidate pool and input condition; document model-card license requirements before redistribution.\\
 CReSE-informed representation & Eligibility-oriented representation/rephrasing approach, conditional on reproducible artifacts. & Distinguish an actual reproduced checkpoint from a newly implemented inspired baseline.\\
-TriAlign encoder & Fine-tuned representation plus an ordered prediction head, when sufficient labels exist. & Same held-out evaluation; compare with frozen features and report training seeds.\\\bottomrule
+TriAlign encoder & Fine-tuned representations for Task 1 candidate ranking, when sufficient labels exist. & Same held-out ranking evaluation; report the Task 2 relationship head separately and retain training seeds.\\\bottomrule
 \end{longtable}
 
 The raw-text baseline is the simplest matched input condition. A second

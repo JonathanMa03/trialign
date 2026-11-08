@@ -59,6 +59,8 @@ def source_text(row: CriterionRecord) -> str:
 
 def frame_issues(row: CriterionRecord) -> list[str]:
     issues = list(getattr(row, "source_quality_issues", []) or [])
+    if row.criterion_type not in {"inclusion", "exclusion"}:
+        issues.append("eligibility role is unspecified")
     if row.review_status not in {"accepted", "corrected"}:
         issues.append("criterion has not been accepted or corrected")
     if row.readiness_blockers:

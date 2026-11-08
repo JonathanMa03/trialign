@@ -29,6 +29,8 @@ def local_configuration(root: Path) -> dict:
     return {
         "api_key": values.get("OPENAI_API_KEY", ""),
         "model": values.get("TRIALIGN_JUDGE_MODEL", values.get("OPENAI_MODEL", "gpt-4o-mini")),
+        "critic_model": values.get("TRIALIGN_CRITIC_MODEL")
+        or values.get("TRIALIGN_JUDGE_MODEL", values.get("OPENAI_MODEL", "gpt-4o-mini")),
         "base_url": values.get("OPENAI_BASE_URL"),
         "origin": origin,
     }
@@ -44,6 +46,7 @@ class OpenAIProvider:
         if not configuration.get("api_key"):
             raise ProviderUnavailable("No OpenAI credential is configured.")
         self.model = configuration["model"]
+        self.critic_model = configuration.get("critic_model") or self.model
         self.client = OpenAI(
             api_key=configuration["api_key"],
             base_url=configuration.get("base_url"),
@@ -66,7 +69,9 @@ class OpenAIProvider:
         # Call and revision budgets are enforced by the orchestrator, not SDK retries.
         self.calls += 1
         response = self.client.responses.create(
-            model=self.model,
+            model=self.critic_model
+            if role in {"criterion_critic_assessment", "criterion_critique"}
+            else self.model,
             instructions=instructions,
             input=json.dumps(payload, ensure_ascii=False),
             text={

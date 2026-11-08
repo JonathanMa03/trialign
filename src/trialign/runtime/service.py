@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import threading
 from collections import Counter
 from datetime import UTC, datetime
@@ -20,16 +21,29 @@ from trialign.models import TfidfEncoder
 from trialign.runtime.catalog import Catalog
 from trialign.runtime.storage import atomic_write, read_run, run_path
 from trialign.schemas import HumanDecision, RelationshipLabel
-from trialign.tools.structured import canonical_entity
+from trialign.tools.correspondence import VERSION as MATCHING_VERSION
+from trialign.tools.correspondence import correspondence
 
 
 def now():
     return datetime.now(UTC).isoformat()
 
 
-def alignment_candidates(a, b, *, top_k=2, floor=0.08, encoder=None):
-    """Bidirectional candidate union; retrieval scores never supply a relation."""
-    texts = [f"{r.entity} {r.source} {r.parent_statement}" for r in [*a, *b]]
+def alignment_candidates(a, b, *, encoder=None):
+    """Maximum-weight one-to-one assignment with explicit unmatched options.
+
+    Shared parent prose never supplies a retrieval feature or a concept mapping.
+    Scores rank eligible counterparts; they never supply a relationship label.
+    """
+    from scipy.optimize import linear_sum_assignment
+
+    if not a or not b:
+        return []
+    a = sorted(a, key=lambda row: row.criterion_id)
+    b = sorted(b, key=lambda row: row.criterion_id)
+    if len({r.criterion_id for r in a + b}) != len(a) + len(b):
+        raise ValueError("Comparison inputs must have unique criterion IDs.")
+    texts = [f"{r.entity} {r.source}" for r in [*a, *b]]
     encoder = encoder or TfidfEncoder()
     if hasattr(encoder, "fit"):
         encoder.fit(texts)
@@ -38,37 +52,32 @@ def alignment_candidates(a, b, *, top_k=2, floor=0.08, encoder=None):
     similarities = (
         similarities.toarray() if hasattr(similarities, "toarray") else np.asarray(similarities)
     )
-    candidates = {}
-    for direction in ["a", "b"]:
-        queries, corpus = (a, b) if direction == "a" else (b, a)
-        for qi, query in enumerate(queries):
-            scores = similarities[qi] if direction == "a" else similarities[:, qi]
-            ranked = sorted(
-                range(len(corpus)), key=lambda j: (-float(scores[j]), corpus[j].criterion_id)
-            )
-            # Entity agreement helps prioritize tools, without becoming a match label.
-            ranked.sort(
-                key=lambda j: canonical_entity(query.entity) != canonical_entity(corpus[j].entity)
-            )
-            taken = 0
-            for j in ranked:
-                entity_match = canonical_entity(query.entity) == canonical_entity(corpus[j].entity)
-                if float(scores[j]) < floor and not entity_match:
-                    continue
-                left, right = (query, corpus[j]) if direction == "a" else (corpus[j], query)
-                candidates[(left.criterion_id, right.criterion_id)] = {
-                    "a": left.criterion_id,
-                    "b": right.criterion_id,
-                    "retrieval_score": float(scores[j]),
-                    "entity_match": entity_match,
-                }
-                taken += 1
-                if taken >= top_k:
-                    break
-    return sorted(
-        candidates.values(),
-        key=lambda x: (not x["entity_match"], -x["retrieval_score"], x["a"], x["b"]),
-    )
+    # Dummy columns permit every A to remain unmatched, at zero weight.
+    weights = np.zeros((len(a), len(b) + len(a)))
+    weights[:, : len(b)] = -1
+    reasons = {}
+    for i, left in enumerate(a):
+        for j, right in enumerate(b):
+            allowed, reason = correspondence(left, right)
+            if allowed:
+                score = float(similarities[i, j])
+                weights[i, j] = 1 + max(0, min(1, score))
+                reasons[i, j] = reason
+    rows, columns = linear_sum_assignment(weights, maximize=True)
+    candidates = []
+    for i, j in zip(rows, columns, strict=True):
+        if j >= len(b) or (i, j) not in reasons:
+            continue
+        candidates.append(
+            {
+                "a": a[i].criterion_id,
+                "b": b[j].criterion_id,
+                "retrieval_score": float(similarities[i, j]),
+                "entity_match": True,
+                "matching_reason": reasons[i, j],
+            }
+        )
+    return sorted(candidates, key=lambda x: (-x["retrieval_score"], x["a"], x["b"]))
 
 
 class ComparisonService:
@@ -118,12 +127,15 @@ class ComparisonService:
             "version": VERSION,
             "llm_configured": bool(config["api_key"]),
             "model": config["model"],
+            "critic_model": config["critic_model"],
             "configuration_origin": config["origin"],
             "encoder": "TF-IDF baseline (temporary encoder; no fine-tuned model)",
             "skills": [{"id": key, **value} for key, value in planner.skills.skills.items()],
             "skill_version": planner.skills.version,
             "tools": list(AgentOrchestrator().tools.names),
+            "matching_policy": MATCHING_VERSION,
             "hooks": [
+                "clinical counterpart gate",
                 "input_validation",
                 "before_tool",
                 "after_tool",
@@ -150,20 +162,68 @@ class ComparisonService:
                 )
             return {**result, "new_records": len(added), "trials_available": self.catalog.trials()}
 
+    def import_files(self, files, **options):
+        from trialign.runtime.uploads import parse_upload
+
+        if sum(len(f["content"]) for f in files) > 15_000_000:
+            raise ValueError("Upload limit is 15 MB total per batch.")
+        payload = parse_upload(files, **options)
+        with self.lock:
+            atomic_write(
+                self.directory.parent / "uploads" / (payload["dataset_id"] + ".json"), payload
+            )
+        return self.upload(payload["dataset_id"])
+
+    def upload(self, dataset_id):
+        if not re.fullmatch(r"upload-[a-f0-9]{32}", dataset_id):
+            raise ValueError("Invalid uploaded dataset identifier.")
+        path = self.directory.parent / "uploads" / (dataset_id + ".json")
+        if not path.is_file():
+            raise ValueError("Uploaded dataset was not found; upload the files again.")
+        return json.loads(path.read_text())
+
     def create(self, request: dict, *, synchronous=False, provider_override=None):
         trial_a, trial_b = str(request.get("trial_a", "")), str(request.get("trial_b", ""))
         if not trial_a or trial_a == trial_b:
             raise ValueError("Select two different trials.")
-        a, b = self.catalog.for_trial(trial_a), self.catalog.for_trial(trial_b)
-        max_pairs = int(request.get("max_pairs", 16))
-        calls = int(request.get("max_model_calls", 8))
-        seconds = int(request.get("max_seconds", 150))
-        if not 1 <= max_pairs <= 80 or not 0 <= calls <= 24 or not 10 <= seconds <= 300:
-            raise ValueError("Run limits are outside the permitted range.")
+        dataset_id = str(request.get("dataset_id") or "")
+        dataset = self.upload(dataset_id) if dataset_id else None
+        if dataset:
+            from trialign.schemas import CriterionRecord
+
+            a = [
+                CriterionRecord.model_validate(r)
+                for r in dataset["records"]
+                if r["trial_id"] == trial_a
+            ]
+            b = [
+                CriterionRecord.model_validate(r)
+                for r in dataset["records"]
+                if r["trial_id"] == trial_b
+            ]
+            if not a or not b:
+                raise ValueError("Both selected trials must belong to the uploaded dataset.")
+            titles = {t["trial_id"]: t["title"] for t in dataset["trials"]}
+        else:
+            a, b = self.catalog.for_trial(trial_a), self.catalog.for_trial(trial_b)
+            titles = self.catalog.titles
+        requested_pairs = int(request.get("max_pairs", 0))
+        max_pairs = requested_pairs
+        raw_calls = request.get("max_model_calls", 200)
+        calls = None if raw_calls is None else int(raw_calls)
+        seconds = int(request.get("max_seconds", 900))
+        if not 0 <= max_pairs <= 5000:
+            raise ValueError("Candidate-pair limit must be between 0 (all retrieved) and 5,000.")
+        if calls is not None and calls < 0:
+            raise ValueError("Call budget must be nonnegative or Unlimited in Provider settings.")
+        if not 10 <= seconds <= 3600:
+            raise ValueError("Time limit must be between 10 and 3600 seconds.")
         with self.lock:
             if any(r["status"] in {"queued", "running", "cancelling"} for r in self.list_runs()):
                 raise ValueError("A comparison is already running. Finish or cancel it first.")
             candidates = alignment_candidates(a, b, encoder=self.encoder_factory())
+            max_pairs = min(5000, len(candidates)) if requested_pairs == 0 else requested_pairs
+            max_pairs = max(1, max_pairs)
             run_id = "run-" + uuid4().hex
             inputs = [r.model_dump(mode="json") for r in [*a, *b]]
             job = {
@@ -175,8 +235,13 @@ class ComparisonService:
                 "owner_pid": os.getpid(),
                 "trial_a": trial_a,
                 "trial_b": trial_b,
-                "title_a": self.catalog.titles.get(trial_a, trial_a),
-                "title_b": self.catalog.titles.get(trial_b, trial_b),
+                "title_a": titles.get(trial_a, trial_a),
+                "title_b": titles.get(trial_b, trial_b),
+                "dataset_id": dataset_id or None,
+                "input_origin": "Uploaded files: " + ", ".join(dataset["files"])
+                if dataset
+                else "Saved criterion catalog",
+                "requested_pair_limit": requested_pairs,
                 "criteria_a": [r.model_dump(mode="json") for r in a],
                 "criteria_b": [r.model_dump(mode="json") for r in b],
                 "input_sha256": hashlib.sha256(
@@ -190,6 +255,7 @@ class ComparisonService:
                 "max_seconds": seconds,
                 "use_llm": bool(request.get("use_llm", True)),
                 "candidates": candidates,
+                "matching_policy": MATCHING_VERSION,
                 "results": [],
                 "reviews": {},
                 "events": [],
@@ -224,6 +290,9 @@ class ComparisonService:
                 provider = OpenAIProvider(configuration)
             runner = AgentOrchestrator(provider if job["use_llm"] else None)
             job["model"] = getattr(provider, "model", None) if job["use_llm"] else None
+            job["critic_model"] = (
+                getattr(provider, "critic_model", job["model"]) if job["use_llm"] else None
+            )
             job["skill_version"] = runner.planner.skills.version
             job["skill_sha256"] = runner.planner.skills.digest
             records = {r["criterion_id"]: r for r in [*job["criteria_a"], *job["criteria_b"]]}
@@ -252,11 +321,22 @@ class ComparisonService:
                     )
                     self._save(job)
             budget.check()
-            job["status"] = "completed"
-            job["message"] = "Comparison complete; review the proposed relationships."
+            limited = len(job["results"]) < len(job["candidates"])
+            job["status"] = "limited" if limited else "completed"
+            job["message"] = (
+                f"Pair limit reached: examined {len(job['results'])} of "
+                f"{len(job['candidates'])} retrieved candidates. "
+                "Remaining candidates were not examined."
+                if limited
+                else "All retrieved candidates processed; inspect unresolved cases and coverage."
+            )
         except BudgetExceeded as exc:
             job["status"] = "cancelled" if budget.cancelled.is_set() else "limited"
-            job["message"] = str(exc)
+            job["message"] = (
+                f"{exc}: examined {len(job['results'])} of {len(job['candidates'])} "
+                "assigned counterparts. Saved decisions remain available; unexamined "
+                "counterparts have no relationship decision."
+            )
         except Exception as exc:
             job["status"] = "failed"
             job["message"] = (
@@ -301,6 +381,16 @@ class ComparisonService:
             "reviewed_pairs": len(job["reviews"]),
             "labels": dict(Counter(r["label"] for r in results if r["label"])),
         }
+        from trialign.schemas import CriterionRecord
+
+        typed = (
+            {
+                side: [CriterionRecord.model_validate(row) for row in job["criteria_" + side]]
+                for side in ["a", "b"]
+            }
+            if job.get("matching_policy") == MATCHING_VERSION
+            else {}
+        )
         for rows, candidates, examined, matched in [
             (job["criteria_a"], candidate_a, examined_a, matched_a),
             (job["criteria_b"], candidate_b, examined_b, matched_b),
@@ -316,6 +406,22 @@ class ComparisonService:
                     if identifier in candidates
                     else "no_candidate_found"
                 )
+                if job.get("matching_policy") == MATCHING_VERSION:
+                    others = typed["b"] if rows is job["criteria_a"] else typed["a"]
+                    record = CriterionRecord.model_validate(row)
+                    has_counterpart = any(correspondence(record, other)[0] for other in others)
+                    row["alignment_reason"] = (
+                        "Assigned counterpart has not been examined because the run stopped."
+                        if identifier in candidates and identifier not in examined
+                        else (
+                            "Compatible counterparts were assigned to other criteria "
+                            "under the one-to-one policy."
+                        )
+                        if identifier not in candidates and has_counterpart
+                        else "No supported common clinical concept in the other trial."
+                        if identifier not in candidates
+                        else "One-to-one counterpart examined; see its decision and review status."
+                    )
         return job
 
     def list_runs(self):
@@ -348,6 +454,10 @@ class ComparisonService:
             }:
                 self.cancel_events[run_id].set()
                 job["status"] = "cancelling"
+                job["message"] = (
+                    "Stop requested; completed results are preserved. "
+                    "An in-flight model request may take up to 35 seconds to return."
+                )
                 self._save(job)
         return self.get(run_id)
 

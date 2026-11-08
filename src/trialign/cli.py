@@ -224,7 +224,8 @@ def compare_trials(
     trial_a: str = typer.Option(..., "--trial-a"),
     trial_b: str = typer.Option(..., "--trial-b"),
     max_pairs: int = typer.Option(16, min=1, max=80),
-    model_calls: int = typer.Option(8, min=0, max=24),
+    model_calls: int = typer.Option(200, min=0),
+    unlimited_model_calls: bool = typer.Option(False, "--unlimited-model-calls"),
     offline: bool = typer.Option(False, "--offline"),
 ) -> None:
     """Run the same persisted workflow used by the local browser UI."""
@@ -237,7 +238,7 @@ def compare_trials(
             "trial_a": trial_a,
             "trial_b": trial_b,
             "max_pairs": max_pairs,
-            "max_model_calls": model_calls,
+            "max_model_calls": None if unlimited_model_calls else model_calls,
             "use_llm": not offline,
         },
         synchronous=True,

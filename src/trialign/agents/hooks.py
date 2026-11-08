@@ -22,8 +22,8 @@ class SourceNeedsReview(RuntimeError):
 
 @dataclass
 class RuntimeBudget:
-    max_model_calls: int = 8
-    max_seconds: float = 150
+    max_model_calls: int | None = 200
+    max_seconds: float = 900
     max_tool_calls: int = 160
     cancelled: Event = field(default_factory=Event)
     started: float = field(default_factory=time.monotonic)
@@ -33,6 +33,14 @@ class RuntimeBudget:
     @property
     def remaining_seconds(self):
         return max(0, self.max_seconds - (time.monotonic() - self.started))
+
+    @property
+    def remaining_model_calls(self):
+        return (
+            float("inf")
+            if self.max_model_calls is None
+            else self.max_model_calls - self.model_calls
+        )
 
     def check(self):
         if self.cancelled.is_set():
@@ -48,7 +56,7 @@ class RuntimeBudget:
 
     def before_model(self):
         self.check()
-        if self.model_calls >= self.max_model_calls:
+        if self.max_model_calls is not None and self.model_calls >= self.max_model_calls:
             raise BudgetExceeded("Context-review call budget reached")
         self.model_calls += 1
 

@@ -123,27 +123,78 @@ file or Python package is required. Its bundled frozen corpus contains the
 reviewed extraction outputs. You can also import compatible criterion records
 from other sources. A combined extraction/comparison interface remains future work.
 
-Install the lightweight application environment and start the local browser UI:
+From the repository root, create and activate a Python 3.11 or 3.12 environment
+and install the application dependencies (first-time setup):
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -e ".[app,dev]"
+```
+
+To start the webapp, activate the environment and run:
+
+```bash
+source .venv/bin/activate
 python scripts/trialign.py serve --open-browser
 ```
 
-Open http://127.0.0.1:8766. Select two trials or import reviewed criterion records,
-run a bounded comparison, inspect source evidence and the executed agent trace,
-and save reviewer decisions. Saved runs, imports and review histories live under
-`artifacts/demo/` and can be reloaded or exported as JSON. They do not modify the
-frozen corpus or annotation release.
+Keep that terminal open while using the app. Open http://127.0.0.1:8766 if the
+browser does not open automatically. Press **Control + C** in the running
+terminal to stop the server; closing the browser tab does not stop it. To
+restart, run the same start commands. Restart after editing `.env` so the new
+configuration is loaded. Saved comparisons and reviews persist across restarts.
+
+If port 8766 is already in use, stop the existing instance or choose another port:
+
+```bash
+python scripts/trialign.py serve --port 8767 --open-browser
+```
+
+Click **Import criteria**, then choose either a combined workbook/files or
+separate uploads for Trial A and Trial B. Click **Use uploaded criteria** to
+see the input counts and source preview. A two-trial upload selects both trials
+automatically and limits the selectors to those uploaded inputs. Comparisons
+use exactly those uploaded rows, including subsets of trials already in the
+saved corpus. Use **Use saved corpus instead** to return to the bundled data.
+
+XLSX, CSV, Parquet, JSON and JSONL are supported. A workbook may put the trials
+on separate sheets, or use a trial-ID column in one sheet. Common criterion-text
+headers such as `Criteria`, `Criterion` and `Text` are recognized; optional column
+mapping accepts other headers. Files without trial IDs use their sheet or file
+names, or their explicitly assigned A/B side. Missing clinical fields remain
+unreviewed. Missing inclusion/exclusion roles are marked `unspecified` and need
+source review; importing text does not certify extraction or atomicity.
+
+Click **Compare trials** to run. The default processes all retrieved candidate
+pairs (up to 5,000), rather than stopping at 16. Criterion counts and candidate-pair
+counts differ: retrieval proposes likely counterparts rather than every possible
+cross-trial combination. Explicit pair/time limits are reported as limited runs;
+Provider settings controls a browser-persisted call budget: **200 calls per
+comparison by default**, or **Unlimited calls** to disable the call cap. There
+is no separate 24-call ceiling. The time limit and Stop control still apply.
+An exhausted call budget can leave contextual cases unresolved. **Stop comparison** keeps
+completed results and starts no further comparisons. An in-flight model request
+may take up to 35 seconds to return.
+
+Saved runs, uploaded input snapshots and review histories live under
+`artifacts/demo/`, survive restarts, and can be exported as JSON. They do not
+modify the frozen corpus or annotation release.
 
 The working workflow uses planner skills, allowlisted tools, source/quote hooks,
-a contextual LLM judge, a critic, one bounded revision and explicit escalation.
+a contextual LLM judge, a source-first blind critic, one bounded revision and explicit escalation.
+The critic first makes its own assessment without receiving the judge output,
+then reviews the proposal against that fixed assessment. Contextual pairs use
+three calls initially, with up to two more for one revision.
 The temporary retrieval encoder is TF–IDF; no fine-tuned model or trained
 relationship head is being simulated. Disable contextual judge/critic for
 local tools-only operation; contextual cases then remain unresolved.
 
 For contextual reasoning, configure `OPENAI_API_KEY` and optionally
-`TRIALIGN_JUDGE_MODEL` (default `gpt-4o-mini`). Configuration precedence is the
+`TRIALIGN_JUDGE_MODEL` (default `gpt-4o-mini`). Set `TRIALIGN_CRITIC_MODEL`
+to configure a different critic model; otherwise it uses the judge model.
+The initial source assessments use separate stateless contexts. Shared model
+errors can remain correlated; this is not independent clinical validation. Configuration precedence is the
 process environment over an explicitly selected `TRIALIGN_ENV_FILE`, otherwise
 the repository `.env`. Copy `.env.example` to `.env` on a fresh checkout and
 supply your key. TriAlign does not read Modern AutoCrit configuration. Credentials are read

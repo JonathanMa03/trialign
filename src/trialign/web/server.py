@@ -9,8 +9,9 @@ import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
+from trialign.runtime.report import comparison_workbook
 from trialign.runtime.service import ComparisonService
 
 STATIC = Path(__file__).parent / "static"
@@ -43,9 +44,34 @@ def handler(service):
                 if path == "/api/trials" and method == "GET":
                     return self.send_json(200, {"trials": service.catalog.trials()})
                 if path == "/api/import" and method == "POST":
+                    if "files" in body:
+                        files = [
+                            {
+                                "filename": str(item.get("filename", "")),
+                                "content": base64.b64decode(
+                                    item.get("content_base64", ""), validate=True
+                                ),
+                                "side": item.get("side", ""),
+                            }
+                            for item in body["files"]
+                        ]
+                        result = service.import_files(
+                            files,
+                            text_column=str(body.get("text_column", "")),
+                            trial_column=str(body.get("trial_column", "")),
+                            role=str(body.get("role", "")),
+                        )
+                        return self.send_json(
+                            200, {**result, "record_count": len(result["records"]), "records": None}
+                        )
                     content = base64.b64decode(body.get("content_base64", ""), validate=True)
                     return self.send_json(
                         200, service.import_file(str(body.get("filename", "")), content)
+                    )
+                if path.startswith("/api/uploads/") and method == "GET":
+                    result = service.upload(path.rsplit("/", 1)[-1])
+                    return self.send_json(
+                        200, {**result, "record_count": len(result["records"]), "records": None}
                     )
                 if path == "/api/runs":
                     return self.send_json(
@@ -62,7 +88,25 @@ def handler(service):
                     if method == "POST" and parts[-1] == "review":
                         return self.send_json(200, service.review(run_id, body))
                     if method == "GET" and parts[-1] == "export":
-                        return self.send_json(200, service.get(run_id), download=run_id + ".json")
+                        if parse_qs(urlparse(self.path).query).get("format") == ["json"]:
+                            return self.send_json(
+                                200, service.get(run_id), download=run_id + ".json"
+                            )
+                        content = comparison_workbook(service.get(run_id))
+                        self.send_response(200)
+                        self.send_header(
+                            "Content-Type",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        )
+                        self.send_header(
+                            "Content-Disposition", f'attachment; filename="{run_id}-report.xlsx"'
+                        )
+                        self.send_header("Content-Length", str(len(content)))
+                        self.send_header("Cache-Control", "no-store")
+                        self.send_header("X-Content-Type-Options", "nosniff")
+                        self.end_headers()
+                        self.wfile.write(content)
+                        return
                 if path.startswith("/api/"):
                     return self.send_json(404, {"error": "Unknown API resource."})
                 if method != "GET":

@@ -11,9 +11,10 @@ from trialign.agents.contracts import Critique, Evidence, Judgment, PairResult
 from trialign.agents.hooks import BudgetExceeded, RuntimeBudget, SourceNeedsReview, validate_inputs
 from trialign.agents.roles import CriticAgent, JudgeAgent, PlannerAgent
 from trialign.schemas import RelationshipLabel
+from trialign.tools.correspondence import NoClinicalCounterpart, correspondence
 from trialign.tools.registry import ToolRegistry
 
-VERSION = "agent-runtime-1"
+VERSION = "agent-runtime-4"
 AgentResult = PairResult
 
 
@@ -65,8 +66,13 @@ class AgentOrchestrator:
         route = "context_review"
         critique = Critique(verdict="escalate", issues=[], rationale="Not yet reviewed.")
         tools = {}
+        critic_assessment = {}
         disposition = "needs_review"
         try:
+            compatible, reason = correspondence(a, b)
+            emit("hook.clinical_correspondence", {"allowed": compatible, "reason": reason})
+            if not compatible:
+                raise NoClinicalCounterpart(reason)
             for tool in skill["tools"]:
                 tools[tool] = self.tools.execute(tool, a, b, budget=budget, emit=emit)
             source_issues = list(getattr(a, "source_quality_issues", []) or [])
@@ -96,20 +102,25 @@ class AgentOrchestrator:
             elif self.provider is None:
                 route = "tools_only"
                 raise BudgetExceeded("Contextual LLM review is disabled or not configured.")
-            elif budget.max_model_calls - budget.model_calls < 2:
-                raise BudgetExceeded("Insufficient call budget for both judge and critic.")
+            elif budget.remaining_model_calls < (3 if self.enable_critic else 1):
+                raise BudgetExceeded(
+                    "Insufficient call budget for judge, independent assessment and critic review."
+                )
             else:
                 proposal = self.judge.judge(
                     a, b, tools, skill, provider=self.provider, budget=budget, emit=emit
                 )
                 if self.enable_critic:
                     critique = self.critic.critique(
-                        proposal, a, b, provider=self.provider, budget=budget, emit=emit
+                        proposal,
+                        a,
+                        b,
+                        provider=self.provider,
+                        budget=budget,
+                        emit=emit,
+                        assessment_cache=critic_assessment,
                     )
-                    if (
-                        critique.verdict == "revise"
-                        and budget.max_model_calls - budget.model_calls >= 2
-                    ):
+                    if critique.verdict == "revise" and budget.remaining_model_calls >= 2:
                         emit("orchestrator.revision", {"attempt": 1, "issues": critique.issues})
                         proposal = self.judge.judge(
                             a,
@@ -122,7 +133,13 @@ class AgentOrchestrator:
                             feedback=critique.model_dump(),
                         )
                         critique = self.critic.critique(
-                            proposal, a, b, provider=self.provider, budget=budget, emit=emit
+                            proposal,
+                            a,
+                            b,
+                            provider=self.provider,
+                            budget=budget,
+                            emit=emit,
+                            assessment_cache=critic_assessment,
                         )
                 else:
                     # Harness-only ablation: still enforce the source-grounding hook.
@@ -136,6 +153,14 @@ class AgentOrchestrator:
                             "Harness ablation: LLM critic disabled; evidence hooks remain active."
                         ),
                     )
+        except NoClinicalCounterpart as exc:
+            disposition = "no_counterpart"
+            route = "correspondence_gate"
+            critique = Critique(
+                verdict="escalate",
+                issues=[str(exc)],
+                rationale="No relationship evaluated: no supported common clinical concept.",
+            )
         except SourceNeedsReview as exc:
             disposition = "source_review"
             emit("hook.source_validation", {"issues": [str(exc)]})

@@ -21,4 +21,3 @@ class JudgmentProvider(Protocol):
     def judge(
         self, a: CriterionRecord, b: CriterionRecord, evidence: list[dict[str, Any]]
     ) -> dict[str, Any]: ...
-
