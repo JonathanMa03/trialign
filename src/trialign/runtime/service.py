@@ -22,7 +22,15 @@ from trialign.agents.provider import OpenAIProvider, local_configuration
 from trialign.models import TfidfEncoder
 from trialign.runtime.catalog import Catalog
 from trialign.runtime.metrics import estimate_api_cost, pricing_settings
-from trialign.runtime.storage import atomic_write, migrate_legacy_runs, read_run, run_path
+from trialign.runtime.storage import (
+    atomic_write,
+    migrate_legacy_runs,
+    read_run,
+    run_path,
+    saved_run_files,
+    trial_label,
+    write_run,
+)
 from trialign.schemas import HumanDecision, RelationshipLabel
 from trialign.tools.correspondence import VERSION as MATCHING_VERSION
 from trialign.tools.correspondence import correspondence
@@ -112,8 +120,9 @@ class ComparisonService:
                 origin=payload["origin"],
             )
         # A process restart never silently resumes a model call or loses saved work.
-        for path in self.directory.glob("run-*.json"):
-            job = json.loads(path.read_text())
+        for _path, job in saved_run_files(self.directory):
+            job.setdefault("note", "")
+            job.setdefault("display_status", "")
             owner_alive = False
             if job.get("owner_pid"):
                 try:
@@ -124,7 +133,8 @@ class ComparisonService:
             if job["status"] in {"queued", "running", "cancelling"} and not owner_alive:
                 job["status"] = "interrupted"
                 job["message"] = "Server restarted; completed pair results were preserved."
-                atomic_write(path, job)
+            if job["status"] not in {"queued", "running", "cancelling"} or not owner_alive:
+                write_run(self.directory, job)
 
     def capabilities(self):
         config = local_configuration(self.root)
@@ -245,6 +255,8 @@ class ComparisonService:
             inputs = [r.model_dump(mode="json") for r in [*a, *b]]
             job = {
                 "schema_version": "comparison-run-1",
+                "note": str(request.get("note") or "").strip(),
+                "display_status": "",
                 "run_id": run_id,
                 "created_at": now(),
                 "updated_at": now(),
@@ -302,7 +314,7 @@ class ComparisonService:
                 "model_calls": 0,
                 "usage": {"input_tokens": 0, "output_tokens": 0},
             }
-            atomic_write(run_path(self.directory, run_id), job)
+            write_run(self.directory, job)
             self.cancel_events[run_id] = threading.Event()
         if synchronous:
             self._execute(run_id, provider_override=provider_override)
@@ -423,11 +435,12 @@ class ComparisonService:
 
     def _save(self, job):
         job["updated_at"] = now()
-        atomic_write(run_path(self.directory, job["run_id"]), job)
+        write_run(self.directory, job)
 
     def get(self, run_id):
         with self.lock:
             job = read_run(self.directory, run_id)
+            job["file_name"] = run_path(self.directory, run_id).name
         results = job["results"]
         candidate_a = {c["a"] for c in job["candidates"]}
         candidate_b = {c["b"] for c in job["candidates"]}
@@ -494,22 +507,29 @@ class ComparisonService:
 
     def list_runs(self):
         results = []
-        for path in sorted(self.directory.glob("run-*.json"), reverse=True):
-            job = json.loads(path.read_text())
-            results.append(
-                {
-                    k: job.get(k)
-                    for k in [
-                        "run_id",
-                        "created_at",
-                        "status",
-                        "trial_a",
-                        "trial_b",
-                        "title_a",
-                        "title_b",
-                    ]
-                }
-            )
+        with self.lock:
+            for path, job in saved_run_files(self.directory):
+                results.append(
+                    {
+                        **{
+                            k: job.get(k)
+                            for k in [
+                                "run_id",
+                                "created_at",
+                                "status",
+                                "trial_a",
+                                "trial_b",
+                                "title_a",
+                                "title_b",
+                                "note",
+                                "display_status",
+                            ]
+                        },
+                        "trial_label_a": trial_label(job, "a"),
+                        "trial_label_b": trial_label(job, "b"),
+                        "file_name": path.name,
+                    }
+                )
         return sorted(results, key=lambda x: x["created_at"], reverse=True)
 
     def cancel(self, run_id):

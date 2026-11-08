@@ -71,6 +71,9 @@ def comparison_workbook(job):
     metrics = job.get("metrics", {})
     cost = job.get("cost_estimate", {})
     metadata_rows = [
+        ["Run note", job.get("note") or "None"],
+        ["Display status", job.get("display_status") or job["status"]],
+        ["Run filename", job.get("file_name", "Not recorded")],
         ["Resolved API models", ", ".join(job.get("resolved_models", [])) or "None reported"],
         ["Request timeout (seconds)", settings.get("request_timeout_seconds", "Not recorded")],
         ["Maximum output tokens per call", settings.get("max_output_tokens", "Not recorded")],

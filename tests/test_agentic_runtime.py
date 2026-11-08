@@ -1078,3 +1078,76 @@ def test_invalid_cost_rates_are_rejected(rate):
 
     with pytest.raises(ValueError):
         pricing_settings({"judge": {"input_per_million": rate, "output_per_million": 1}})
+
+
+def test_readable_filenames_preserve_ids_notes_and_status_transitions(tmp_path):
+    from trialign.runtime.storage import atomic_write, read_run, run_path, write_run
+
+    job = {
+        "run_id": "run-" + "a" * 32,
+        "created_at": "2026-11-08T20:30:45+00:00",
+        "trial_a": "NCT01841736",
+        "trial_b": "NCT04310007",
+        "status": "running",
+        "note": "Initial",
+        "display_status": "",
+    }
+    running_path = write_run(tmp_path, job)
+    assert (
+        running_path.name
+        == "run_2026-11-08_15-30-45_EST_NCT01841736_NCT04310007_running_aaaaaaaa.json"
+    )
+    edited = read_run(tmp_path, job["run_id"])
+    edited["note"] = "Presentation example"
+    edited["display_status"] = "Reviewed"
+    atomic_write(running_path, edited)
+    job["status"] = "completed"
+    completed = write_run(tmp_path, job)
+    assert "_completed_" in completed.name and not running_path.exists()
+    assert read_run(tmp_path, job["run_id"])["note"] == "Presentation example"
+    assert read_run(tmp_path, job["run_id"])["display_status"] == "Reviewed"
+    assert read_run(tmp_path, job["run_id"])["status"] == "completed"
+    assert run_path(tmp_path, job["run_id"]) == completed
+    # Identification is based on the JSON ID even if a user renames the file.
+    renamed = completed.rename(tmp_path / "presentation-example.json")
+    assert run_path(tmp_path, job["run_id"]) == renamed
+
+
+def test_short_filename_id_collisions_never_overwrite_another_run(tmp_path):
+    from trialign.runtime.storage import read_run, write_run
+
+    base = {
+        "created_at": "2026-11-08T20:30:45+00:00",
+        "trial_a": "NCT01841736",
+        "trial_b": "NCT04310007",
+        "status": "completed",
+    }
+    first = {**base, "run_id": "run-" + "a" * 32, "note": "First"}
+    second = {**base, "run_id": "run-" + "a" * 8 + "b" * 24, "note": "Second"}
+    a, b = write_run(tmp_path, first), write_run(tmp_path, second)
+    assert a != b
+    assert read_run(tmp_path, first["run_id"])["note"] == "First"
+    assert read_run(tmp_path, second["run_id"])["note"] == "Second"
+
+
+def test_existing_run_is_renamed_and_manual_note_is_listed_without_changing_status(tmp_path):
+    from trialign.runtime.storage import atomic_write, run_path
+
+    service = ComparisonService(tmp_path)
+    service.catalog.add([age("A"), age("B")], origin="test")
+    job = service.create(
+        {"trial_a": "HARNESS-A", "trial_b": "HARNESS-B", "use_llm": False}, synchronous=True
+    )
+    path = run_path(service.directory, job["run_id"])
+    legacy = path.rename(service.directory / (job["run_id"] + ".json"))
+    raw = json.loads(legacy.read_text())
+    raw["note"] = "Use for presentation"
+    raw["display_status"] = "Ready"
+    atomic_write(legacy, raw)
+    restarted = ComparisonService(tmp_path)
+    listed = restarted.list_runs()[0]
+    assert listed["note"] == "Use for presentation" and listed["display_status"] == "Ready"
+    assert listed["status"] == "completed"
+    assert listed["file_name"].startswith("run_") and not legacy.exists()
+    assert restarted.get(job["run_id"])["reviews"] == job["reviews"]
+    assert restarted.get(job["run_id"])["cost_estimate"] == job["cost_estimate"]

@@ -1295,6 +1295,26 @@ other fees; it is not an invoice. Metadata and per-request usage appear in the
 UI and Excel export. Historical runs retain their original data and display
 unrecorded fields as unavailable rather than receiving fabricated measurements.
 
+Run files use readable names with local date/time, original trial identifiers,
+execution status and a short unique suffix, for example
+\pathcode{run_2026-11-08_15-30-45_EST_NCT01841736_NCT04310007_completed_a1b2c3d4.json}.
+Filename and compact menu timestamps use \pathcode{America/New_York}; recorded
+metadata timestamps remain UTC. Original IDs are preferred over upload hashes.
+The internal run ID remains stable as the filename changes with execution
+status; reviews, saved-run loading and export continue using that stable ID.
+Legacy names are converted on startup, and short-suffix collisions fall back
+to the full ID without overwriting another run.
+
+Saved-comparison labels display compact date/time, the two trial identifiers,
+status and an optional note rather than full protocol titles. Users may edit
+\pathcode{note} and \pathcode{display_status} in the run JSON, then refresh.
+The display status is an annotation independent of the machine-managed
+execution \pathcode{status}; changing it to ``Reviewed'' does not make an
+incomplete job complete. The worker preserves manual annotations when saving
+progress, and exports include both annotations and the actual run status.
+Other fields, particularly \pathcode{run_id} and \pathcode{status}, should remain
+unchanged. Incomplete JSON edits are omitted from the listing until valid.
+
 Deleting a completed run JSON removes it from the next listing. A migration
 completion record outside the run directory prevents deleted history from
 being reimported even if the whole \pathcode{runs/} directory is removed.
@@ -1326,7 +1346,7 @@ lactation judgment used a synonym interpretation. This discrepancy requires
 review rather than treating either outcome as clinical ground truth.
 
 \paragraph{Verification and observed failure cases.}
-The automated suite passes 67 tests, covering baseline retrieval, run metadata,
+The automated suite passes 70 tests, covering baseline retrieval, run metadata,
 polarity, endpoint/unit handling, source conflicts,
 critic veto, bounded revision, invented quotes, cancellation, atomic imports,
 and durable review history. A separate 12-case constructed offline harness

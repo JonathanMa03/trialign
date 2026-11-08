@@ -52,7 +52,22 @@ for (const side of ["A", "B"]) {
     () => renderTrialOptions(side, "", {editing:true}));
 }
 
-async function loadSaved(){const {runs}=await api("/api/runs");const select=$("savedRuns"),previous=current?.run_id||select.value;select.replaceChildren(node("option","Choose a saved comparison"));select.firstChild.value="";for(const run of runs){const option=node("option",`${new Date(run.created_at).toLocaleString()} · ${run.title_a||run.trial_a} ↔ ${run.title_b||run.trial_b} · ${run.status}`);option.value=run.run_id;select.append(option);}select.value=previous||"";}
+function savedRunLabel(run){
+  const date=new Intl.DateTimeFormat("en-US",{year:"2-digit",month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit",second:"2-digit",timeZone:"America/New_York"}).format(new Date(run.created_at));
+  const status=typeof run.display_status==="string"&&run.display_status.trim()?run.display_status.trim():run.status;
+  const note=typeof run.note==="string"?run.note.trim():"";
+  const shortNote=note.length>64?note.slice(0,64)+"…":note;
+  return `${date} · ${run.trial_label_a||run.trial_a} ↔ ${run.trial_label_b||run.trial_b} · ${status}${shortNote?" · "+shortNote:""}`;
+}
+async function loadSaved(){
+  const {runs}=await api("/api/runs"),select=$("savedRuns"),previous=current?.run_id||select.value;
+  select.replaceChildren(node("option","Choose a saved comparison"));select.firstChild.value="";
+  for(const run of runs){
+    const option=node("option",savedRunLabel(run));option.value=run.run_id;
+    option.title=[run.file_name,run.note].filter(Boolean).join(" · ");select.append(option);
+  }
+  select.value=previous||"";
+}
 function setActive(run){if(current?.run_id!==run.run_id){resetTrialSearches();$("trialA").value=run.trial_a;$("trialB").value=run.trial_b;resetTrialSearches();$("savedRuns").value=run.run_id;}current=run;render();if(polling)clearTimeout(polling);if(running(run))polling=setTimeout(poll,950);}
 async function poll(){
   if(!current)return;
@@ -171,7 +186,9 @@ function renderRunMetadata(){
   const root=$("runMetadata");root.replaceChildren();
   const settings=current.provider_settings,metrics=current.metrics,cost=current.cost_estimate;
   const add=(label,value)=>root.append(node("dt",label),node("dd",String(value??"Not recorded")));
-  add("Run ID",current.run_id);
+  add("Run ID",current.run_id);add("Run file",current.file_name);
+  add("Note",current.note||"None");
+  if(current.display_status)add("Display status",current.display_status);
   add("Retrieval",settings?.retrieval_model||current.encoder);
   add("Configured judge model",settings?.judge_model||current.model);
   add("Configured critic model",settings?.critic_model||current.critic_model);
@@ -232,7 +249,7 @@ async function init(){
   resetComparisonForm();
   try{
     health=await api("/api/health");
-    if(["agent-runtime-1","agent-runtime-2","agent-runtime-3","agent-runtime-4","agent-runtime-5"].includes(health.version)){
+    if(["agent-runtime-1","agent-runtime-2","agent-runtime-3","agent-runtime-4","agent-runtime-5","agent-runtime-6"].includes(health.version)){
       notice("The Python server is running an older version. Stop it with Control + C, restart python scripts/trialign.py serve --open-browser, then refresh this page.",true);return;
     }
     $("providerState").textContent=health.llm_configured?`· ${health.model}`:"· not configured; tools-only mode available";

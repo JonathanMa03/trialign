@@ -189,7 +189,7 @@ Git-ignored repository directory `runs/` and survive restarts. Existing history
 from `artifacts/demo/` is copied there once without overwriting newer saved
 files or deleting the originals. **Export Excel report** downloads a readable
 workbook; JSON remains available through the export endpoint with `?format=json`.
-Deleting a completed `run-*.json` file removes that comparison from the list
+Deleting a completed `run*.json` file removes that comparison from the list
 after refresh; deleted history is not imported again from the legacy folder.
 Stop an active comparison before deleting its file, since it continues saving
 while running. These files do not modify the frozen corpus or annotation release.
@@ -201,6 +201,28 @@ input, cached-input and output rates entered in Provider settings. Missing
 rates or usage are reported as unavailable/partial, not as zero. Estimates
 cover API model tokens only and exclude local compute and other fees.
 Historical runs keep their original metadata; unrecorded fields are not invented.
+
+Run filenames use New York time, trial identifiers, execution status, and a short
+unique suffix, for example:
+
+```text
+run_2026-11-08_15-30-45_EST_NCT01841736_NCT04310007_completed_a1b2c3d4.json
+```
+
+Existing filenames are upgraded on server startup while retaining internal run
+IDs and reviews. The filename updates when execution status changes. Saved
+comparison labels show a compact date/time, the two trial identifiers, status,
+and an optional note instead of full protocol titles. For uploaded inputs,
+original trial identifiers are used when available.
+
+To annotate a saved run, edit its existing `note` field (for example,
+`"Presentation example"`) and optionally `display_status` (for example,
+`"Reviewed"`), then refresh the page. Keep the other fields, especially `run_id`
+and the execution `status`, unchanged. `display_status` changes the list label
+without changing execution state. Manual notes survive later saves and are
+included in Excel reports. Filenames and list timestamps use America/New_York;
+other recorded metadata timestamps remain UTC.
+
 
 The working workflow uses planner skills, allowlisted tools, source/quote hooks,
 a contextual LLM judge, a source-first blind critic, one bounded revision and explicit escalation.
