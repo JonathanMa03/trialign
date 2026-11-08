@@ -1,38 +1,33 @@
-"""Transparent lexical baseline."""
-
-from __future__ import annotations
-
-from collections.abc import Sequence
-from pathlib import Path
+"""Sparse TF-IDF representations of eligibility criteria."""
 
 import joblib
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import normalize
 
 
 class TfidfEncoder:
     name = "tfidf"
 
-    def __init__(self, *, ngram_range: tuple[int, int] = (1, 2), min_df: int = 1):
+    def __init__(self):
         self.vectorizer = TfidfVectorizer(
-            lowercase=True, ngram_range=ngram_range, min_df=min_df, sublinear_tf=True
+            lowercase=True,
+            ngram_range=(1, 2),
+            norm="l2",
+            dtype=np.float32,
         )
-        self._fitted = False
 
-    def fit(self, texts: Sequence[str]) -> "TfidfEncoder":
+    def fit(self, texts):
         self.vectorizer.fit(texts)
-        self._fitted = True
         return self
 
-    def encode(self, texts: Sequence[str]) -> np.ndarray:
-        if not self._fitted:
-            raise RuntimeError("Call fit before encode.")
-        matrix = self.vectorizer.transform(texts)
-        return normalize(matrix, norm="l2").toarray().astype(np.float32)
+    def encode(self, texts):
+        return self.vectorizer.transform(texts)
 
-    def save(self, path: str) -> None:
-        destination = Path(path)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(self.vectorizer, destination)
+    def save(self, path):
+        joblib.dump(self.vectorizer, path)
 
+    @classmethod
+    def load(cls, path):
+        encoder = cls()
+        encoder.vectorizer = joblib.load(path)
+        return encoder
