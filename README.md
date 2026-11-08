@@ -116,6 +116,50 @@ python scripts/freeze_pair_pilot.py --verify
 
 The command is read-only and fails on stale hashes, workbook/log disagreements, missing evidence, invalid labels or changed release dispositions. Generated data remain ignored by default; the selected corpus, pilot and family-audit release files are explicitly tracked. Final train/validation/test partitions are not assigned. The generic `trialign split` and `trialign pairs` commands remain scaffolding and do not enforce this release's family exclusions.
 
+## Local working demo
+
+TriAlign runs independently: no Modern AutoCrit checkout, server, environment
+file or Python package is required. Its bundled frozen corpus contains the
+reviewed extraction outputs. You can also import compatible criterion records
+from other sources. A combined extraction/comparison interface remains future work.
+
+Install the lightweight application environment and start the local browser UI:
+
+```bash
+python -m pip install -e ".[app,dev]"
+python scripts/trialign.py serve --open-browser
+```
+
+Open http://127.0.0.1:8766. Select two trials or import reviewed criterion records,
+run a bounded comparison, inspect source evidence and the executed agent trace,
+and save reviewer decisions. Saved runs, imports and review histories live under
+`artifacts/demo/` and can be reloaded or exported as JSON. They do not modify the
+frozen corpus or annotation release.
+
+The working workflow uses planner skills, allowlisted tools, source/quote hooks,
+a contextual LLM judge, a critic, one bounded revision and explicit escalation.
+The temporary retrieval encoder is TF–IDF; no fine-tuned model or trained
+relationship head is being simulated. Disable contextual judge/critic for
+local tools-only operation; contextual cases then remain unresolved.
+
+For contextual reasoning, configure `OPENAI_API_KEY` and optionally
+`TRIALIGN_JUDGE_MODEL` (default `gpt-4o-mini`). Configuration precedence is the
+process environment over an explicitly selected `TRIALIGN_ENV_FILE`, otherwise
+the repository `.env`. Copy `.env.example` to `.env` on a fresh checkout and
+supply your key. TriAlign does not read Modern AutoCrit configuration. Credentials are read
+locally and excluded from run exports. External model calls require connectivity
+and incur API usage costs. The UI exposes pair, call and time limits and cancellation.
+
+```bash
+python scripts/trialign.py harness
+python -m pytest
+python scripts/freeze_pair_pilot.py --verify
+```
+
+The harness checks constructed routing and constraint cases; passing these and
+integration checks does not establish clinical accuracy. See the technical guide
+for architecture, provenance, limitations and the remaining evaluation work.
+
 ## Repository structure
 
 ```text
@@ -135,7 +179,7 @@ trialign/
 │   ├── schemas/                        # Versioned Pydantic records
 │   └── cli.py                         # Command-line workflows
 ├── app/
-│   └── review_app.py                   # Initial Streamlit review surface
+│   └── review_app.py                   # Local browser UI launcher
 ├── scripts/
 │   └── trialign.py                     # Source-checkout CLI launcher
 ├── tests/                                  # Unit and pipeline smoke tests

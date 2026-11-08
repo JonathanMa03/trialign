@@ -1,0 +1,26 @@
+version: comparison-skills-1
+skills:
+  numeric:
+    title: Compare source-supported numeric rules
+    tools: [inspect_frame, compare_constraints, cite_sources]
+    instructions: >-
+      Interpret inclusion/exclusion polarity once. Preserve strict endpoints,
+      units, ULN references, temporal anchors, exceptions and Boolean parents.
+      Numeric containment is valid only in the supported comparison frame.
+  clinical_context:
+    title: Interpret contextual eligibility requirements
+    tools: [inspect_frame, compare_constraints, cite_sources]
+    instructions: >-
+      Compare the selected criterion with its governing context, not entire
+      trial populations. Do not absorb independent AND siblings into the selected
+      child. Preserve governing qualifiers and inclusion OR alternatives.
+      Distinguish consent capability, willingness, literacy, completed consent
+      and timing. Never replace an exception child with its full parent silently.
+  source_resolution:
+    title: Resolve or escalate source problems
+    tools: [inspect_frame, cite_sources]
+    instructions: >-
+      A section heading or lesion-assessment fragment is not a positive
+      inclusion predicate. Conflicting role, missing exception policy or missing
+      reference values require an explicit unresolved disposition. Do not use
+      empty-set containment or a guessed correction to manufacture a label.

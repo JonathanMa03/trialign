@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TriAlign · Trial comparison</title><link rel="stylesheet" href="/styles.css"></head>
+<body>
+<header><a class="brand" href="/">TriAlign<span>Clinical protocol comparison</span></a><span class="local">Local workspace</span></header>
+<main>
+<div class="heading"><div><p class="eyebrow">Eligibility, side by side</p><h1>Compare two trials</h1><p>Align their criteria, inspect differences, and trace each relationship to its source.</p></div><button id="importButton" class="secondary">Import criteria</button><input id="fileInput" type="file" accept=".xlsx,.parquet,.json,.jsonl,.csv" multiple hidden></div>
+<div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+<section class="setup" aria-label="Comparison setup">
+<div class="selectors"><label>Trial A<select id="trialA"></select></label><button id="swap" class="secondary swap" aria-label="Swap Trial A and Trial B">⇄</button><label>Trial B<select id="trialB"></select></label></div>
+<div class="setup-bottom"><label class="checkbox"><input type="checkbox" id="useLlm" checked>Contextual judge + critic <span id="providerState"></span></label><div><button id="cancelButton" class="secondary" hidden>Cancel run</button><button id="compareButton" class="primary">Compare trials</button></div></div>
+<details class="limits"><summary>Run limits and available capabilities</summary><div class="limit-fields"><label>Candidate-pair limit<input id="pairLimit" type="number" min="1" max="80" value="16"></label><label>LLM call limit<input id="callLimit" type="number" min="0" max="24" value="8"></label><label>Time limit (seconds)<input id="timeLimit" type="number" min="10" max="300" value="150"></label></div><p id="capabilities"></p><p>Retrieval uses the TF-IDF baseline while the trained encoder is pending. Retrieval scores select candidates; they do not determine clinical relationships.</p></details>
+</section>
+<section class="run-toolbar"><label>Saved comparisons<select id="savedRuns"><option value="">Choose a saved comparison</option></select></label><a id="exportButton" class="button secondary" hidden>Export evidence + review</a></section>
+<section id="emptyState" class="empty"><div class="empty-symbol">A ↔ B</div><h2>A trial comparison is built from criterion comparisons</h2><p>Choose two trials above, or import reviewed criterion records.<br>You can inspect the sources, agent steps, critic findings, and your saved decisions.</p></section>
+<section id="workspace" hidden>
+<div class="run-status"><strong id="runStatus"></strong><span id="runMessage"></span><span id="callUsage"></span></div><progress id="progress" max="16" value="0"></progress>
+<div class="stats"><div><strong id="statPairs">0</strong><span>Pairs examined</span></div><div><strong id="statSupported">0</strong><span>Supported candidates</span></div><div><strong id="statReview">0</strong><span>Need review</span></div><div><strong id="statSaved">0</strong><span>Reviewer decisions</span></div></div>
+<div class="workspace-grid"><aside class="pair-list"><div class="list-heading"><h2>Candidate comparisons</h2><select id="resultFilter" aria-label="Filter candidate comparisons"><option value="all">All</option><option value="review">Need review</option><option value="supported">Supported</option><option value="reviewed">Reviewed</option></select></div><input id="searchResults" type="search" placeholder="Search source or entity" aria-label="Search comparisons"><div id="pairRows"></div></aside>
+<article id="pairDetail" class="pair-detail"><div class="detail-empty">Pair results will appear here as the workflow runs.</div></article></div>
+<details class="coverage"><summary>Criterion coverage across both trials</summary><p>“Not examined” reflects this run’s limits. “No candidate found” reflects retrieval; neither proves that the other protocol lacks the requirement.</p><div class="source-columns"><div><h3>Trial A</h3><div id="coverageA"></div></div><div><h3>Trial B</h3><div id="coverageB"></div></div></div></details>
+<details class="activity" open><summary>Live workflow activity</summary><ol id="activityLog"></ol></details>
+</section>
+</main><footer>TriAlign development demo · Review model proposals before using them in protocol work.</footer>
+<script src="/app.js" defer></script></body></html>

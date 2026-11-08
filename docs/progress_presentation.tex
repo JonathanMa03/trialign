@@ -1,7 +1,8 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 \usetheme{default}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern,booktabs,tabularx,graphicx}
+\usepackage{lmodern,booktabs,tabularx,graphicx,tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
 \definecolor{wine}{HTML}{9B1C2B}
 \definecolor{orange}{HTML}{D97800}
 \definecolor{cream}{HTML}{FFF9F5}
@@ -14,10 +15,7 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{itemize item}{\color{wine}\small\textbullet}
 \setbeamertemplate{footline}{\hspace{1em}\color{muted}\scriptsize TriAlign progress\hfill\insertframenumber\hspace{1em}\vspace{.5em}}
-\setbeamertemplate{note page}[plain]
-\setbeameroption{hide notes}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\newcommand{\source}[1]{\par\vfill{\tiny\color{muted}#1\par}}
 \newcommand{\gap}{\par\vspace{.55em}}
 \newcommand{\status}[1]{{\color{wine}\textbf{#1}}}
 \title{TriAlign}
@@ -36,177 +34,216 @@
 Jonathan Ma \qquad Jiatong Gao\par
 \gap
 {\color{muted}November 2026}
-\note{Jonathan, 0:30. Status reflects repository inspection on November 6, 2026. Explain that this is a progress report. Allocate 14 minutes of content including a 3-minute demonstration, 1 minute for transitions, and 5 minutes for discussion. The live demo still needs implementation and rehearsal. Source: proposal.tex and trialign\_technical.tex.}
 \end{frame}
 
 \begin{frame}{Project objective}
-Help a clinical team compare a current eligibility rule with rules from other trials.
+Help a clinician compare the eligibility requirements of Trial A and Trial B.
 \gap
 \begin{enumerate}
-\item Retrieve potentially comparable criteria.
-\item Explain operational differences using source evidence.
-\item Record a relationship or escalate an unresolved comparison.
+\item Align potentially corresponding criteria across the trials.
+\item Explain relationships and differences using source evidence.
+\item Identify criteria needing further review and preserve unresolved comparisons.
 \end{enumerate}
 \gap
 \textbf{Illustrative case:} inclusion age $\geq18$ versus inclusion age $<18$.\\
 Shared words conceal disjoint allowed populations.
 \gap
-Scope: criterion comparison for protocol review, without patient screening.
-\source{Source: technical guide, Sections 1 and 3. Example is illustrative, not a measured encoder failure.}
-\note{Jonathan, 1:00. Describe protocol review and historical precedents. Do not say we have measured embedding errors on this example. Similarity is useful for retrieving candidates but does not itself establish a relationship.}
+Scope: trial comparison through criterion alignment, without patient screening.
 \end{frame}
 
-\begin{frame}{Current dataset}
-\begin{tabularx}{\textwidth}{@{}p{.34\textwidth}Y@{}}
+\begin{frame}{From extracted criteria to trial comparison}
+\centering
+\resizebox{.98\textwidth}{!}{%
+  \IfFileExists{docs/figures/trial_comparison_workflow.tex}
+    {\input{docs/figures/trial_comparison_workflow.tex}}
+    {\input{figures/trial_comparison_workflow.tex}}%
+}
+\par\vspace{.5em}
+{\small Today: Modern AutoCrit runs separately. The TriAlign demo starts from reviewed criteria.}
+\end{frame}
+
+\begin{frame}{Current dataset: already extracted and reviewed}
+\begin{tabularx}{\textwidth}{@{}p{.28\textwidth}Y@{}}
 \toprule
-Source & Current artifact\\\midrule
-Modern AutoCrit & Reviewed atomic criteria derived from public trial eligibility text\\
-Frozen release & \texttt{trial100\_v1}: 3,537 criteria across 100 trials\\
-Review state & All retained rows marked corrected; zero recorded validation issues or readiness blockers\\
-Provenance & Trial and criterion IDs, source versions, parent statements and available context\\
-Reproducibility & Parquet snapshot with corpus hash and adjacent manifest\\\bottomrule
+Data source & Public oncology and cardiovascular trial eligibility text\\\midrule
+Extraction & Modern AutoCrit produces atomic criteria with structured fields\\
+Manual review & Reviewed by the project owner in \texttt{trial100\_v1.xlsx}\\
+Frozen corpus & 3,537 criteria across 100 trials, stored as Parquet\\
+Evidence retained & Criterion text, parent statements, trial IDs and source context\\\bottomrule
 \end{tabularx}
 \gap
-Criterion validation is complete by the source review record. \textbf{Clinical pair labels are a separate task.}
-\source{Source: trial100\_v1.parquet.manifest.json. Review authority: project owner's reported manual validation. Chia remains an optional external source, not part of this release.}
-\note{Jonathan, 1:15. Use 3,537, not the earlier proposal's 3,145 extraction count. Zero validation issues concerns the export's recorded checks, not independent proof of clinical correctness. The cohort is oncology/cardiovascular; do not assert verified per-area counts without the mapping. Source: data/processed/trial100\_v1.parquet.manifest.json, frozen November 1, 2026.}
+\textbf{What the demo loads:} select two trials from this frozen corpus, or import other extracted criterion records.
+\gap
+The demo compares existing criteria. Fresh extraction remains in Modern AutoCrit.
 \end{frame}
 
-\begin{frame}{Pair construction and manual review}
-\textbf{Completed:} reproducible development pilot and an Excel labeling workbook.
+\begin{frame}{What does a clinical relationship mean?}
+Compare the people allowed by each \textbf{selected rule}, within a common frame.
 \gap
-\begin{tabularx}{\textwidth}{@{}Y r@{}}\toprule
-Primary sampling method & Pairs\\\midrule
-Same entity with structured differences & 25\\
-Further same-entity matches & 25\\
-Lexical neighbors within a domain & 15\\
-Random controls & 10\\\midrule
-Total natural cross-trial pairs & 75\\\bottomrule
+{\small
+\begin{tabularx}{\textwidth}{@{}p{.25\textwidth}p{.16\textwidth}p{.16\textwidth}Y@{}}
+\toprule
+Relationship & Rule A: age & Rule B: age & Interpretation\\\midrule
+Equivalent & $\geq18$ & $\geq18$ & Same allowed set\\
+A more restrictive & $\geq21$ & $\geq18$ & A allows a smaller set\\
+B more restrictive & $\geq18$ & $\geq21$ & B allows a smaller set\\
+Partial overlap & 18--65 & 50--80 & Shared ages, plus ages unique to each\\
+Contradictory / disjoint & $\geq18$ & $<18$ & No shared allowed ages\\\bottomrule
+\end{tabularx}
+}
+\gap
+{\small
+\textbf{Related, not comparable:} related concepts without a supported common frame.\\[3pt]
+\textbf{Unrelated:} different concepts without a relevant relationship.\\[3pt]
+\textbf{Ambiguous:} missing or conflicting source meaning prevents a decision.
+}
+\gap
+{\small Age examples are illustrative inclusion rules in years. Role, units, timing and Boolean scope can change the relationship.}
+\end{frame}
+
+\begin{frame}{How the agentic comparison runs}
+\centering
+\begin{tikzpicture}[
+ font=\footnotesize,
+ agentbox/.style={draw=wine!75,fill=white,rounded corners=2pt,align=center,
+ text width=4.4cm,minimum height=1cm,inner sep=5pt},
+ flow/.style={-{Latex[length=2mm]},draw=wine,line width=.8pt}
+]
+\node[agentbox] (retrieve) at (0,0) {\textbf{Candidate retrieval}\\TF--IDF + entity priority};
+\node[agentbox] (plan) at (6,0) {\textbf{Planner / orchestrator}\\Skill and tool selection};
+\node[agentbox] (exact) at (0,-1.55) {\textbf{Exact tool}\\Numeric or identical rules};
+\node[agentbox] (judge) at (6,-1.55) {\textbf{LLM judge}\\Contextual interpretation};
+\node[agentbox] (rulecritic) at (0,-3.1) {\textbf{Rule audit}\\Source and frame checks};
+\node[agentbox] (critic) at (6,-3.1) {\textbf{LLM critic}\\Accept / revise / escalate};
+\draw[flow] (retrieve) -- (plan);
+\draw[flow] (plan.south) -- (6,-.78) -- (0,-.78) -- (exact.north);
+\draw[flow] (plan) -- (judge);
+\draw[flow] (exact) -- (rulecritic);
+\draw[flow] (judge) -- (critic);
+\end{tikzpicture}
+\par\vspace{.6em}
+\textbf{Outcome:} an evidence-supported proposal or an unresolved case for human review.
+\par\vspace{.4em}
+{\small The orchestrator allows one revision, then finalizes or escalates. Retrieval similarity alone never supplies a clinical label.}
+\end{frame}
+
+\begin{frame}{Skills, tools and hooks give the agents boundaries}
+\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}Y@{}}
+\toprule
+Component & Role in the working system\\\midrule
+Skills & Versioned instructions for numeric comparison, clinical context and source problems. The planner selects a skill.\\
+Tools & Inspect the comparison frame, compare supported constraints and collect source citations. Only permitted tools run.\\
+Hooks & Validate inputs and exact source quotes, check limits and cancellation, and gate the final result.\\
+Orchestrator & Coordinates tool calls, judge, critic and revision within pair, call and time limits.\\\bottomrule
 \end{tabularx}
 \gap
-Twenty trials reserved for development. Family audit remains pending.\\
-\status{No pair labels entered in the workbook as of November 6.}
-\source{Source: pair\_pilot\_v1/manifest.json, generator and labeling workbook. Sampling categories do not imply labels.}
-\note{Jonathan, 1:15. The reserved pool contains 815 criteria, not all of which appear in selected pairs. Checks confirmed unique groups, cross-trial membership, quotas, reuse caps and deterministic regeneration. Reserve related families from held-out testing after audit. This is an enriched convenience pilot, not a clinical benchmark or prevalence sample. Source: scripts/build\_pair\_pilot.py and data/processed/pair\_pilot\_v1/.}
+\textbf{Clinician-facing output:} source excerpts, rationale, critic feedback, executed trace and saved reviewer decisions.
+\gap
+{\small Contextual judge and critic use separate prompts with the configured LLM (currently GPT-4o mini). Agreement does not establish clinical correctness.}
 \end{frame}
 
-\begin{frame}{Clinical relationship labels}
+\begin{frame}{Retrieval progress and the model still to train}
 \begin{columns}[T,onlytextwidth]
-\column{.53\textwidth}
-\textbf{Comparable allowed populations}
+\column{.48\textwidth}
+\textbf{Implemented by Jiatong}
 \begin{itemize}
-\item Equivalent
-\item A more restrictive
-\item B more restrictive
-\item Partial overlap
-\item Contradictory or disjoint
+\item TF--IDF, MPNet and BioLORD retrieval backends.
+\item Cross-trial ranking with a shared neighbor format.
+\item Provisional runs on 200 criteria across 100 trials.
 \end{itemize}
-\column{.43\textwidth}
-\textbf{Other dispositions}
+\column{.48\textwidth}
+\textbf{Current local demo}
 \begin{itemize}
-\item Related, not comparable
-\item Unrelated
-\item Ambiguous
+\item Uses the original TF--IDF encoder as the temporary retriever.
+\item Exact tools and LLM reasoning assign relationships.
+\item Dense baseline integration awaits the teammate PR.
 \end{itemize}
 \end{columns}
 \gap
-Interpret eligibility role, internal negation, units, time and Boolean scope before assigning a label.
+\textbf{Next model step:} use reviewed comparisons to train and evaluate a clinically informed encoder and directional relationship component.
 \gap
-Example: inclusion age $\geq21$ is more restrictive than inclusion age $\geq18$ in a common age frame.
-\source{Source: pair labeling contract 0.1 and technical guide, Section 3. Reversing A/B swaps only the two restrictive labels.}
-\note{Jonathan, 1:00. Related but not comparable means the concepts are understood but no supported shared representation exists. Ambiguous means missing or conflicting evidence prevents a defensible interpretation. Independent second annotation is desirable but has not happened. Hand over to Jiatong.}
+Clinical retrieval quality and improvement over the baselines are not yet measured.
 \end{frame}
 
-\begin{frame}{AI and agent workflow}
-\begin{tabularx}{\textwidth}{@{}p{.24\textwidth}Y p{.24\textwidth}@{}}\toprule
-Stage & Intended behavior & Current status\\\midrule
-Candidate retrieval & Find cross-trial lexical and dense neighbors & Teammate branch\\
-Exact tools & Compare supported, fully interpreted constraints & Starter comparator\\
-Encoder and head & Rank candidates and predict ordered relationships & Fine-tuning and head planned\\
-LLM judge and critic & Resolve contextual cases and challenge evidence & Planned\\
-Orchestrator & Reconcile results, trace routes and escalate & Exact-only skeleton\\
-Human review & Inspect evidence and record final decisions & Excel pilot available\\\bottomrule
+\begin{frame}{Where TriAlign fits among eligibility systems}
+\textbf{TriAlign:} compare criteria across two trials and explain equivalence,
+restrictiveness, overlap or uncertainty using source evidence.
+\gap
+{\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{.20\textwidth}p{.28\textwidth}Y@{}}
+\toprule
+System & Primary task & Planned connection to TriAlign\\\midrule
+\href{https://github.com/ncbi-nlp/TrialGPT}{TrialGPT} & Patient-to-trial matching & Adapt evidence-based judgments to common criterion pairs.\\
+\href{https://arxiv.org/abs/2604.02678v1}{EligMeta} & Evidence synthesis & Compare eligibility alignment and LLM / deterministic execution.\\
+\href{https://aclanthology.org/2024.findings-eacl.149/}{CReSE} & Criterion recommendation & Compare embeddings if reproducible artifacts permit.\\
+\href{https://arxiv.org/abs/2604.08849v4}{SatIR} / \href{https://arxiv.org/abs/2609.03366v1}{VERDICT} & Logical matching and rationales & Study consistency, explicit assumptions and explanation faithfulness.\\
+\href{https://aclanthology.org/2025.findings-acl.491/}{EC-RAFT} & Criterion generation & Adjacent authoring work, outside the direct benchmark.\\\bottomrule
 \end{tabularx}
-\source{Source: current orchestrator, structured tool and technical guide; teammate branch d30c71e for dense retrieval. Full routed workflow is not implemented.}
-\note{Jiatong, 1:15. Explain one pair's path verbally: validate evidence, retrieve or run a supported exact tool, escalate context-sensitive cases, and record human decisions. A future router may combine tools. Do not present the skeleton as an LLM agent already running. Source: src/trialign/agents/orchestrator.py and src/trialign/tools/structured.py.}
+}
+\gap
+{\footnotesize \textbf{Planned evaluation:} common cases and evidence where tasks align. Compare labels, evidence support, abstention, latency and cost. No external-system results yet.}
 \end{frame}
 
-\begin{frame}{Baseline progress}
-\textbf{Code present on the teammate branch}
-\begin{itemize}
-\item TF--IDF, MPNet and BioLORD retrieval interfaces.
-\item Shared neighbor format with query/candidate IDs, rank and score.
-\item Cross-trial filtering and normalized dense embeddings.
-\end{itemize}
+\begin{frame}{What the prototype resolves and where it stops}
+{\small Trial A: NCT05379712 \qquad Trial B: NCT02769832}
 \gap
-\textbf{Teammate-reported integration results}
-\begin{itemize}
-\item Common provisional sample: 200 criteria across 100 trials.
-\item 20 tests passed; saved-output checks passed.
-\end{itemize}
+\begin{columns}[T,onlytextwidth]
+\column{.47\textwidth}
+\textbf{Supported age comparison}
 \gap
-\status{Clinical performance is not yet measured.} Validated relevance labels and exact resolved model revisions are still needed.
-\source{Source: teammate's progress report and local branch feature/comparisons-agent-ui at d30c71e. Saved run artifacts are absent from this checkout.}
-\note{Jiatong, 1:15. Distinguish code inspection from the reported runs. We have not independently reproduced the complete 20-test suite or the saved dense outputs here. A prior review reproduced 19 non-CLI tests. Do not treat these as accuracy results. The provisional sample is not the full frozen corpus evaluation. Model revision tracking remains pending. Her branch has not been merged or edited.}
+A: ``$\geq18$ years of age''\\[4pt]
+B: ``Age $\geq18$ years old, both male and female''
+\gap
+\status{Equivalent in the age frame.}
+\gap
+The exact tool compares allowed ages. This does not establish equivalence of the whole trials.
+\column{.49\textwidth}
+\textbf{Consent comparison needing review}
+\gap
+A: ability to read, understand and sign consent.\\[4pt]
+B: willingness and ability to sign consent.
+\gap
+\status{No supported final label in the saved run.}
+\gap
+The source-quote check rejected the model's citations. The case remains unresolved for review.
+\end{columns}
+\gap
+{\small These are observed prototype outcomes. Shared consent wording does not establish equivalence of literacy, understanding and willingness.}
 \end{frame}
-
-\begin{frame}{A failure in the current exact comparator}
-\begin{tabularx}{\textwidth}{@{}p{.30\textwidth}Y@{}}\toprule
-Constructed diagnostic & Rule\\\midrule
-A & Inclusion: age $\geq18$ years\\
-B & Exclusion: age $\geq18$ years\\\midrule
-Current tool output & Equivalent, confidence 1.0\\
-Expected relationship & Disjoint allowed age sets in this simplified frame\\\bottomrule
-\end{tabularx}
-\gap
-The comparator matches intervals without first applying eligibility role.\\
-Its fixed confidence values do not measure calibrated certainty.
-\gap
-\textbf{Next fix:} gate context and polarity before allowing an exact label.
-\source{Source: constructed diagnostic executed against main on November 6; structured.py. This is a code failure case, not a corpus error rate.}
-\note{Jiatong, 1:15. We executed this diagnostic using two synthetic CriterionRecords. The source criterion text and interval were identical, but criterion\_type differed. The current function returned equivalent with requires\_context false. Show the problem candidly. Under the simple common age universe, A allows adults and B permits those below 18. Do not generalize to entire trials or claim a clinical test-set result.}
-\end{frame}
-
-
 
 \begin{frame}{Current challenges and limitations}
 \begin{itemize}
-\item Pair labels and an audited family split are still missing.
-\item The starter exact tool does not implement the complete labeling contract.
-\item Baseline integration needs shared, versioned inputs and resolved model commits.
-\item We have no fine-tuned encoder, calibrated uncertainty or clinical evaluation yet.
-\item The UI, durable review workflow and end-to-end latency still need validation.
+\item Clinical interpretation can fail on timing, exceptions, negation and parent/child scope.
+\item Judge and critic can share mistakes. Human review remains necessary.
+\item No retrieved candidate does not prove that a requirement is absent.
+\item Independent clinical evaluation, final family-aware splits and calibrated uncertainty remain pending.
+\item Dense baseline integration and fine-tuning remain ahead.
 \end{itemize}
 \gap
-Local execution avoids website hosting. Optional external LLM calls still require network access and may incur usage costs.
-\source{Source: technical guide, local implementation and baseline branch review. Family/duplicate handling precedes held-out evaluation.}
-\note{Jonathan, 1:00. Acknowledge the upstream review effort while keeping criterion quality separate from relationship quality. Do not claim a runtime estimate: the guide's 2-second local and 30-second contextual budgets are proposed targets, not measurements.}
+The UI runs locally. Contextual model calls still need network access and have API costs and latency.
 \end{frame}
 
-\begin{frame}{Next steps}
-\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}Y@{}}\toprule
-Owner & Deliverable before the final presentation\\\midrule
-Jonathan & Adjudicated pilot, revised guide and audited family map\\
-Jiatong & Baseline PR and reproducible runs with pinned revisions\\
-Together & Local pair-review UI with persistent save/reload\\
-Together & Baseline and exact-tool metrics with documented errors\\
-Jiatong & Fine-tuning and held-out comparison, if labels and development results justify training\\\bottomrule
+\begin{frame}{Next steps before the final presentation}
+\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}Y@{}}
+\toprule
+Owner & Deliverable\\\midrule
+Jonathan & Finish review of development comparisons and source ambiguities. Finalize family-aware evaluation partitions.\\
+Jiatong & Submit the retrieval PR, integrate MPNet/BioLORD and record reproducible model revisions.\\
+Together & Evaluate retrieval and relationship predictions against reviewed labels. Analyze errors and critic behavior.\\
+Together & Improve and rehearse the local interface, including evidence inspection and reviewer corrections.\\
+Together & Train the clinical encoder once labels and evaluation partitions are ready, then compare with frozen baselines.\\\bottomrule
 \end{tabularx}
 \gap
-Final presentation target: December 8, subject to course confirmation.\\
-Training remains conditional on label quality and development evidence.
-\source{Source: technical guide milestones and pair labeling contract. Dates are planning targets, not completed milestones.}
-\note{Jonathan and Jiatong, 1:15 total. Jonathan covers labels and split ownership. Jiatong covers baselines, UI integration and training gate. Total planned content including demo is 14 minutes. Reserve 1 minute for handoffs and application switching to stay within 15 minutes. Then allow 5 minutes for questions.}
+Longer term: let Modern AutoCrit and TriAlign run separately or together in one tool.
 \end{frame}
 
 \begin{frame}{Questions and feedback}
 \Large
-Which clinical comparisons should the pilot prioritize?
+Which differences matter most when comparing two trial protocols?
 \gap
-What evidence would make a comparison useful to a protocol reviewer?
+What evidence would help you trust or correct a proposed relationship?
 \gap
-What should a minimum useful demonstration show?
-\note{Both presenters, 5 minutes for questions and feedback after the 15-minute presentation/demo block.}
+When should the system stop and ask for clinical review?
 \end{frame}
 
 \end{document}

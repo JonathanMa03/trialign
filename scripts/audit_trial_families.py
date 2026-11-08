@@ -216,8 +216,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--corpus", type=Path, default=Path("data/processed/trial100_v1.parquet"))
-    parser.add_argument("--cohort", type=Path, default=Path("../modern-autocrit/config/trial_cohort_100.json"))
-    parser.add_argument("--jobs", type=Path, default=Path("../modern-autocrit/runtime/criteria/jobs"))
+    parser.add_argument("--cohort", type=Path, required=True, help="Exported cohort manifest JSON; no upstream installation is required.")
+    parser.add_argument("--jobs", type=Path, required=True, help="Directory of exported source-job JSON files for audit regeneration only.")
     parser.add_argument("--output", type=Path, default=Path("data/processed/family_audit_v1"))
     parser.add_argument("--fetch-registry", action="store_true")
     parser.add_argument("--registry-snapshot", type=Path)

@@ -205,3 +205,54 @@ def baseline_tfidf(
     })
     console.print(f"[green]Wrote TF-IDF baseline artifacts to {destination}[/green]")
 
+
+@app.command("serve")
+def serve(
+    port: int = typer.Option(8766, min=1024, max=65535),
+    open_browser: bool = typer.Option(False, "--open-browser"),
+    runtime_directory: Path = typer.Option(None, "--runtime-directory"),
+) -> None:
+    """Start the local trial-comparison UI and agent runtime."""
+    from trialign.config import ROOT
+    from trialign.web.server import run_browser_app
+
+    run_browser_app(ROOT, port=port, open_browser=open_browser, runtime_directory=runtime_directory)
+
+
+@app.command("compare-trials")
+def compare_trials(
+    trial_a: str = typer.Option(..., "--trial-a"),
+    trial_b: str = typer.Option(..., "--trial-b"),
+    max_pairs: int = typer.Option(16, min=1, max=80),
+    model_calls: int = typer.Option(8, min=0, max=24),
+    offline: bool = typer.Option(False, "--offline"),
+) -> None:
+    """Run the same persisted workflow used by the local browser UI."""
+    from trialign.config import ROOT
+    from trialign.runtime.service import ComparisonService
+
+    service = ComparisonService(ROOT)
+    job = service.create(
+        {
+            "trial_a": trial_a,
+            "trial_b": trial_b,
+            "max_pairs": max_pairs,
+            "max_model_calls": model_calls,
+            "use_llm": not offline,
+        },
+        synchronous=True,
+    )
+    console.print({"run_id": job["run_id"], "status": job["status"], **job["summary"]})
+
+
+@app.command("harness")
+def diagnostic_harness() -> None:
+    """Run offline routing, polarity, endpoint and abstention diagnostics."""
+    from trialign.config import ROOT
+    from trialign.evaluation.harness import run_harness
+
+    result = run_harness(ROOT, ROOT / "artifacts/demo/harness.json")
+    console.print({"passed": result["passed"], "cases": result["cases"]})
+    if result["passed"] != result["cases"]:
+        console.print([r["id"] for r in result["results"] if not r["passed"]])
+        raise typer.Exit(1)

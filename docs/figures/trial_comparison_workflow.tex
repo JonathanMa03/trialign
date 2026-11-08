@@ -1,0 +1,51 @@
+% Shared editable diagram used by the progress deck and technical document.
+\begingroup
+\definecolor{wfWine}{HTML}{9B1C2B}
+\definecolor{wfOrange}{HTML}{D97800}
+\definecolor{wfInk}{HTML}{302F2D}
+\definecolor{wfPale}{HTML}{FFF9F5}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\begin{tikzpicture}[
+  font=\sffamily\fontsize{10}{12}\selectfont,
+  wfbox/.style={draw=wfInk!55,line width=.65pt,rounded corners=2pt,
+    fill=white,text=wfInk,align=center,text width=2.8cm,
+    minimum height=2.5cm,inner sep=6pt},
+  wfsystem/.style={wfbox,draw=wfWine,fill=wfPale},
+  wfarrow/.style={-{Latex[length=2.2mm]},draw=wfWine,line width=.9pt}
+]
+\node[wfbox] (trials) at (0,0) {
+  \textbf{1. Select trials}\\[4pt]
+  Clinician chooses\\Trial A + Trial B
+};
+\node[wfsystem] (extract) at (3.65,0) {
+  {\color{wfWine}\textbf{2. Modern}}\\
+  {\color{wfWine}\textbf{AutoCrit}}\\[4pt]
+  Extract criteria\\Structure records
+};
+\node[wfbox] (handoff) at (7.3,0) {
+  \textbf{3. Review}\\\textbf{and import}\\[4pt]
+  Reviewed files\\Source evidence
+};
+\node[wfsystem] (compare) at (10.95,0) {
+  {\color{wfWine}\textbf{4. TriAlign}}\\[4pt]
+  Align criteria\\Compare pairs\\Explain relations
+};
+\draw[wfarrow] (trials) -- (extract);
+\draw[wfarrow] (extract) -- (handoff);
+\draw[wfarrow] (handoff) -- (compare);
+
+\node[draw=wfOrange,line width=.8pt,rounded corners=2pt,
+  fill=white,text=wfInk,align=center,text width=13.3cm,
+  minimum height=1.65cm,inner sep=7pt] (view) at (5.475,-3.05) {
+  \textbf{Clinician's Trial A vs Trial B comparison}\\[4pt]
+  Matched rules: equivalent, stricter, overlapping or conflicting\\
+  Unmatched or unclear rules, with source-linked explanations
+};
+\draw[wfarrow] (compare.south) -- (10.95,-1.9)
+  -| (view.north);
+\node[text=wfWine,font=\sffamily\fontsize{9.5}{11}\selectfont,
+  anchor=south] at (7.8,-1.8)
+  {Criterion comparisons build the trial view};
+\end{tikzpicture}
+\endgroup

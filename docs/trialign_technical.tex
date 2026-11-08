@@ -2,7 +2,7 @@
 \usepackage[margin=.85in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,microtype,amsmath,amssymb}
-\usepackage{textcomp,fvextra}
+\usepackage{textcomp,fvextra,graphicx}
 \usepackage{booktabs,array,longtable,tabularx,enumitem}
 \usepackage{xcolor,tikz,hyperref,xurl,fancyhdr,needspace}
 \usetikzlibrary{arrows.meta,positioning,calc}
@@ -46,8 +46,8 @@ how source evidence and normalization are retained, how an agent selects and
 reconciles comparison tools, and how a clinician could inspect and correct a
 result. The frozen criterion release contains 3,537 records from 100 trials.
 The first development pair-review release preserves 75 decisions, including
-67 clean comparisons and eight queued cases. Trained models, clinical
-evaluation and a functional comparison interface remain subsequent deliverables.
+67 clean comparisons and eight queued cases. A functional local comparison interface and bounded agent runtime are implemented.
+Fine-tuned models and independent clinical evaluation remain subsequent deliverables.
 \end{abstract}
 
 \newpage
@@ -64,10 +64,12 @@ an abbreviation and an expanded term may express the same rule with limited word
 clinical investigators, protocol designers, and research coordinators compare
 protocols.
 
-The primary workflow is criterion-to-criterion comparison across trials: select
-a current rule, retrieve historical rules about the same clinical concept,
-inspect the operational differences, and record an evidence-supported
-relationship. Potential applications include identifying precedent during
+The intended clinician-facing workflow compares the eligibility requirements
+of Trial A and Trial B. Criterion-to-criterion comparison is the computational
+unit underneath that view: retrieve rules about the same clinical concept,
+inspect their operational differences, and record an evidence-supported
+relationship. Individual-criterion search remains useful as a separate entry
+point. Potential applications include identifying precedent during
 protocol design, comparing amendments, documenting harmonization decisions,
 and inspecting whether superficially similar study populations are defined
 by materially different criteria. These applications motivate the system;
@@ -78,6 +80,41 @@ treatment, estimate recruitment yield without patient data, or establish
 causal transportability. A criterion-level comparison is not a claim that
 two complete protocols recruit the same population: their remaining rules,
 sites, ascertainment practices, and treatment settings may differ.
+
+\subsection{Trial comparison workflow}
+\label{sec:trialworkflow}
+The clinician selects two trials, uses Modern AutoCrit to extract and
+structure their eligibility criteria, reviews the extracted records, and
+imports the resulting criteria files into TriAlign. TriAlign is intended to
+align comparable requirements and display their relationships, differences,
+source evidence, unresolved cases and requirements without a supported
+match. Figure~\ref{fig:trialworkflow} is the same diagram used in the progress
+presentation.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{.98\linewidth}{!}{%
+  \IfFileExists{docs/figures/trial_comparison_workflow.tex}
+    {\input{docs/figures/trial_comparison_workflow.tex}}
+    {\input{figures/trial_comparison_workflow.tex}}%
+}
+\caption{Intended workflow: a clinician compares two trials through
+source-grounded criterion comparisons. A relationship between two rules
+does not establish a relationship between the complete trial populations.
+Trial alignment and the comparison interface remain planned.}
+\label{fig:trialworkflow}
+\end{figure}
+
+The encoder retrieves potentially corresponding criteria; the relationship
+component and contextual review determine how selected pairs compare.
+Criterion-pair labels train and evaluate those components. A trial view then
+assembles their results, with support for one-to-many or grouped matches
+where Boolean scope requires it. A retrieved neighbor is not automatically
+a semantic match, and no match found is not proof that a requirement is
+absent from the other protocol. This workflow does not yet define a validated
+single whole-trial similarity score. A future combined application could
+remove the manual file handoff while retaining the review checkpoint and
+separate component modes (Section~\ref{sec:combinedtool}).
 
 \subsection{Why textual similarity is insufficient}
 The clinical meaning of a rule depends on more than its entity name.
@@ -1013,29 +1050,114 @@ replays saved versioned outputs, including saved judge/critic results where
 available, and is labeled as replay. A new input without a matching cached
 case cannot receive a fabricated replay result.
 
-A recording or screenshots provide a final fallback. Before presentation,
+Before presentation,
 verify local startup, model/index revisions and checksums, inference warm-up,
 expected latency on the demonstration machine, source evidence, local review
 storage, and replay mode. Check credentials and connectivity only for the
 optional online route; stored source excerpts remain available locally even
-when registry links cannot be opened. The current Streamlit application is
-a candidate-table placeholder, not an implemented version of this workspace.
+when registry links cannot be opened. The current local browser application implements the comparison workspace described below; larger visual analytics remain exploratory.
+
+\subsection{Implemented local agent runtime: November 7 update}
+\label{sec:workingruntime}
+\textbf{Operational prototype.} The application now compares two selected trials
+from the checksum-verified frozen corpus, or reviewed imported criterion files.
+It uses bidirectional TF--IDF neighbors with entity prioritization to construct
+candidate alignments. Rankings propose comparisons; they do not determine
+clinical relationships. The temporary encoder is explicitly identified as
+TF--IDF. A compatible encoder factory can replace it later; no trained
+relationship head is fabricated. MPNet/BioLORD adapters remain on the teammate branch pending her PR;
+the local runtime uses the original main-branch TF--IDF encoder.
+
+\begin{enumerate}
+\item The planner selects a versioned numeric, clinical-context or source-resolution
+skill from \pathcode{src/trialign/agents/skills.yaml}. These are executable
+runtime instructions with tool permissions, not additional project Markdown.
+\item A closed tool registry executes \pathcode{inspect_frame},
+\pathcode{compare_constraints} and \pathcode{cite_sources}. Each call records
+its arguments, version, outcome, timing and evidence hashes.
+\item Input, before/after-tool, evidence and finalization hooks enforce the
+cross-trial boundary, source readiness, tool budget, cancellation and deadline.
+Literal source quotes must cover both sides. Known source defects route to
+source review rather than model repair of the frozen corpus.
+\item Source-gated exact comparisons apply inclusion/exclusion role once,
+retain strict endpoints, support explicit unit conversions and discrete ECOG
+scores, and abstain on unsupported scope, timing, exceptions or source conflicts.
+The exact critic is a deterministic rule audit, clearly distinguished from an LLM.
+\item Contextual cases invoke a structured-output judge followed by a critic.
+The orchestrator permits at most one revision, reserves budget for the critic,
+and publishes no clinical label after provider failure, budget exhaustion or
+critic veto. Operational failure is distinct from the clinical label ambiguous.
+\end{enumerate}
+
+The provider uses the OpenAI Responses API with a strict JSON schema,
+\pathcode{store=False}, bounded timeouts and no SDK retries. The adapter follows
+\href{https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses}{the official structured-output interface}.
+The judge and critic are separate role invocations using the configured model;
+their agreement is not independent clinical validation. Instructions preserve
+the selected child as the annotation unit, exclude independent AND siblings,
+and retain governing OR groups. Quote validation establishes textual grounding,
+not semantic correctness. Context windows are bounded and may omit relevant
+remote text; the source view and human review remain necessary.
+
+Default job limits are 16 candidate comparisons, eight model calls and 150
+seconds. The interface permits bounded adjustments and cancellation; completed
+partial results survive interruption. A source snapshot, input hash, runtime
+source fingerprint, skill hash/version, requested and resolved model IDs,
+token usage, traces and append-only review history are saved atomically under
+\pathcode{artifacts/demo/}. The directory is ignored by Git. Imported files are
+validated before persistence; the frozen corpus and pair release are never
+rewritten. Review saving requires a reviewer, rationale and current revision.
+
+The interface implements trial selection, file import, live progress, candidate
+filtering, side-by-side evidence and parent context, rationale, critic feedback,
+executed traces, saved-run reload, review history and JSON export. Criterion
+coverage distinguishes a supported candidate, a case needing review, an
+unexamined case due to limits, and no retrieved candidate. None of these proves
+that a requirement is absent from the other trial. The browser is local; only
+the optional contextual route uses a remote service. Modern AutoCrit supplied
+implementation patterns for strict JSON boundaries, atomic storage and the
+local browser server. A combined extraction/comparison application remains
+future work rather than a feature of this prototype.
+
+\paragraph{Verification and observed failure cases.}
+The automated suite passes 18 runtime tests, covering polarity, endpoint/unit handling, source conflicts,
+critic veto, bounded revision, invented quotes, cancellation, atomic imports,
+and durable review history. A separate 12-case constructed offline harness
+passes via \pathcode{python scripts/trialign.py harness}. These are engineering
+diagnostics, not held-out clinical performance estimates.
+A headless browser check exercised import, comparison, rule-critic trace,
+review save/reload and JSON export, with no JavaScript errors; desktop and
+mobile layouts were inspected. A bounded live contextual run used four calls
+to \pathcode{gpt-4o-mini-2024-07-18}, including a critic-requested revision.
+An earlier live run exhausted its revision allowance and withheld its label.
+The revised run obtained critic acceptance, but its explanation still illustrates
+possible contamination by neighboring consent/compliance clauses. Treat both
+as workflow checks requiring human interpretation, not validated predictions.
+No latency distribution, clinical accuracy, independent reviewer agreement or
+critic benefit has yet been measured.
 
 \subsection{Local startup and demonstration assets}
 \label{sec:localdemo}
-The existing local UI entry point can be launched from the repository root
-with the project's Python environment and application dependencies installed:
+Install the application dependencies and launch from the repository root:
 \begin{verbatim}
-python -m streamlit run app/review_app.py \
-  --server.address 127.0.0.1 --server.port 8501
+python -m pip install -e ".[app,dev]"
+python scripts/trialign.py serve --open-browser
 \end{verbatim}
-Open \url{http://127.0.0.1:8501} in the presenter's browser. This command
-currently starts the placeholder review surface; completing the agent
-workflow behind that entry point remains an implementation deliverable.
-The intended finished workflow should use this documented local launch
-path, with any additional preparation/configuration steps listed in the
-README. Binding to the loopback address supports a single-machine
-demonstration without a public deployment.
+Open \url{http://127.0.0.1:8766}. The loopback-only HTTP server serves the
+local browser interface and JSON endpoints; no public website is required.
+\pathcode{app/review_app.py} is a compatibility launcher for this application.
+Set \pathcode{OPENAI_API_KEY} and optionally \pathcode{TRIALIGN_JUDGE_MODEL}
+for contextual reasoning. Environment variables override an explicit
+\pathcode{TRIALIGN_ENV_FILE}, otherwise the repository's \pathcode{.env}.
+TriAlign does not read configuration from Modern AutoCrit and requires no
+Modern AutoCrit checkout, server or installed package. The frozen corpus and
+source inventory are bundled within this repository. Compatible imported
+criteria may come from another extractor. A relocated-checkout regression
+loads all 100 trials and runs an offline comparison without an upstream
+directory or credentials. On a new checkout,
+copy \pathcode{.env.example} to \pathcode{.env} and provide a key.
+Credentials are read locally, never copied into tracked files or run exports.
+Turning off contextual reasoning leaves source-dependent comparisons unresolved.
 
 \begin{longtable}{L{.25\linewidth}L{.66\linewidth}}
 \toprule Local asset & Preparation and runtime requirement\\\midrule
@@ -1351,7 +1473,7 @@ failure, and a necessary abstention alongside successes.
 The repository currently provides criterion/pair schemas, workbook and
 Parquet adapters, candidate generation, family-splitting utilities, a TF--IDF
 runner, a lazy Sentence Transformers wrapper, a starter exact comparator, a
-deterministic-first orchestrator, and a placeholder review application.
+deterministic-first orchestrator, and a functional local browser review application (runtime update below).
 These interfaces do not establish that fine-tuning, contextual judging,
 calibration, full family-aware command-line splitting, or the proposed UI
 have been implemented. The pair generator's unordered ID and the
@@ -1447,6 +1569,102 @@ persistence of reviewer decisions. Link every report example to
 its frozen case and source evidence. Record cache behavior and the limits of
 reproducing stochastic external-model outputs. Freeze a tagged submission
 archive after the contribution statements and numerical claims are audited.
+
+\subsection{Deferred research direction: comparison across extraction granularities}
+\label{sec:deferrednovelty}
+\textbf{Status: proposed research to revisit after progress-presentation feedback.}
+This is not implemented in the current prototype and is not an established
+novelty claim. Retain the current criterion-pair demonstration and frozen
+release. Do not expand scope, regenerate labels or begin training for this
+extension before reviewing feedback and its feasibility.
+
+\paragraph{Candidate contribution.}
+Investigate group-level clinical requirement alignment whose conclusions
+remain stable when an extractor splits or merges a requirement without
+changing its meaning. Two protocols can express the same eligibility rule
+using different numbers of rows, Boolean groups or inclusion/exclusion forms.
+For defined age and ECOG measurements in a shared frame, exclusion of
+``age below 18 OR ECOG above 2'' permits the same states as inclusion of
+``age at least 18 AND ECOG at most 2.'' Comparing isolated rows can miss this
+correspondence. Merely adding parent text to an LLM prompt is not the proposed
+methodological contribution.
+
+\begin{enumerate}
+\item \textbf{Group alignment method.} Represent criteria with explicit
+Boolean, exception and governing-context relationships. Identify supported
+one-to-many and many-to-many correspondences, then compare the smallest
+semantically complete groups. Define the supported logic fragment and common
+measurement frame. A meaning-preserving split, merge or logical rewrite should
+leave the group relationship unchanged; an eligibility-changing edit should
+change it when relevant.
+\item \textbf{Interpretation-dependent results.} Retain multiple
+source-supported interpretations when attachment or scope is unresolved.
+Report a stable relationship only when it holds across the retained
+interpretations. Otherwise identify the alternative relationships and the
+specific source clarification that distinguishes them. This is not a guarantee
+covering every possible clinical reading. Solver correctness does not establish
+that the source was translated faithfully.
+\item \textbf{Learning objective.} Explore joint group alignment and ordered
+relationship prediction, with consistency across reviewed, meaning-preserving
+decompositions. Keep counterpart relevance distinct from population equivalence:
+contradictory age rules may be important counterparts to retrieve. Do not push
+all contradictory pairs apart indiscriminately. Neither a fine-tuned encoder
+nor an added critic alone establishes novelty.
+\end{enumerate}
+
+\paragraph{Evidence needed.}
+Extend annotation with separately versioned group identities, governing scope,
+source evidence and any admissible interpretation alternatives. Do not silently
+change the annotation unit or overwrite the frozen pair contract. Construct a
+reviewed evaluation set containing natural group alignments, controlled
+meaning-preserving decompositions and genuinely eligibility-changing edits.
+Keep constructed examples distinct from natural cases and all transformations
+of a source family within one partition. Measure group alignment, directional
+relationships, invariance to valid restructuring, sensitivity to semantic changes,
+coverage/abstention and cost. An always-constant predictor must fail the
+sensitivity component. Compare structured matching, lexical/dense retrieval,
+LLM-only judgments and the current routed system; ablate group structure and
+interpretation handling. The existing 75-case development release is not, by
+itself, evidence supporting the proposed group-level method.
+
+\paragraph{Novelty and decision gate.}
+The hypothesis is that explicitly handling different extraction granularities
+and interpretation uncertainty improves cross-trial comparison over isolated
+criterion matching. Validate the distinction against eligibility representation
+learning, formal constraint reasoning and amendment analysis, including
+CReSE, EligMeta, SatIR, VERDICT and AMEND++
+\cite{crese,eligmeta,satir,verdict,amendpp}. A targeted search that finds no
+identical system does not prove priority. After presentation feedback, decide
+whether to pursue a bounded numerical/Boolean prototype, seek additional
+clinical annotation, or retain the narrower current project. The current UI,
+agent runtime and source-preserving imports provide infrastructure for this
+research, not evidence that the contribution has already been achieved.
+
+\subsection{Future work: a combined Modern AutoCrit and TriAlign tool}
+\label{sec:combinedtool}
+\textbf{Future work item:} ``somehow integrating modern autocrit and trialign
+together into one tool.'' The goal is one application that lets the user
+choose either component independently or run them together. This is a future
+integration goal, separate from the current file-based handoff.
+
+\begin{longtable}{L{.20\linewidth}L{.34\linewidth}L{.37\linewidth}}
+\toprule Mode & User supplies & Intended result\\\midrule
+\endhead
+Modern AutoCrit only & Trial identifiers, protocol text or PDFs & Extract, structure and review criteria; save/export the reviewed records without running TriAlign.\\
+TriAlign only & Existing reviewed criterion files or saved criterion sets & Compare individual criteria or select two trials for alignment and source-linked relationship explanations, without repeating extraction.\\
+Both together & Trial A and Trial B source inputs & Extract both trials, pause for criterion review, then pass the approved records directly to TriAlign and display the comparison.\\\bottomrule
+\end{longtable}
+
+Keep the extraction and comparison components independently callable, with a
+shared, versioned handoff schema for trial/criterion IDs, source versions,
+parent statements, Boolean context, review state and evidence. The combined
+mode should reuse saved reviewed records and allow users to resume at a
+chosen stage. The review checkpoint remains visible before comparison;
+combining the tools must not silently turn unreviewed extractions into
+validated inputs. A local application can orchestrate the components and
+preserve their separate exports and traces without requiring website
+deployment. Interface design, shared job management and end-to-end validation
+remain to be implemented.
 
 \subsection{Risks, mitigations, and definition of done}
 \begin{longtable}{L{.25\linewidth}L{.67\linewidth}}
@@ -1863,11 +2081,13 @@ Generated data are ignored by Git under the existing project policy. Preserve th
 Recompute the offline audit from its saved snapshots, from the repository root in the project environment:
 
 \begin{Verbatim}[breaklines=true,fontsize=\small]
-python scripts/audit_trial_families.py
+python scripts/audit_trial_families.py \
+  --cohort /path/to/exported/cohort.json \
+  --jobs /path/to/exported/source_jobs
 python scripts/finalize_family_audit.py
 \end{Verbatim}
 
-The screening script accepts \pathcode{--jobs} and \pathcode{--cohort} paths for another machine. It needs the archived upstream source jobs plus the frozen corpus and registry snapshot. Fresh registry retrieval requires \pathcode{--fetch-registry} and a new output directory; existing snapshots cannot be overwritten through that option. The finalizer rejects stale evidence hashes and missing/duplicate decisions.
+Audit regeneration requires explicit \pathcode{--jobs} and \pathcode{--cohort} paths to exported files, with no assumed sibling checkout. Normal demo execution uses the bundled inventory and does not run this script. It needs the archived upstream source jobs plus the frozen corpus and registry snapshot. Fresh registry retrieval requires \pathcode{--fetch-registry} and a new output directory; existing snapshots cannot be overwritten through that option. The finalizer rejects stale evidence hashes and missing/duplicate decisions.
 
 \subsection{Gate before scaling}\label{audit-gate-before-scaling}
 
@@ -1878,7 +2098,7 @@ The current generic \pathcode{trialign split} CLI does not consume this map or e
 \clearpage
 \section{Progress presentation and demonstration plan}\label{demo-progress-presentation-and-demonstration-plan}\label{sec:demoworkingnotes}
 
-Prepared November 6, 2026. The deck is a progress report, with planned work explicitly separated from completed artifacts. The runtime demo is not built.
+Prepared November 6 and updated November 7, 2026. The deck separates implemented prototype behavior from training and clinical evaluation. The local runtime is implemented; presentation-machine rehearsal remains required.
 
 \subsection{Speaking and timing}\label{demo-speaking-and-timing}
 
@@ -1889,20 +2109,21 @@ Slides & Speaker & Time \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1--5: objective, corpus, pilot and labels & Jonathan & 5:00 \\
-6--8: workflow, baseline progress and exact-tool failure & Jiatong & 3:45 \\
+1--5: objective, trial workflow, corpus and relationships & Jonathan & 4:00 \\
+6--7: agent routing, skills, tools and hooks & Jiatong & 2:00 \\
+8--10: retrieval, related systems and prototype cases & Jiatong & 2:30 \\
 Live walkthrough outside the slides & Jiatong, with Jonathan explaining one label decision & 3:00 \\
-9: limitations & Jonathan & 1:00 \\
-10: next steps & Both & 1:15 \\
+11: limitations & Jonathan & 1:00 \\
+12: next steps & Both & 1:30 \\
 Application switching and handoffs & Both & 1:00 \\
-11: questions and feedback & Both & 5:00 \\
+13: questions and feedback & Both & 5:00 \\
 \end{longtable}
 
-Total: 20 minutes. The current deck has 11 slides, with no demo-plan or backup slides. The demonstration happens outside the slide deck. The TeX source contains per-slide speaker notes, timing and source references.
+Total: 20 minutes. The current deck has 13 slides, including the shared trial-comparison diagram and related-system positioning, with no pair-construction, demo-plan or backup slides. The demonstration happens outside the slide deck. Speaker notes, source footers and engineering-check counts were removed from the deck. Speaking allocations and timing remain in this document. The editable shared diagram is \pathcode{docs/figures/trial_comparison_workflow.tex}; both documents include that file directly.
 
 \subsection{Recommended demonstration: a small local TriAlign review UI}\label{demo-recommended-demonstration-a-small-local-trialign-review-ui}
 
-This is the closest match to the project\textquotesingle s current progress. Build a narrow workflow around the existing 75-pair pilot. A trained model is not required to demonstrate evidence inspection and durable human annotation.
+Historical design proposal, retained for context: build a narrow workflow around the existing 75-pair pilot. The implemented trial-comparison runtime is described in Section~\ref{sec:workingruntime}. A trained model is not required to demonstrate evidence inspection and durable human annotation.
 
 Minimum behavior:
 
@@ -1941,7 +2162,7 @@ Three-minute sequence:
 
 Select cases after clinical review. Do not preassign a label solely from sampling method or lexical score. If no pilot decision is ready, demonstrate saving an unresolved review rather than inventing adjudication.
 
-The current app/review\_app.py is a candidate-table placeholder and is not this workflow. Implementing this UI is a separate next task, not part of the deck creation. Once functional, launch locally using the documented Streamlit entry point and rehearse on the presentation machine.
+The local browser implementation now supports trial selection, criterion imports, evidence inspection, bounded agent execution and durable review history. Use the launch command in Section~\ref{sec:localdemo}. The earlier narrow pilot-UI proposal above is retained as design history; the current runtime compares trials using frozen criterion inputs.
 
 \subsection{Alternative demonstration: Modern AutoCrit}\label{demo-alternative-demonstration-modern-autocrit}
 
@@ -1953,7 +2174,7 @@ This demonstrates upstream extraction, not completed TriAlign relationship predi
 
 \subsection{Presentation scope}\label{demo-presentation-scope}
 
-The owner removed the demo-plan slide and all backup slides. Do not add them back without a new request. The existing workbook image assets remain source artifacts, not evidence of a functioning runtime UI. Runtime demonstration implementation and rehearsal remain pending. Keep these planning notes in this technical document, not in an additional Markdown plan or in the deck.
+The owner removed the demo-plan slide and all backup slides. Do not add them back without a new request. The existing workbook image assets remain source artifacts, not evidence of a functioning runtime UI. Runtime implementation is complete at prototype scope; rehearsal and clinical acceptance remain pending. Keep these planning notes in this technical document, not in an additional Markdown plan or in the deck.
 
 \subsection{Evidence and reporting boundaries}\label{demo-evidence-and-reporting-boundaries}
 
@@ -1967,7 +2188,7 @@ The owner removed the demo-plan slide and all backup slides. Do not add them bac
 \item
   Failure case: a constructed pair with identical age \textgreater=18 intervals and opposite inclusion/exclusion role returned equivalent with confidence 1.0 from the current exact tool. That is a diagnostic failure, not an error rate.
 \item
-  Runtime UI, LLM judge/critic, trained encoder and calibrated uncertainty remain planned. No clinical accuracy or latency result is claimed.
+  Runtime UI and bounded LLM judge/critic are implemented. The trained encoder, calibrated uncertainty and clinical evaluation remain pending. No clinical accuracy or latency benchmark is claimed.
 \end{itemize}
 
 Her branch was inspected read-only using git show. The working checkout remained on main, with no edits to her implementation and no branch switch.
@@ -2120,6 +2341,8 @@ Accessed November 4, 2026.
 \url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}.
 \bibitem{biolord} FremyCompany / F. Remy et al. \emph{BioLORD-2023 model card}.
 \url{https://huggingface.co/FremyCompany/BioLORD-2023}.
+\bibitem{amendpp} \emph{AMEND++: Benchmarking Eligibility Criteria Amendments in Clinical Trials}.
+2026. \url{https://arxiv.org/abs/2601.06300}.
 \bibitem{crese} S. Kim et al. \emph{CReSE: Benchmark Data and Automatic Evaluation Framework for Recommending Eligibility Criteria from Clinical Trial Information}.
 Findings of EACL, 2024. \url{https://aclanthology.org/2024.findings-eacl.149/}.
 \bibitem{trialgpt} Q. Jin et al. \emph{Matching patients to clinical trials with large language models}.
