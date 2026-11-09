@@ -7,25 +7,27 @@ import time
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from trialign.agents.contracts import Critique, Evidence, Judgment, PairResult
+from trialign.agents.contracts import Critique, Evidence, Judgment, ModelPrediction, PairResult
 from trialign.agents.hooks import BudgetExceeded, RuntimeBudget, SourceNeedsReview, validate_inputs
 from trialign.agents.roles import CriticAgent, JudgeAgent, PlannerAgent
 from trialign.schemas import RelationshipLabel
 from trialign.tools.correspondence import NoClinicalCounterpart, correspondence
 from trialign.tools.registry import ToolRegistry
+from trialign.tools.source_quality import assess_source
 
-VERSION = "agent-runtime-7"
+VERSION = "agent-runtime-8"
 AgentResult = PairResult
 
 
 class AgentOrchestrator:
-    def __init__(self, provider=None, *, enable_critic=True):
+    def __init__(self, provider=None, *, enable_critic=True, relationship_model=None):
         self.provider = provider
         self.enable_critic = enable_critic
         self.planner = PlannerAgent()
         self.tools = ToolRegistry()
         self.judge = JudgeAgent()
         self.critic = CriticAgent()
+        self.relationship_model = relationship_model
 
     def compare(self, a, b, *, budget=None, on_event=None, run_id=None):
         budget = budget or RuntimeBudget()
@@ -68,11 +70,24 @@ class AgentOrchestrator:
         tools = {}
         critic_assessment = {}
         disposition = "needs_review"
+        model_prediction = None
         try:
             compatible, reason = correspondence(a, b)
             emit("hook.clinical_correspondence", {"allowed": compatible, "reason": reason})
             if not compatible:
                 raise NoClinicalCounterpart(reason)
+            source_assessments = {"A": assess_source(a), "B": assess_source(b)}
+            emit(
+                "hook.source_scope",
+                {side: result.as_dict() for side, result in source_assessments.items()},
+            )
+            blockers = [
+                f"{side}: {issue}"
+                for side, result in source_assessments.items()
+                for issue in result.blockers
+            ]
+            if blockers:
+                raise SourceNeedsReview("; ".join(blockers))
             for tool in skill["tools"]:
                 tools[tool] = self.tools.execute(tool, a, b, budget=budget, emit=emit)
             source_issues = list(getattr(a, "source_quality_issues", []) or [])
@@ -80,7 +95,8 @@ class AgentOrchestrator:
             if source_issues:
                 raise SourceNeedsReview("; ".join(source_issues))
             exact = tools.get("compare_constraints", {})
-            if exact.get("label") and not exact.get("requires_context"):
+            warnings = any(result.warnings for result in source_assessments.values())
+            if exact.get("label") and not exact.get("requires_context") and not warnings:
                 route = "exact_tools"
                 proposal = Judgment(
                     label=exact["label"],
@@ -99,14 +115,36 @@ class AgentOrchestrator:
                     proposal, a, b, provider=None, budget=budget, emit=emit, exact=True
                 )
                 emit("agent.critic.rule_audit", critique.model_dump())
-            elif self.provider is None:
-                route = "tools_only"
-                raise BudgetExceeded("Contextual LLM review is disabled or not configured.")
-            elif budget.remaining_model_calls < (3 if self.enable_critic else 1):
-                raise BudgetExceeded(
-                    "Insufficient call budget for judge, independent assessment and critic review."
-                )
             else:
+                if self.relationship_model is not None:
+                    budget.before_tool()
+                    emit("hook.before_tool", {"tool": "predict_relationship"})
+                    model_prediction = ModelPrediction.model_validate(
+                        self.relationship_model.predict_pair(a, b)
+                    ).model_dump(mode="json")
+                    budget.check()
+                    tools["predict_relationship"] = model_prediction
+                    emit(
+                        "tool.completed",
+                        {"tool": "predict_relationship", "result": model_prediction},
+                    )
+                    emit(
+                        "hook.after_tool",
+                        {"tool": "predict_relationship", "status": "proposal_only"},
+                    )
+                if self.provider is None:
+                    route = "trained_model_review" if model_prediction else "tools_only"
+                    raise BudgetExceeded(
+                        "Contextual review unavailable; any trained prediction "
+                        "is a proposal requiring review."
+                    )
+                if budget.remaining_model_calls < (3 if self.enable_critic else 1):
+                    raise BudgetExceeded(
+                        "Insufficient call budget for judge, independent assessment "
+                        "and critic review."
+                    )
+                if model_prediction:
+                    route = "model_assisted_context_review"
                 proposal = self.judge.judge(
                     a, b, tools, skill, provider=self.provider, budget=budget, emit=emit
                 )
@@ -233,4 +271,5 @@ class AgentOrchestrator:
             trace=trace,
             elapsed_seconds=round(time.monotonic() - started, 3),
             confidence=1.0 if route == "exact_tools" and accepted else 0.0,
+            model_prediction=model_prediction,
         )

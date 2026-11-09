@@ -35,7 +35,7 @@
   \large An Agent for Clinically Meaningful Comparison of Eligibility Criteria\\
   \normalsize Architecture, Dataset, Pair Semantics, Interface Concepts, and Research Notes}
 \author{Jonathan Ma \and Jiatong Gao}
-\date{Revised November 7, 2026}
+\date{Revised November 9, 2026}
 
 \begin{document}
 \maketitle
@@ -97,7 +97,9 @@ presentation.
 \resizebox{.98\linewidth}{!}{%
   \IfFileExists{docs/figures/trial_comparison_workflow.tex}
     {\input{docs/figures/trial_comparison_workflow.tex}}
-    {\input{figures/trial_comparison_workflow.tex}}%
+    {\IfFileExists{../figures/trial_comparison_workflow.tex}
+      {\input{../figures/trial_comparison_workflow.tex}}
+      {\input{figures/trial_comparison_workflow.tex}}}%
 }
 \caption{Intended workflow: a clinician compares two trials through
 source-grounded criterion comparisons. A relationship between two rules
@@ -130,7 +132,7 @@ pair identification and relationship comparison are distinct operations.
 \toprule Task & Question and output & Current and planned methods\\\midrule
 \endhead
 1. Pair identification & Which criteria across Trial A and Trial B should be compared? Output ranked candidate pairs with source IDs. & TF--IDF plus entity priority in the current demo; Jiatong's TF--IDF, MPNet and BioLORD backends establish baseline pair-similarity rankings. A trained clinical encoder is planned.\\
-2. Relationship comparison & How do a selected pair's allowed populations relate? Output a directional/categorical relationship, evidence and uncertainty or an unresolved review disposition. & Exact tools and contextual LLM judge/critic in the current demo. A separately trained ordered relationship head is planned.\\\bottomrule
+2. Relationship comparison & How do a selected pair's allowed populations relate? Output a directional/categorical relationship, evidence and uncertainty or an unresolved review disposition. & Exact tools and contextual LLM judge/critic in the current demo. An ordered relationship head attached to the trained encoder is planned.\\\bottomrule
 \end{longtable}
 
 For example, Task 1 identifies ``age at least 18'' and ``age at least 21'' as
@@ -159,6 +161,33 @@ missed counterparts and wrong relationships. The teammate's baseline ranking
 work is part of Task 1 and remains required for evaluating an improved encoder.
 When a user supplies exactly two criteria, Task 1 is already supplied and only
 Task 2 needs to run; the trial-versus-trial interface requires both tasks.
+
+\paragraph{Planned model and orchestrator responsibilities.}
+The intended trained TriAlign model supports \textbf{both pair identification
+and relationship comparison}. A shared encoder embeds individual criteria so
+candidate counterparts can be ranked. An ordered relationship head consumes
+the two criterion representations and approved input features to predict their
+relationship. These are two learning objectives within one model system;
+they do not require two independently trained encoders. Training may begin
+with a frozen encoder and a trained head, followed by joint encoder/head
+fine-tuning if the labeled data support it. No custom model has been trained yet.
+
+The orchestrator coordinates these capabilities as tools. It requests candidate
+pairs, routes supported comparisons to exact tools, invokes learned relationship
+predictions and contextual judge/critic review when appropriate, and reconciles
+evidence or escalates unresolved cases. It does not itself learn the embedding
+space or replace the relationship classifier. Candidate generation precedes
+pair-specific routing in the proposal. A second explicit relevance-classification
+head is an optional experiment; the planned pair-identification output already
+comes from encoder similarity and ranking. A pair classifier alone would still
+need candidate generation for efficient large-corpus search.
+
+The same reviewed pair supplies separate supervision: its relevance judgment
+teaches pair identification, and its supported relationship judgment teaches
+relationship comparison. A conflicting or stricter counterpart can be a
+retrieval positive. Uncertain relevance is not a negative, and unresolved
+clinical meaning is not a forced semantic relationship target. Eligibility
+for either training loss must be released explicitly after review.
 
 \subsection{Why textual similarity is insufficient}
 The clinical meaning of a rule depends on more than its entity name.
@@ -304,6 +333,21 @@ logical-complexity examples. Its annotations do not directly provide
 TriAlign's eight pair relationships. Any use requires an explicit schema
 mapping, license/source review, overlap checks, and separate reporting; it
 must not be silently mixed into the v1 benchmark.
+
+\subsection{Version control and local data outputs}
+Tracked data comprise the authoritative \pathcode{data/trial100_v1.xlsx},
+frozen Parquet and its manifest, the pair-labeling workbook, and the minimal
+frozen family/split and contract provenance required for verification. Draft
+JSONL files, construction packets, pilot training snapshots, intermediate audit
+outputs and the older unreviewed extraction remain local and Git-ignored.
+Annotation import uses the tracked labeling workbook as a pair registry when
+construction packets are unavailable, while still checking IDs, source text,
+orientation, partitions and review requirements. Historical audit regeneration
+requires its local evidence files. The \pathcode{full_data_pilot_v1/workbook.xlsx}
+file is an unchanged snapshot of the labeling workbook, created to reproduce
+the unvalidated training pilot; it is not another authoritative corpus or a
+separate review task. Its recorded checksum is verified and the snapshot is
+ignored together with the rest of the local pilot directory.
 
 \section{Clinical Pair Definitions}
 \label{sec:pairs}
@@ -725,11 +769,13 @@ failed comparability gates.
 
 \subsubsection{Supervision and training objectives}
 Training data may contain equivalences, ordinary negatives, hard negatives,
-and ordered anchors. Hard negatives include lexical neighbors whose polarity,
-boundary, timing, or exception changes the relationship. They should not
-include unlabeled pairs arbitrarily declared negative. Restrictive and
-overlapping pairs remain conceptually related; treating every non-equivalent
-pair as a maximally distant negative would damage useful retrieval geometry.
+and ordered anchors. For pair identification, a hard negative is a reviewed
+superficially similar pair addressing different eligibility questions.
+Same-question differences in polarity, boundaries, timing or exceptions are
+relationship contrasts; they are not automatically retrieval negatives.
+Never declare an unlabeled pair negative. Restrictive, overlapping and
+conflicting counterparts can remain retrieval positives; treating every
+non-equivalent pair as maximally distant would damage useful retrieval geometry.
 
 One training option is a supervised contrastive loss on justified positives,
 an ordered classification loss, and a diagnostic ordering loss:
@@ -750,13 +796,13 @@ the result.
 
 \subsubsection{Retraining procedure and release checklist}
 \label{sec:retraining}
-\planned\ Retraining is an offline maintenance operation, never part of a
-demonstration comparison. This checkout has encoder inference wrappers but
-no implemented training entry point. The following is the required runbook
-for that implementation; it does not describe an executable training command
-that already exists. The training deliverable must add exact preparation,
-training, evaluation, export and index-building commands to the README,
-together with a checked-in example configuration.
+Retraining is an offline operation, never part of a demonstration comparison.
+The November 9 implementation adds annotation auditing/release, shared-encoder
+training, checkpoint export and separate evaluation commands. The executable
+workflow and tunable settings are described below; real fitting remains gated
+on approved training and validation labels. The following checklist governs
+experiment preparation and release rather than claiming a clinically validated
+trained model already exists.
 
 \begin{enumerate}
 \item \textbf{Decide what needs updating.} Record the reason: new adjudicated
@@ -820,6 +866,226 @@ Training duration is not yet measured. Estimate it from the smoke run's
 steps per epoch, planned epochs and validation cost; report actual elapsed
 time and peak memory with the resulting release. Model training and demo
 inference may use different machines without requiring a hosted website.
+
+\subsubsection{Implemented model pipeline and tunable parameters: November 9}
+\label{sec:implementedlearning}
+The implementation now separates five executable concerns: baseline selection
+in the local interface, the model/orchestrator boundary, human annotation
+import, offline training/evaluation, and source-scope validation. These are
+implemented infrastructure; a clinical encoder/head has not been trained on
+approved project labels. Synthetic execution checks must not be reported as
+clinical results.
+
+\paragraph{One model serving both tasks.}
+\pathcode{src/trialign/models/joint.py} implements a shared sentence encoder
+and an ordered eight-logit relationship head. Pair identification ranks unit
+embeddings by cosine similarity. The head consumes
+\( [z_A;z_B;z_A-z_B;|z_A-z_B|;z_A\odot z_B] \), followed by layer normalization,
+a configurable hidden layer, GELU, dropout and the label layer. The additional
+structured-difference vector proposed earlier is not yet implemented. The
+\pathcode{criterion-v1} input rendering includes the selected entity, role,
+comparator/value, bounds and inclusivity, reference basis, atom position,
+source, parent/context, negation, time, qualifier, Boolean operator and unit;
+null fields and an exact duplicate parent are omitted to reduce wasted tokens.
+annotation labels/rationales and trial identifiers are excluded.
+
+The first implemented pair-identification objective is a masked margin loss on
+cosine similarity: direct counterparts are positives regardless of whether
+their relationship is equivalent, stricter or conflicting; explicitly unrelated
+pairs are negatives. Related-topic examples have zero negative weight by
+default, configurable as an experiment. Uncertain/source-blocked targets have
+zero weight. A separately weighted cross-entropy loss trains supported
+relationship labels; ambiguous source meaning is masked rather than forced
+into a semantic target. Optional training-only A/B swapping reverses directional
+labels and retains symmetric labels. This is augmentation, not the dedicated
+swap-consistency or anchor-triple losses proposed above.
+
+\paragraph{Human labels and immutable releases.}
+\pathcode{annotations-check} reads the workbook without changing it. It verifies
+construction IDs, A/B orientation, original source wording, exact quote spans,
+frozen family assignments, label vocabulary and required review fields. Actual
+human reviewer/adjudicator identities, UTC timestamps and adjudicated status are
+required; assistant draft identities cannot approve examples. Required second
+reviews must be human and have a distinct reviewer. Disagreements retain both
+reviews and need an explicit adjudication rationale.
+\pathcode{annotations-release} requires explicit research-use approval and
+refuses an existing output directory. It writes separate training, validation
+and test JSONL files plus source/workbook, contract, partition and file hashes.
+Quarantined pairs are excluded. A partial release does not relax the 20\%
+development double-review minimum or the two-reviewer rule for every held-out
+judgment. Including the 70 non-quarantined pilot pairs alongside all 300 new
+pairs requires at least 74 independently double-reviewed training pairs; the
+60 preselected slots cover the new batch only. This is a release requirement,
+not a claim that the assistant second pass satisfies it.
+
+The present working workbook has zero approved release rows while its reviewer
+identities remain assistant drafts. Reviewed validation labels must also be
+prepared before real model training. Additional immutable construction packets
+can be registered through repeatable \pathcode{--packet} options. The importer
+does not silently create evaluation pairs or relabel uncertain evidence negative.
+
+\paragraph{Configuration.}
+\pathcode{configs/training.yaml} exposes the following settings. Defaults are
+starting configurations, not validated hyperparameters; choose experiments on
+training/validation data and retain the test set for the locked final run.
+\begin{longtable}{L{.31\linewidth}L{.22\linewidth}L{.38\linewidth}}
+\toprule Setting & Default & Purpose\\\midrule
+\endhead
+Base encoder and sequence limit & MPNet, 384 tokens & BioLORD uses 128; exceeding the pinned model limit is rejected.\\
+Encoder freezing & false & Compare head-only learning with shared-encoder fine-tuning.\\
+Encoder/head learning rates & \(2\times10^{-5}\), \(10^{-3}\) & Separate AdamW parameter groups.\\
+Batch size / gradient accumulation & 16 / 1 & Control memory and optimizer-update frequency.\\
+Epochs / patience & 10 / 3 & Best checkpoint and stopping use validation loss only.\\
+Head width / dropout & 256 / 0.1 & Control relationship-head capacity and regularization.\\
+Weight decay / gradient clip & 0.01 / 1.0 & Optimizer regularization and finite-gradient handling.\\
+Warmup fraction & 0.1 & Warmup followed by linear learning-rate decay.\\
+Relevance/relationship loss weights & 1 / 1 & Tune the two tasks separately.\\
+Positive/negative cosine margins & 1.0 / 0.2 & Shape counterpart versus unrelated representations.\\
+Related-topic negative weight & 0 & Do not push associated topics apart by default.\\
+Swap augmentation & true & Preserve direction reversal within the training partition.\\
+Seed / deterministic execution & 20261011 / true & Record reproducibility settings; device support still matters.\\
+Prediction/relevance thresholds & 0.6 / 0 & Uncalibrated inference thresholds, not clinical confidence guarantees.\\
+Truncation policy & error & Fail on truncation unless \pathcode{allow_recorded} is explicitly selected.\\
+\bottomrule
+\end{longtable}
+
+The trainer records truncation counts, loss history, effective device, dependency
+versions, source-code hashes, complete configuration, base revision and label
+release hash. Checkpoints contain the encoder and relationship head in safe
+tensor files, with a verified file/label/serializer manifest. Existing model
+directories are not overwritten. Runtime loading verifies artifacts and rejects
+synthetic smoke models. A truncated input or an unsupported head class causes
+the learned tool to abstain. Training uses public Sentence Transformers and
+PyTorch interfaces; see
+\url{https://sbert.net/docs/package_reference/sentence_transformer/model.html}
+and \url{https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW}.
+
+\paragraph{Commands and evaluation boundary.}
+Commands run from the TriAlign repository with the relevant optional
+dependencies installed. The first command is read-only; the release command
+is appropriate only after actual human review. The training command requires
+both training and validation records in the approved release.
+\begin{Verbatim}[breaklines=true,fontsize=\small]
+python scripts/trialign.py annotations-check data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx --output artifacts/labels/readiness.json
+python scripts/trialign.py annotations-release data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx artifacts/labels/reviewed_v1 --approve-research-use
+python scripts/trialign.py train-smoke docs/logging/learning_smoke_v1
+python scripts/trialign.py train artifacts/labels/reviewed_v1 docs/logging/reviewed_v1/model --training-config configs/training.yaml
+python scripts/trialign.py evaluate-model docs/logging/reviewed_v1/model artifacts/labels/reviewed_v1 docs/logging/reviewed_v1/validation.json
+\end{Verbatim}
+The smoke command uses a small trainable constructed encoder and disjoint
+synthetic trial IDs to check optimization, saving, reload and evaluation. Its
+repeated toy rules do not establish clinical generalization. A separate local
+check exercised a cached pinned MPNet forward/backward pass through both the
+encoder and head without saving fitted weights or using clinical labels.
+
+Model evaluation reports relationship accuracy/macro F1, direction-swap
+consistency and reviewed-pair relevance AUC/AP separately. Pair discrimination
+is not full-corpus retrieval performance. Validation-only
+\pathcode{evaluate-retrieval} accepts preselected query IDs and partition-correct
+ranked lists, reporting pooled Precision@5, uncertainty bounds, pooled nDCG
+and paired cohort-stratified split-group bootstrap intervals. Unjudged cases
+remain unknown; no full-corpus recall estimate is invented. Model-only test
+evaluation requires a prior \pathcode{lock-model-evaluation} file matching the
+model, label release and evaluator code. Training never opens the test shard.
+That model-only lock is not a substitute for a full-system prompt/router lock;
+the pooled command deliberately does not open test judgments.
+
+\paragraph{Unvalidated full-data training pilot.}
+The November 9 snapshot \pathcode{data/processed/pair_pilot_v1/full_data_pilot_v1}
+preserves the workbook bytes, checksum manifest, audit and partitioned targets.
+All 370 eligible workbook pairs are in the frozen training partition; five
+quarantined pairs are excluded. Source issues and disagreements between draft
+passes mask the corresponding objectives, leaving 257 relevance targets and
+248 relationship targets. Draft passes are not independent human reviews.
+The pilot does not invent validation data or move training trials into the
+frozen validation/test partitions. It runs a predetermined number of epochs
+and saves the final checkpoint, with no validation-based model selection.
+\begin{Verbatim}[breaklines=true,fontsize=\small]
+python scripts/trialign.py train data/processed/pair_pilot_v1/full_data_pilot_v1 docs/logging/full_data_pilot_v1/model --training-config configs/training_pilot.yaml --allow-draft-labels
+python scripts/trialign.py evaluate-model docs/logging/full_data_pilot_v1/model data/processed/pair_pilot_v1/full_data_pilot_v1 docs/logging/full_data_pilot_v1/fit.json --split train --allow-draft-labels
+\end{Verbatim}
+The pilot configuration fine-tunes MPNet and the head on CPU for three epochs,
+batch size four and four-step gradient accumulation. It explicitly permits
+recorded input truncation at 384 tokens. Metrics on the training shard are
+in-sample agreement with unvalidated draft labels, not evidence of clinical
+accuracy, retrieval quality or generalization. Manifest and evaluation metadata
+retain draft provenance and deny clinical-validation claims. Draft test
+evaluation and automatic clinical runtime registration are disabled. A later workbook
+state requires a new \pathcode{annotations-pilot} snapshot; the human-approved
+release and held-out evaluation protocol remain separate.
+
+After training, a backend-only, process-scoped testing override is available:
+\begin{Verbatim}[breaklines=true,fontsize=\small]
+python scripts/trialign.py serve --pilot-model docs/logging/full_data_pilot_v1/model --open-browser
+\end{Verbatim}
+This verifies the artifact files before starting the server, temporarily selects
+that artifact and permits draft-label models for this process only. It does not
+edit \pathcode{.env} or approve labels. The model becomes selectable in Provider
+settings as a draft pilot; the existing relationship-model checkbox separately
+enables the learned head. UI settings and saved run metadata record draft/testing
+status. Normal server startup keeps draft models disabled; stopping this test
+server ends the override. Synthetic smoke models remain unavailable. The source
+checks, judge/critic independence and abstention policy remain active.
+
+\paragraph{Training progress, pause and resume.}
+Training outputs now default to \pathcode{docs/logging/<label-release-name>/model}.
+The adjacent \pathcode{model.training} directory contains a readable
+\pathcode{training.log}, append-only \pathcode{events.jsonl}, latest
+\pathcode{progress.json} and atomic \pathcode{checkpoint.pt}. Terminal progress
+reports each batch, loss, epoch, optimizer-update counts, active elapsed time and
+an estimated remaining training duration. Validation progress and model-loading,
+checkpoint-restoration and export phases are also reported. ETA is an estimate
+for the planned updates, not a clinical-performance or wall-time guarantee.
+\begin{Verbatim}[breaklines=true,fontsize=\small]
+python scripts/trialign.py train-pause docs/logging/full_data_pilot_v1/model
+python scripts/trialign.py train data/processed/pair_pilot_v1/full_data_pilot_v1 docs/logging/full_data_pilot_v1/model --training-config configs/training_pilot.yaml --allow-draft-labels --resume
+\end{Verbatim}
+Control+C also requests a pause. The worker completes its current accumulation
+group, saves at an optimizer-update boundary and exits with paused status;
+validation finishes its current epoch before pausing. Resume restores current
+and best weights, optimizer, schedule, epoch/batch cursor, shuffled order,
+partial-epoch loss history and Python/NumPy/Torch/device random states. It checks
+label, configuration, code, device and recorded library fingerprints. This
+preserves accumulation and dropout behavior without treating a restart as a new
+fine-tuning experiment. A CPU constructed regression compares resumed and
+uninterrupted weights and histories exactly; cross-device equivalence is not
+claimed. An exclusive worker lock prevents simultaneous writers. Checkpoints
+are periodic (ten optimizer updates by default), at epoch boundaries and on
+pause; abrupt interruptions may replay work after the last saved checkpoint.
+The selected model is exported only on completion. Training weights, logs,
+checkpoints and fit reports under \pathcode{docs/logging} are Git-ignored.
+For a training-split report, the default evaluation output is
+\pathcode{docs/logging/<run-name>/fit.json}. Existing jobs started before this
+implementation do not acquire resumable state retroactively.
+
+\paragraph{Runtime integration and source checks.}
+Provider settings select TF--IDF, MPNet, BioLORD or a registered trained encoder.
+The raw baseline CLI benchmarks and the UI remain distinct: the UI retains the
+clinical correspondence gate and one-to-one assignment. Baseline runtime
+rendering is selected entity plus source; trained rendering is the artifact's
+versioned source/context input. Model pools and content-addressed embedding
+caches avoid unnecessary reloads; metadata records rendering, full revision,
+requested/effective settings and cache use. Candidate preparation is asynchronous
+and included in the run budget, with cancellation checked before subsequent
+comparison work. Stop does not interrupt an already executing local batch.
+
+Register the verified model directory through \pathcode{TRIALIGN_MODEL_PATH}
+in TriAlign's own environment or \pathcode{.env}, then restart the server.
+The orchestrator can call \pathcode{predict_relationship} after source checks
+when an exact route is unavailable. Typed uncalibrated scores are recorded as
+tool proposals and may inform the contextual judge; they are not automatically
+published as accepted labels. The critic's source-first assessment remains
+isolated from the learned proposal. Without contextual review, the proposal
+is visible for human review and remains unresolved.
+
+\pathcode{tools/source_quality.py} adds conservative diagnostics for headings,
+bare inclusion fragments without operative scope, joint exclusions, unresolved
+NYHA/LVEF list logic, inherited negation and the observed malformed reproductive
+sentence. Permissions and inclusion alternatives require contextual handling
+rather than automatic exact labels. These checks neither repair the frozen
+corpus nor guarantee complete atomicity or clinical correctness. The expanded
+15-case constructed harness covers representative failure paths; real reviewed
+case evaluation remains separate.
 
 \subsubsection{Retrieval versus interpretation}
 A useful retrieval candidate can be an equivalent rule, a stricter rule, or a
@@ -1113,9 +1379,10 @@ excluding shared parent paragraphs, and rank only eligible counterparts.
 Rankings and assignments propose comparisons; they do not determine clinical
 relationships. The temporary encoder is explicitly identified as
 TF--IDF. A compatible encoder factory can replace it later; no trained
-relationship head is fabricated. MPNet/BioLORD baseline CLI commands are merged into main. The local runtime
-uses the merged sparse TF--IDF encoder; dense-model selection in the UI
-remains a separate integration task.
+relationship head is fabricated. MPNet/BioLORD baseline CLI commands are merged into main.
+The November 9 integration also exposes those pinned dense encoders in Provider
+settings, retaining the same clinical gate and one-to-one assignment. A registered
+trained artifact can supply embeddings and an ordered relationship tool.
 
 \begin{enumerate}
 \item The planner selects a versioned numeric, clinical-context or source-resolution
@@ -1271,8 +1538,15 @@ The dialog defaults to TF--IDF retrieval, environment-configured judge and
 critic models, 200 calls and 15 minutes on each page load. Judge/critic model
 names and budgets can be overridden for the session; closing by button,
 Escape or outside click validates the values. Credentials are never shown or
-persisted with a run. Dense retrieval remains unavailable in the UI until its
-separate integration, although the baseline CLI implementations are merged.
+persisted with a run. Dense retrieval is now selectable when model dependencies
+are installed. The pinned token defaults are 384 for MPNet and 128 for BioLORD.
+Batch size, compute device, token limit and minimum candidate score are configurable;
+TF--IDF also exposes n-gram and feature limits. The trained artifact's input
+settings remain fixed by its saved training configuration. Requested and effective
+settings, full revision, artifact hash and embedding-cache use are recorded.
+Candidate preparation runs in the background under the run budget; Stop can be
+requested during loading/encoding, with an in-flight batch finishing before
+cancellation takes effect. First-use loading may take longer than cached runs.
 
 Each new run snapshots the configured and effective model names, retrieval
 method, budgets, contextual-model toggle and optional USD prices per million
@@ -1346,10 +1620,10 @@ lactation judgment used a synonym interpretation. This discrepancy requires
 review rather than treating either outcome as clinical ground truth.
 
 \paragraph{Verification and observed failure cases.}
-The automated suite passes 74 tests, covering baseline retrieval, run metadata,
+The automated suite covers baseline retrieval, run metadata,
 polarity, endpoint/unit handling, source conflicts,
 critic veto, bounded revision, invented quotes, cancellation, atomic imports,
-and durable review history. A separate 12-case constructed offline harness
+and durable review history. The expanded 15-case constructed offline harness
 passes via \pathcode{python scripts/trialign.py harness}. These are engineering
 diagnostics, not held-out clinical performance estimates.
 A headless browser check exercised import, comparison, rule-critic trace,
@@ -2530,26 +2804,39 @@ retrieve previously unjudged candidates require additional blinded judgments
 before comparable pooled metrics can be reported. Freeze this contract before
 annotation; material changes require a new version and a review migration.
 
-\section{Manual-review candidate sampling plan v1}\label{sec:reviewsampling}
-This is the next annotation plan; no new pair labels or held-out query packet
-are created by the partition freeze. The existing 75-pair pilot remains a separate
-development release. The generic \pathcode{pairs} command now
-enforces training-only membership but remains a random/same-entity control
-generator, not the full stratified sampler described here. Source criteria, original annotations and releases are
-not overwritten.
+\section{Manual-review candidate sampling plan v2}\label{sec:reviewsampling}
+The November 8 development amendment is recorded in
+\pathcode{configs/pair_review_sampling_v2.json}. It supersedes only the
+development sampling proportions in policy v1; the frozen family partitions,
+relevance contract 1.0 and relationship contract 0.2 remain unchanged. The
+generic \pathcode{pairs} command remains a training-only random/same-entity
+control generator. The dedicated \pathcode{scripts/prepare_pair_review.py}
+constructs and verifies the versioned v2 packet without assigning labels.
 
 \paragraph{Development wave: 300 unique training pairs.}
-Use only training families and partition-correct rankings. Sample 120 pairs
-found in the top five by at least two baselines; 90 found by exactly one baseline;
-60 additional same-question structured contrasts involving polarity, timing,
-exceptions, units or Boolean scope; and 30 random controls, sampling distinct trial pairs uniformly before
-criteria within those trials.
-These strata suggest useful examples, not their labels: agreement is not proof
-of relevance, disagreement is not a negative, and random controls may be positive.
+The prepared packet contains 210 clinical-question search pairs, 30 baseline
+agreement pairs, 30 baseline-unique pairs and 30 random trial-pair controls.
+The clinical searches use a manually specified list of selected-entity aliases
+covering 56 questions, including infection, surgery, medication exposure,
+consent, pregnancy, lactation and laboratory measurements. These search rules
+propose pairs; they are not human relevance judgments. Of the 210 search pairs,
+140 concern contextual/categorical questions and 70 concern numerical or
+ordinal questions. Clinical question, cohort load and trial reuse guide
+selection without selecting desired relationship labels. Natural restrictions,
+exceptions and missing context remain exactly as stored in the frozen corpus.
+
+Baseline agreement means at least two methods retrieve the unordered pair in
+their training-only top-five lists in either direction. Baseline-unique means
+exactly one does so. TF--IDF vocabulary and IDF are refitted on training criteria.
+Pinned dense embeddings are reused only after checking full-corpus row order
+and scores against saved neighbors, and rankings are recomputed within training.
+Random controls sample distinct trial pairs uniformly and then criteria within
+each trial, subject to the diversity caps. Agreement is not proof of relevance,
+disagreement is not a negative, and a random control may be a counterpart.
 Natural source pairs and any later constructed stress tests remain separate.
 
-Sample query trials before criteria, balancing the two cohorts and clinical
-questions so large trials and frequent age/laboratory clauses do not dominate.
+Balance the two cohorts, clinical questions and trial exposure so large trials
+and frequent age/laboratory clauses do not dominate.
 Canonicalize unordered pair IDs, retain every contributing model/rank, and avoid
 resampling pilot pairs. Cap each criterion at six distinct pairs, each unordered
 trial pair at twelve, each trial at twenty pair endpoints, and each normalized
@@ -2557,7 +2844,79 @@ entity category at 15\% of this development wave. These are sampling diversity
 caps, not the UI's one-to-one alignment rule. Log achieved counts, eligible pool
 sizes, shortfalls, overlap removal and rejection reasons. Do not silently relax
 caps or replace difficult cases with easy ones; a changed sampling policy needs
-a versioned amendment before labels are inspected.
+a versioned amendment before labels are inspected. The new packet has 300
+pairs over all 68 training trials and 405 distinct criteria. Its 600 trial
+endpoints comprise 306 cardiovascular and 294 oncology occurrences. No
+validation, test or quarantined criterion enters the new batch.
+
+\paragraph{Working workbook and human review.}
+At the owner's request, the working
+\pathcode{data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx}
+is replaced in place. At initial construction it contained the original 75 pilot
+decisions followed by 300 blank-label training examples, with stable criterion and pair IDs.
+The original pilot JSONL, adjudication log and release v1 are unchanged. Five
+historical pilot pairs touch quarantined trials; they remain visible as history
+and are explicitly excluded from training. Even the other 70 pilot decisions
+require the new relevance fields and explicit training approval. Preserved
+reviewer names/statuses record their historical provenance and do not establish
+new independent human review. The working workbook is mutable and is no longer
+the byte-identical Excel artifact referenced by the old release manifest.
+
+On \texttt{Label pairs}, reviewers enter Task 1 relevance and Task 2 relationship
+separately, with the clinical question, exact quotes from A and B, governing
+scope, source issues, rationale, uncertainty, reviewer and UTC review time.
+The \texttt{Evidence} sheet retains the original source, inclusion/exclusion
+role, internal negation, parent, surrounding text, selected entity, structured
+fields and source/version identifiers. Sampling model names, ranks and scores
+are absent from the reviewer sheets and retained in the JSONL provenance.
+\texttt{Guide} contains the two label sets and completion instructions.
+
+Begin with pair numbers 76--125, then check annotation consistency before
+continuing. A deterministic 20\% sample of the new batch, 60 pairs, was initially placed in
+\texttt{Second review} with blank decisions. The second human reviewer must work
+without reading the first decisions; the shared workbook does not enforce
+access isolation. Preserve both reviews and adjudicate disagreement by pair ID
+before release. A completed worksheet check means ready for release review,
+not automatically approved training data. The new packet and its manifest are
+\pathcode{training_review_v2.jsonl} and
+\pathcode{training_review_v2.manifest.json} in the same pilot directory.
+
+\paragraph{November 9 draft annotation round.}
+At the owner's request, assistant proposals now fill all 375 primary relevance
+rows and all 60 second-pass rows. The original 75 relationship decisions and
+their historical provenance remain unchanged; the 300 new relationships are
+proposals. Each pass records the selected clinical question, supporting quotes,
+source scope, rationale, uncertainty and unresolved issues. The second pass was
+initially prepared from source-only inputs before consulting primary labels.
+It is an additional assistant pass, \emph{not independent human double review}.
+The contract's human review requirements and explicit training-release gate
+remain unmet until actual reviewers complete them.
+
+The initial passes differed on 16 of the 60 pairs in at least one of the two
+labels. A focused audit of directional/overlap proposals and selected primary
+sources corrected unsupported sibling imports and temporal implications;
+15 pairs retain different proposed labels. Preserve both rationales for final
+review. Matching proposals are not an accuracy estimate. Clinical question
+granularity and abstract-value versus complete contextual comparisons remain
+material review issues; a numerical-only observation must not be interpreted
+as whole-trial containment.
+
+Three ClinicalTrials.gov full eligibility texts were checked against the exact
+frozen protocol hashes. The checks restored a missing negative six-month
+event-history heading for pair 178, confirmed unresolved NYHA/LVEF Boolean scope
+for pair 235, and confirmed that pair 231's malformed reproductive-status
+sentence is present in the primary source. Frozen criterion wording was not
+rewritten. Prior proposals, corrections and source-check evidence are retained
+in \pathcode{annotations_draft_2026-11-09.jsonl}, keyed by pair ID and primary
+or second review kind. The immutable candidate packet remains label-free;
+annotations are a separate versioned draft round.
+
+The workbook's \texttt{Pass comparison} column joins labels by stable pair ID.
+\texttt{Review check} prioritizes draft disagreements, uncertain or ambiguous
+evidence, and qualifiers. Assistant reviewer identities cannot make a row
+ready for release merely by retaining a historical adjudicated status. Actual
+human reviewer, time, adjudicator and completed fields are required. No new
+proposal is marked human-adjudicated or approved for supervised training.
 
 \paragraph{Validation and test: pooled query evaluation.}
 Preselect twenty queries per partition, ten from each cohort, using the fixed

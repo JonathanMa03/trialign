@@ -8,12 +8,11 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, Field
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
 class DataConfig(BaseModel):
-    source_workbook: Path = Path("data/trial100_notreviewed.xlsx")
+    source_workbook: Path = Path("data/trial100_v1.xlsx")
     review_sheet: str = "Human Review"
     reviewed_statuses: list[str] = Field(default_factory=lambda: ["accepted", "corrected"])
     processed_dir: Path = Path("data/processed")

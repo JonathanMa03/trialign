@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from time import perf_counter
+from typing import Annotated
 
 import pandas as pd
 import typer
@@ -22,6 +23,290 @@ from trialign.schemas import AgentJudgment, CriterionRecord, HumanDecision, Pair
 
 app = typer.Typer(no_args_is_help=True, help="TriAlign data and experiment commands.")
 console = Console()
+
+
+@app.command("annotations-check")
+def annotations_check(
+    workbook: Path,
+    output: Path | None = None,
+    packet: list[Path] | None = typer.Option(None, "--packet"),
+):
+    """Read-only audit of source, identities, human approval and review completeness."""
+    from trialign.config import ROOT
+    from trialign.data.annotations import inspect_annotations
+
+    packets = (
+        [
+            *[
+                p
+                for p in [
+                    ROOT / "data/processed/pair_pilot_v1/pairs.jsonl",
+                    ROOT / "data/processed/pair_pilot_v1/training_review_v2.jsonl",
+                ]
+                if p.is_file()
+            ],
+            *packet,
+        ]
+        if packet
+        else None
+    )
+    report = inspect_annotations(ROOT, workbook, packets=packets)
+    report.pop("records")
+    if output:
+        _write_json(output, report)
+    console.print(
+        {
+            "rows": report["rows"],
+            "approved": report["approved_rows"],
+            "errors": len(report["errors"]),
+            "pending": len(report["pending"]),
+            "excluded": len(report["excluded"]),
+        }
+    )
+    if report["errors"]:
+        raise typer.Exit(1)
+
+
+@app.command("annotations-release")
+def annotations_release(
+    workbook: Path,
+    output: Path,
+    approve_research_use: bool = False,
+    allow_partial: bool = False,
+    packet: list[Path] | None = typer.Option(None, "--packet"),
+):
+    """Freeze human-approved labels; never promotes assistant proposals."""
+    from trialign.config import ROOT
+    from trialign.data.annotations import release_annotations
+
+    try:
+        report = release_annotations(
+            ROOT,
+            workbook,
+            output,
+            approve_research_use=approve_research_use,
+            allow_partial=allow_partial,
+            packets=(
+                [
+                    *[
+                        p
+                        for p in [
+                            ROOT / "data/processed/pair_pilot_v1/pairs.jsonl",
+                            ROOT / "data/processed/pair_pilot_v1/training_review_v2.jsonl",
+                        ]
+                        if p.is_file()
+                    ],
+                    *packet,
+                ]
+                if packet
+                else None
+            ),
+        )
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    console.print(report["counts"])
+
+
+@app.command("train")
+def train(
+    release: Path,
+    output: Annotated[Path | None, typer.Argument()] = None,
+    training_config: Path = Path("configs/training.yaml"),
+    allow_draft_labels: bool = False,
+    resume: bool = False,
+    checkpoint_every_updates: int = typer.Option(10, min=1, max=10000),
+):
+    """Train encoder/head from approved labels or an explicitly opted-in draft pilot."""
+    import yaml
+
+    from trialign.config import ROOT
+    from trialign.models.joint import TrainingConfig
+    from trialign.training import train_model
+
+    output = output or Path("docs/logging") / release.name / "model"
+    try:
+        config = TrainingConfig.model_validate(yaml.safe_load(training_config.read_text()))
+        report = train_model(
+            release,
+            output,
+            config,
+            root=ROOT,
+            allow_draft_labels=allow_draft_labels,
+            resume=resume,
+            checkpoint_every_updates=checkpoint_every_updates,
+        )
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    console.print(
+        {
+            "output": str(output),
+            "epochs": len(report["history"]),
+            "synthetic": report["synthetic"],
+            "draft_labels": report["draft_labels"],
+            "status": report.get("status", "completed"),
+        }
+    )
+
+
+@app.command("train-pause")
+def train_pause(output: Path):
+    """Request a checkpoint and graceful exit at the next optimizer-update boundary."""
+    from trialign.training_control import request_pause
+
+    try:
+        console.print(request_pause(output))
+    except (OSError, ValueError, KeyError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+
+@app.command("annotations-pilot")
+def annotations_pilot(workbook: Path, output: Path):
+    """Snapshot all eligible workbook drafts for provisional, family-separated training."""
+    from trialign.config import ROOT
+    from trialign.data.annotations import release_draft_pilot
+
+    try:
+        report = release_draft_pilot(ROOT, workbook, output)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    console.print({k: report[k] for k in ["counts", "usable_targets", "excluded_rows"]})
+
+
+@app.command("train-smoke")
+def train_smoke(
+    output: Annotated[Path, typer.Argument()] = Path("docs/logging/learning_smoke_v1"),
+):
+    """Constructed tiny-encoder training/checkpoint/evaluation check; no clinical claims."""
+    from trialign.evaluation.learned import evaluate_model
+    from trialign.models.joint import TrainingConfig
+    from trialign.training import synthetic_release, train_model
+
+    if output.exists():
+        raise typer.BadParameter("Smoke directory exists; use a new output directory.")
+    synthetic_release(output / "labels")
+    config = TrainingConfig(
+        epochs=2,
+        batch_size=4,
+        hidden_size=16,
+        max_seq_length=64,
+        encoder_learning_rate=0.01,
+        head_learning_rate=0.01,
+        deterministic=True,
+    )
+    train_model(output / "labels", output / "model", config, synthetic=True)
+    report = evaluate_model(output / "model", output / "labels", allow_synthetic=True)
+    _write_json(output / "execution_check.json", report)
+    console.print({"synthetic": True, "rows": report["rows"], "output": str(output)})
+
+
+@app.command("lock-model-evaluation")
+def lock_model_evaluation(artifact: Path, release: Path, output: Path):
+    """Lock model, label release and evaluator fingerprints before opening test labels."""
+    from trialign.evaluation.learned import lock_evaluation
+
+    console.print(lock_evaluation(artifact, release, output))
+
+
+@app.command("evaluate-model")
+def evaluate_model_command(
+    artifact: Path,
+    release: Path,
+    output: Annotated[Path | None, typer.Argument()] = None,
+    split: str = "validation",
+    test_lock: Path | None = None,
+    allow_draft_labels: bool = False,
+):
+    """Evaluate relationship predictions and pair discrimination separately."""
+    from trialign.evaluation.learned import evaluate_model
+
+    output = output or Path("docs/logging") / (
+        artifact.parent.name if artifact.name == "model" else artifact.name
+    ) / ("fit.json" if split == "train" else split + ".json")
+    try:
+        report = evaluate_model(
+            artifact,
+            release,
+            split=split,
+            test_lock=test_lock,
+            allow_draft_labels=allow_draft_labels,
+        )
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    _write_json(output, report)
+    console.print({"output": str(output), **report})
+
+
+@app.command("evaluate-retrieval")
+def evaluate_retrieval_command(
+    rankings: Path, release: Path, queries: Path, output: Path, split: str = "validation"
+):
+    """Pooled P@5/bounds/nDCG for declared query IDs, not a full-corpus recall claim.
+
+    Rankings JSON: {model: {query_criterion_id: [candidate_criterion_id, ...]}}.
+    Queries JSON: a preselected list of query criterion IDs.
+    """
+    from trialign.config import ROOT
+    from trialign.data.annotations import load_label_split
+    from trialign.data.partitions import load_partition_release
+    from trialign.evaluation.learned import pooled_metrics
+
+    if split != "validation":
+        raise typer.BadParameter(
+            "This pooled command is validation-only; test retrieval needs a separately "
+            "frozen full-system evaluation configuration."
+        )
+    rows, _ = load_label_split(release, split)
+    frozen = load_partition_release(ROOT)
+    corpus = {
+        r.criterion_id: r for r in load_parquet_corpus(ROOT / "data/processed/trial100_v1.parquet")
+    }
+    selected = json.loads(queries.read_text())
+    provided = json.loads(rankings.read_text())
+    inventory = json.loads(
+        (ROOT / "data/processed/family_audit_v1/trial_inventory.json").read_text()
+    )
+    if not selected or len(selected) != len(set(selected)):
+        raise typer.BadParameter("Declare distinct preselected query IDs.")
+    for model, mapping in provided.items():
+        if not set(selected) <= set(mapping):
+            raise typer.BadParameter(f"Missing declared queries in {model}.")
+        for q in selected:
+            for identifier in [q, *mapping[q]]:
+                if (
+                    identifier not in corpus
+                    or frozen["assignments"][corpus[identifier].trial_id] != split
+                ):
+                    raise typer.BadParameter(
+                        "Ranking uses an unknown or cross-partition criterion."
+                    )
+            if any(corpus[c].trial_id == corpus[q].trial_id for c in mapping[q]):
+                raise typer.BadParameter("Ranking contains a same-trial candidate.")
+    judgments = {
+        tuple(sorted((r["a"]["criterion_id"], r["b"]["criterion_id"]))): r["relevance_grade"]
+        for r in rows
+    }
+    groups = json.loads((ROOT / "data/processed/family_audit_v1/family_mapping.json").read_text())[
+        "split_group_by_trial"
+    ]
+    metadata = {
+        q: {
+            "cohort": inventory[corpus[q].trial_id]["cohort"],
+            "split_group": groups[corpus[q].trial_id],
+        }
+        for q in selected
+    }
+    report = pooled_metrics(
+        {m: {q: v[q] for q in selected} for m, v in provided.items()},
+        judgments,
+        query_metadata=metadata,
+    )
+    report.update(
+        query_file_sha256=sha(queries),
+        rankings_sha256=sha(rankings),
+        label_release_sha256=sha(release / "manifest.json"),
+    )
+    _write_json(output, report)
+    console.print(report)
 
 
 def _write_json(path: Path, payload: object) -> None:
@@ -424,12 +709,49 @@ def serve(
     port: int = typer.Option(8766, min=1024, max=65535),
     open_browser: bool = typer.Option(False, "--open-browser"),
     runtime_directory: Path = typer.Option(None, "--runtime-directory"),
+    pilot_model: Path | None = typer.Option(None, "--pilot-model"),
 ) -> None:
     """Start the local trial-comparison UI and agent runtime."""
     from trialign.config import ROOT
     from trialign.web.server import run_browser_app
 
-    run_browser_app(ROOT, port=port, open_browser=open_browser, runtime_directory=runtime_directory)
+    if pilot_model is None:
+        run_browser_app(
+            ROOT, port=port, open_browser=open_browser, runtime_directory=runtime_directory
+        )
+        return
+
+    import os
+
+    from trialign.models.joint import read_manifest
+
+    artifact = pilot_model.resolve()
+    try:
+        manifest = read_manifest(artifact)
+        if manifest.get("synthetic") is not False:
+            raise ValueError("Pilot runtime requires a real trained encoder, not a smoke fixture.")
+    except (OSError, ValueError, KeyError) as exc:
+        raise typer.BadParameter(f"Pilot artifact is unavailable or invalid: {exc}") from exc
+    overrides = {
+        "TRIALIGN_MODEL_PATH": str(artifact),
+        "TRIALIGN_ALLOW_DRAFT_RUNTIME": "1",
+    }
+    previous = {key: os.environ.get(key) for key in overrides}
+    try:
+        os.environ.update(overrides)
+        console.print(
+            "[yellow]Pilot model test mode: unvalidated draft artifacts enabled "
+            "for this server process only.[/yellow]"
+        )
+        run_browser_app(
+            ROOT, port=port, open_browser=open_browser, runtime_directory=runtime_directory
+        )
+    finally:
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
 
 
 @app.command("compare-trials")

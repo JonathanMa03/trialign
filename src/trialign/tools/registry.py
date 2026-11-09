@@ -6,6 +6,7 @@ import hashlib
 import time
 from dataclasses import asdict
 
+from trialign.tools.source_quality import assess_source
 from trialign.tools.structured import VERSION, compare_structured, frame_issues
 
 
@@ -20,7 +21,11 @@ class ToolRegistry:
         emit("hook.before_tool", {"tool": name, "call": budget.tool_calls})
         started = time.monotonic()
         if name == "inspect_frame":
-            result = {"a": frame_issues(a), "b": frame_issues(b)}
+            result = {
+                "a": frame_issues(a),
+                "b": frame_issues(b),
+                "source_scope": {"A": assess_source(a).as_dict(), "B": assess_source(b).as_dict()},
+            }
         elif name == "compare_constraints":
             result = asdict(compare_structured(a, b))
             result["label"] = result["label"].value if result["label"] else None

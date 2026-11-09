@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import textwrap
 from io import BytesIO
@@ -80,6 +81,14 @@ def comparison_workbook(job):
         ["Configured judge model", settings.get("judge_model", "Not recorded")],
         ["Configured critic model", settings.get("critic_model", "Not recorded")],
         ["Retrieval model", settings.get("retrieval_model", job.get("encoder", "Not recorded"))],
+        [
+            "Encoder configuration and revision",
+            json.dumps(job.get("encoder_metadata", {}), sort_keys=True),
+        ],
+        [
+            "Relationship artifact",
+            json.dumps(settings.get("relationship_artifact"), sort_keys=True),
+        ],
         ["Contextual models enabled", job.get("use_llm")],
         [
             "Maximum model calls",
@@ -187,6 +196,14 @@ def comparison_workbook(job):
                 b["criterion_id"],
                 result.get("pair_id", ""),
                 "\n".join(f"[{e['side']}] {e['quote']}" for e in result.get("evidence", [])),
+                (
+                    readable((result.get("model_prediction") or {}).get("proposed_label"))
+                    or "Abstained"
+                )
+                if result.get("model_prediction")
+                else "Not run",
+                (result.get("model_prediction") or {}).get("relevance_score"),
+                (result.get("model_prediction") or {}).get("artifact_sha256", ""),
             ]
         )
     sheet(
@@ -210,9 +227,12 @@ def comparison_workbook(job):
             "B criterion ID",
             "Pair ID",
             "Cited evidence",
+            "Learned proposal (uncalibrated)",
+            "Learned relevance score",
+            "Learned artifact SHA-256",
         ],
         pair_rows,
-        [25, 65, 25, 65, 27, 30, 80, 60, 70, 27, 65, 24, 22, 22, 36, 36, 32, 75],
+        [25, 65, 25, 65, 27, 30, 80, 60, 70, 27, 65, 24, 22, 22, 36, 36, 32, 75, 40, 24, 75],
     )
     coverage_rows = []
     for side in ["a", "b"]:

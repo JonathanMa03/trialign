@@ -1,0 +1,27 @@
+# Unvalidated full-workbook pilot; fixed epochs, no validation or clinical claims.
+base_model: mpnet
+device: cpu
+max_seq_length: 384
+truncation_policy: allow_recorded
+freeze_encoder: false
+epochs: 3
+batch_size: 4
+gradient_accumulation: 4
+encoder_learning_rate: 0.00002
+head_learning_rate: 0.001
+weight_decay: 0.01
+warmup_fraction: 0.1
+max_grad_norm: 1.0
+hidden_size: 256
+dropout: 0.1
+relevance_loss_weight: 1.0
+relationship_loss_weight: 1.0
+positive_margin: 1.0
+negative_margin: 0.2
+related_topic_negative_weight: 0.0
+swap_augmentation: true
+patience: 3
+seed: 20261011
+deterministic: true
+prediction_threshold: 0.6
+relevance_threshold: 0.0

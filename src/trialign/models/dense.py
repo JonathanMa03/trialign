@@ -12,6 +12,9 @@ class DenseEncoder:
         revision=None,
         batch_size=32,
         model_factory=None,
+        max_seq_length=None,
+        cache_folder=None,
+        local_files_only=False,
     ):
         if device not in {"auto", "cpu", "cuda", "mps"}:
             raise ValueError("Unsupported device.")
@@ -24,6 +27,13 @@ class DenseEncoder:
         self.batch_size = batch_size
         self._model_factory = model_factory
         self._model = None
+        self.max_seq_length = max_seq_length
+        self.cache_folder = cache_folder
+        self.local_files_only = local_files_only
+
+    @property
+    def effective_device(self):
+        return str(self._model.device) if self._model is not None else self.device
 
     def _load_model(self):
         if self._model is None:
@@ -34,10 +44,22 @@ class DenseEncoder:
                 factory = SentenceTransformer
 
             options = {"revision": self.revision}
+            if self.cache_folder is not None:
+                options["cache_folder"] = str(self.cache_folder)
+            if self.local_files_only:
+                options["local_files_only"] = True
             if self.device != "auto":
                 options["device"] = self.device
 
             self._model = factory(self.name, **options)
+            if self.max_seq_length is not None:
+                native = self._model.max_seq_length
+                if native and self.max_seq_length > native:
+                    self._model = None
+                    raise ValueError(
+                        f"Requested token length exceeds this encoder's limit ({native})."
+                    )
+                self._model.max_seq_length = self.max_seq_length
 
         return self._model
 

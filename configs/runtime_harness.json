@@ -1,18 +1,239 @@
 {
-  "version": "runtime-harness-1",
+  "version": "runtime-harness-2",
   "purpose": "Constructed operational diagnostics; not a clinical benchmark or training set.",
   "cases": [
-    {"id": "role-inversion", "a": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18, "criterion_type": "exclusion"}, "expected_label": "contradictory_or_disjoint", "must_escalate": false},
-    {"id": "a-restrictive", "a": {"source": "Age >= 21 years", "comparator": ">=", "value": 21}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "expected_label": "a_more_restrictive", "must_escalate": false},
-    {"id": "b-restrictive", "a": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "b": {"source": "Age >= 21 years", "comparator": ">=", "value": 21}, "expected_label": "b_more_restrictive", "must_escalate": false},
-    {"id": "equivalent", "a": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "expected_label": "equivalent", "must_escalate": false},
-    {"id": "partial-overlap", "a": {"source": "Age <= 65 years", "comparator": "<=", "value": 65}, "b": {"source": "Age >= 50 years", "comparator": ">=", "value": 50}, "expected_label": "partial_overlap", "must_escalate": false},
-    {"id": "strict-endpoint", "a": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "b": {"source": "Age > 18 years", "comparator": ">", "value": 18}, "expected_label": "b_more_restrictive", "must_escalate": false},
-    {"id": "time-not-aligned", "a": {"source": "Age >= 18 years at consent", "comparator": ">=", "value": 18, "temporal": "at consent"}, "b": {"source": "Age >= 18 years at screening", "comparator": ">=", "value": 18, "temporal": "at screening"}, "expected_label": null, "must_escalate": true},
-    {"id": "undefined-exception", "a": {"source": "Age >= 18 years unless an exception is granted", "comparator": ">=", "value": 18}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "expected_label": null, "must_escalate": true},
-    {"id": "source-comparator-conflict", "a": {"source": "Age >= 18 years", "comparator": ">", "value": 18}, "b": {"source": "Age > 18 years", "comparator": ">", "value": 18}, "expected_label": null, "must_escalate": true},
-    {"id": "negation-not-proof", "a": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18, "negated": true}, "expected_label": null, "must_escalate": true},
-    {"id": "invalid-allowed-domain", "a": {"source": "Age < 0 years", "comparator": "<", "value": 0}, "b": {"source": "Age >= 18 years", "comparator": ">=", "value": 18}, "expected_label": null, "must_escalate": true},
-    {"id": "exact-unit-conversion", "a": {"entity": "Hemoglobin", "source": "Hemoglobin >= 100 g/L", "comparator": ">=", "value": 100, "unit": "g/L"}, "b": {"entity": "Hemoglobin", "source": "Hemoglobin >= 8 g/dL", "comparator": ">=", "value": 8, "unit": "g/dL"}, "expected_label": "a_more_restrictive", "must_escalate": false}
+    {
+      "id": "role-inversion",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18,
+        "criterion_type": "exclusion"
+      },
+      "expected_label": "contradictory_or_disjoint",
+      "must_escalate": false
+    },
+    {
+      "id": "a-restrictive",
+      "a": {
+        "source": "Age >= 21 years",
+        "comparator": ">=",
+        "value": 21
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "expected_label": "a_more_restrictive",
+      "must_escalate": false
+    },
+    {
+      "id": "b-restrictive",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age >= 21 years",
+        "comparator": ">=",
+        "value": 21
+      },
+      "expected_label": "b_more_restrictive",
+      "must_escalate": false
+    },
+    {
+      "id": "equivalent",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "expected_label": "equivalent",
+      "must_escalate": false
+    },
+    {
+      "id": "partial-overlap",
+      "a": {
+        "source": "Age <= 65 years",
+        "comparator": "<=",
+        "value": 65
+      },
+      "b": {
+        "source": "Age >= 50 years",
+        "comparator": ">=",
+        "value": 50
+      },
+      "expected_label": "partial_overlap",
+      "must_escalate": false
+    },
+    {
+      "id": "strict-endpoint",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age > 18 years",
+        "comparator": ">",
+        "value": 18
+      },
+      "expected_label": "b_more_restrictive",
+      "must_escalate": false
+    },
+    {
+      "id": "time-not-aligned",
+      "a": {
+        "source": "Age >= 18 years at consent",
+        "comparator": ">=",
+        "value": 18,
+        "temporal": "at consent"
+      },
+      "b": {
+        "source": "Age >= 18 years at screening",
+        "comparator": ">=",
+        "value": 18,
+        "temporal": "at screening"
+      },
+      "expected_label": null,
+      "must_escalate": true
+    },
+    {
+      "id": "undefined-exception",
+      "a": {
+        "source": "Age >= 18 years unless an exception is granted",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "expected_label": null,
+      "must_escalate": true
+    },
+    {
+      "id": "source-comparator-conflict",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">",
+        "value": 18
+      },
+      "b": {
+        "source": "Age > 18 years",
+        "comparator": ">",
+        "value": 18
+      },
+      "expected_label": null,
+      "must_escalate": true
+    },
+    {
+      "id": "negation-not-proof",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18,
+        "negated": true
+      },
+      "expected_label": null,
+      "must_escalate": true
+    },
+    {
+      "id": "invalid-allowed-domain",
+      "a": {
+        "source": "Age < 0 years",
+        "comparator": "<",
+        "value": 0
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "expected_label": null,
+      "must_escalate": true
+    },
+    {
+      "id": "exact-unit-conversion",
+      "a": {
+        "entity": "Hemoglobin",
+        "source": "Hemoglobin >= 100 g/L",
+        "comparator": ">=",
+        "value": 100,
+        "unit": "g/L"
+      },
+      "b": {
+        "entity": "Hemoglobin",
+        "source": "Hemoglobin >= 8 g/dL",
+        "comparator": ">=",
+        "value": 8,
+        "unit": "g/dL"
+      },
+      "expected_label": "a_more_restrictive",
+      "must_escalate": false
+    },
+    {
+      "id": "heading-is-not-a-predicate",
+      "a": {
+        "entity": "Chemotherapy",
+        "source": "Chemotherapy"
+      },
+      "b": {
+        "entity": "Chemotherapy",
+        "source": "No chemotherapy within three weeks"
+      },
+      "expected_label": "ambiguous",
+      "must_escalate": true
+    },
+    {
+      "id": "joint-exclusion-retains-and",
+      "a": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18,
+        "criterion_type": "exclusion",
+        "logical_operator": "and",
+        "parent_atom_count": 2,
+        "parent_statement": "Exclude age >= 18 years AND elevated bilirubin"
+      },
+      "b": {
+        "source": "Age >= 18 years",
+        "comparator": ">=",
+        "value": 18
+      },
+      "expected_label": "ambiguous",
+      "must_escalate": true
+    },
+    {
+      "id": "malformed-reproductive-scope",
+      "a": {
+        "entity": "Lactation Status",
+        "source": "Not Pregnant or breastfeeding women,Pregnancy before pregnancy screening, the women who blood / urine results were positivetherapy."
+      },
+      "b": {
+        "entity": "Lactation Status",
+        "source": "Not breastfeeding"
+      },
+      "expected_label": "ambiguous",
+      "must_escalate": true
+    }
   ]
 }

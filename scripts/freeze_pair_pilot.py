@@ -78,6 +78,45 @@ def validate_workbook(path: Path, pairs: list[dict], reviews: list[dict]) -> Non
     with zipfile.ZipFile(path) as archive:
         require(archive.testzip() is None, "Workbook ZIP integrity check failed")
     workbook = load_workbook(path, data_only=False)
+    # The owner expanded the mutable Excel interface after release v1. Check
+    # the historical 75 decisions by stable IDs without mistaking new rows for
+    # frozen annotations. verify() still enforces the old release's byte hashes.
+    if workbook["Label pairs"].cell(5, 6).value == "Relevance":
+        sheet = workbook["Label pairs"]
+        headers = {cell.value: cell.column for cell in sheet[5]}
+        indexed = {}
+        for row in range(6, sheet.max_row + 1):
+            if sheet.cell(row, headers["Batch"]).value == "pilot_history":
+                pair_id = sheet.cell(row, headers["Pair ID"]).value
+                require(pair_id not in indexed, "Duplicate historical pair ID")
+                indexed[pair_id] = row
+        require(set(indexed) == {p["pair_id"] for p in pairs}, "Historical pilot coverage changed")
+        fields = {
+            "label": "Relationship", "status": "Status", "uncertainty": "Uncertainty",
+            "rationale": "Relationship rationale", "common_frame": "Common comparison frame",
+            "evidence": "Evidence cited", "assumptions": "Assumptions",
+            "ambiguity_reason": "Ambiguity reason", "reviewer_id": "Reviewer",
+            "review_date": "Review date (YYYY-MM-DD)", "adjudicator_id": "Adjudicator",
+        }
+        for pair, review in zip(pairs, reviews, strict=True):
+            row = indexed[pair["pair_id"]]
+            for header, expected in {
+                "A source": pair["a"]["source"], "B source": pair["b"]["source"],
+                "Pair group ID": pair["pair_group_id"],
+                "A criterion ID": pair["criterion_a_id"], "B criterion ID": pair["criterion_b_id"],
+                "A trial ID": pair["a"]["trial_id"], "B trial ID": pair["b"]["trial_id"],
+                "Guide version": pair["guide_version"], "Corpus version": pair["dataset_version"],
+            }.items():
+                require(sheet.cell(row, headers[header]).value == expected,
+                        f"Historical source/identity differs: {pair['pair_id']}, {header}")
+            for field, header in fields.items():
+                actual = sheet.cell(row, headers[header]).value
+                if field == "review_date" and hasattr(actual, "strftime"):
+                    actual = actual.strftime("%Y-%m-%d")
+                require((actual or "") == (review[field] or ""),
+                        f"Historical decision changed: {pair['pair_id']}, {field}")
+        workbook.close()
+        return
     require(workbook.sheetnames == ["Label pairs", "Evidence", "Guide"],
             "Unexpected workbook sheets")
     sheet = workbook["Label pairs"]

@@ -293,49 +293,43 @@ __pycache__/
 # TriAlign generated data and experiment artifacts
 # =========================
 
-data/processed/*
-!data/processed/.gitkeep
+# Authoritative reviewed data and minimal frozen provenance only.
+/data/*
+!/data/trial100_v1.xlsx
+!/data/processed/
+/data/processed/*
+!/data/processed/.gitkeep
+!/data/processed/trial100_v1.parquet
+!/data/processed/trial100_v1.parquet.manifest.json
+!/data/processed/family_audit_v1/
+/data/processed/family_audit_v1/*
+!/data/processed/family_audit_v1/family_mapping.json
+!/data/processed/family_audit_v1/trial_inventory.json
+!/data/processed/partitions_v1/
+/data/processed/partitions_v1/*
+!/data/processed/partitions_v1/partitions.json
+!/data/processed/partitions_v1/duplicate_audit.json
+!/data/processed/partitions_v1/manifest.json
+!/data/processed/pair_pilot_v1/
+/data/processed/pair_pilot_v1/*
+!/data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx
+# These two frozen manifests are required to verify split and contract provenance.
+!/data/processed/pair_pilot_v1/manifest.json
+!/data/processed/pair_pilot_v1/release_v1/
+/data/processed/pair_pilot_v1/release_v1/*
+!/data/processed/pair_pilot_v1/release_v1/manifest.json
+# Pair packets, assistant drafts, pilot training snapshots and copied workbooks
+# remain local; finalized human releases require a deliberate future allowlist.
+/data/**/*.jsonl
+~$*.xlsx
+
 artifacts/*
 !artifacts/.gitkeep
-# Root-level downloaded/trained model artifacts only. Do not ignore
-# the Python source package at src/trialign/models/.
 /models/
-
-# Selected immutable development releases. Keep all other generated data ignored.
-!data/processed/trial100_v1.parquet
-!data/processed/trial100_v1.parquet.manifest.json
-!data/processed/family_audit_v1/
-data/processed/family_audit_v1/*
-!data/processed/family_audit_v1/all_pair_scores.json
-!data/processed/family_audit_v1/shared_secondary_identifiers.json
-!data/processed/family_audit_v1/trial_inventory.json
-!data/processed/family_audit_v1/external_registry_snapshot.json
-!data/processed/family_audit_v1/screening_manifest.json
-!data/processed/family_audit_v1/candidate_edges.json
-!data/processed/family_audit_v1/family_mapping.json
-!data/processed/family_audit_v1/registry_snapshot.json
-!data/processed/pair_pilot_v1/
-data/processed/pair_pilot_v1/*
-!data/processed/pair_pilot_v1/manifest.json
-!data/processed/pair_pilot_v1/pairs.jsonl
-!data/processed/pair_pilot_v1/annotations_ai_draft_2026-11-07.jsonl
-!data/processed/pair_pilot_v1/adjudication_2026-11-07.jsonl
-!data/processed/pair_pilot_v1/source_checks_2026-11-07.json
-!data/processed/pair_pilot_v1/trial100_v1_pair_labeling.xlsx
-!data/processed/pair_pilot_v1/release_v1/
-data/processed/pair_pilot_v1/release_v1/*
-!data/processed/pair_pilot_v1/release_v1/manifest.json
-!data/processed/pair_pilot_v1/release_v1/annotations.jsonl
-!data/processed/pair_pilot_v1/release_v1/resolved_pairs.jsonl
-!data/processed/pair_pilot_v1/release_v1/review_queue.jsonl
-~$*.xlsx
 
 # Local comparison history, uploaded snapshots and review records.
 /runs/
 
-# Frozen family-aware partition release (source corpus remains unchanged).
-!data/processed/partitions_v1/
-data/processed/partitions_v1/*
-!data/processed/partitions_v1/partitions.json
-!data/processed/partitions_v1/duplicate_audit.json
-!data/processed/partitions_v1/manifest.json
+# Local training weights, resumable optimizer state, progress and fit reports.
+/docs/logging/*
+!/docs/logging/.gitkeep

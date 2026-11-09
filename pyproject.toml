@@ -33,6 +33,7 @@ models = [
   "datasets>=2.20,<5",
   "sentence-transformers>=3.0,<6",
   "accelerate>=0.33,<2",
+  "safetensors>=0.4,<1",
   "faiss-cpu>=1.8,<2",
 ]
 app = [

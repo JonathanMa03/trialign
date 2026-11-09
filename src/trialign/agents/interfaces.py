@@ -21,3 +21,11 @@ class JudgmentProvider(Protocol):
     def judge(
         self, a: CriterionRecord, b: CriterionRecord, evidence: list[dict[str, Any]]
     ) -> dict[str, Any]: ...
+
+
+class PairRelationshipModel(Protocol):
+    """A prediction tool, not an evidence validator or an autonomous final judge."""
+
+    artifact_digest: str
+
+    def predict_pair(self, a: CriterionRecord, b: CriterionRecord) -> dict[str, Any]: ...

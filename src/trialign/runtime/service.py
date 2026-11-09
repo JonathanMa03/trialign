@@ -20,6 +20,15 @@ from trialign.agents.hooks import BudgetExceeded, RuntimeBudget
 from trialign.agents.orchestrator import VERSION, AgentOrchestrator
 from trialign.agents.provider import OpenAIProvider, local_configuration
 from trialign.models import TfidfEncoder
+from trialign.models.runtime import (
+    BASELINE_TOKEN_LIMITS,
+    BASELINES,
+    EncoderOptions,
+    EncoderPool,
+    configured_artifact,
+    encoder_capabilities,
+    runtime_artifact_permitted,
+)
 from trialign.runtime.catalog import Catalog
 from trialign.runtime.metrics import estimate_api_cost, pricing_settings
 from trialign.runtime.storage import (
@@ -40,7 +49,7 @@ def now():
     return datetime.now(UTC).isoformat()
 
 
-def alignment_candidates(a, b, *, encoder=None):
+def alignment_candidates(a, b, *, encoder=None, min_score=0):
     """Maximum-weight one-to-one assignment with explicit unmatched options.
 
     Shared parent prose never supplies a retrieval feature or a concept mapping.
@@ -54,8 +63,10 @@ def alignment_candidates(a, b, *, encoder=None):
     b = sorted(b, key=lambda row: row.criterion_id)
     if len({r.criterion_id for r in a + b}) != len(a) + len(b):
         raise ValueError("Comparison inputs must have unique criterion IDs.")
-    texts = [f"{r.entity} {r.source}" for r in [*a, *b]]
     encoder = encoder or TfidfEncoder()
+    texts = [
+        encoder.text(r) if hasattr(encoder, "text") else f"{r.entity} {r.source}" for r in [*a, *b]
+    ]
     if hasattr(encoder, "fit"):
         encoder.fit(texts)
     vectors = encoder.encode(texts)
@@ -70,7 +81,7 @@ def alignment_candidates(a, b, *, encoder=None):
     for i, left in enumerate(a):
         for j, right in enumerate(b):
             allowed, reason = correspondence(left, right)
-            if allowed:
+            if allowed and np.isfinite(similarities[i, j]) and similarities[i, j] >= min_score:
                 score = float(similarities[i, j])
                 weights[i, j] = 1 + max(0, min(1, score))
                 reasons[i, j] = reason
@@ -95,6 +106,8 @@ class ComparisonService:
     def __init__(self, root: Path, *, directory: Path | None = None, encoder_factory=None):
         self.root = root
         self.encoder_factory = encoder_factory or TfidfEncoder
+        self._injected_encoder = encoder_factory is not None
+        self.encoder_pool = EncoderPool(root)
         self.directory = directory or root / "runs"
         self.import_directory = self.directory / "imports"
         self.upload_directory = self.directory / "uploads"
@@ -103,7 +116,7 @@ class ComparisonService:
             migrate_legacy_runs(root, self.directory)
         self.catalog = Catalog(root)
         digest = hashlib.sha256()
-        for directory in ["agents", "tools", "runtime", "web"]:
+        for directory in ["agents", "tools", "models", "runtime", "web"]:
             for path in sorted((root / "src/trialign" / directory).rglob("*")):
                 if path.is_file() and path.suffix in {".py", ".yaml", ".html", ".css", ".js"}:
                     digest.update(path.relative_to(root).as_posix().encode() + b"\0")
@@ -145,7 +158,9 @@ class ComparisonService:
             "model": config["model"],
             "critic_model": config["critic_model"],
             "configuration_origin": config["origin"],
-            "encoder": "TF-IDF baseline (temporary encoder; no fine-tuned model)",
+            "encoder": "TF-IDF default; pinned dense and trained encoders are selectable",
+            "retrieval_models": encoder_capabilities(self.root),
+            "encoder_defaults": EncoderOptions().model_dump(),
             "skills": [{"id": key, **value} for key, value in planner.skills.skills.items()],
             "skill_version": planner.skills.version,
             "tools": list(AgentOrchestrator().tools.names),
@@ -153,6 +168,7 @@ class ComparisonService:
             "hooks": [
                 "clinical counterpart gate",
                 "input_validation",
+                "source_scope",
                 "before_tool",
                 "after_tool",
                 "evidence_validation",
@@ -227,8 +243,40 @@ class ComparisonService:
         for model in [judge_model, critic_model]:
             if not isinstance(model, str) or not model.strip() or len(model) > 200 or "\n" in model:
                 raise ValueError("Provide a valid judge and critic model name.")
-        if request.get("retrieval_model", "tfidf") != "tfidf":
-            raise ValueError("This runtime currently supports TF-IDF retrieval only.")
+        retrieval_model = request.get("retrieval_model", "tfidf")
+        raw_options = dict(request.get("encoder_options") or {})
+        if retrieval_model in BASELINE_TOKEN_LIMITS:
+            raw_options.setdefault("max_seq_length", BASELINE_TOKEN_LIMITS[retrieval_model])
+        options = EncoderOptions.model_validate(raw_options)
+        if retrieval_model not in {"tfidf", "mpnet", "biolord", "trained"}:
+            raise ValueError("Choose a registered retrieval model.")
+        if (
+            retrieval_model in BASELINE_TOKEN_LIMITS
+            and options.max_seq_length > BASELINE_TOKEN_LIMITS[retrieval_model]
+        ):
+            raise ValueError(
+                f"{retrieval_model} token limit is {BASELINE_TOKEN_LIMITS[retrieval_model]}; "
+                "choose a smaller value."
+            )
+        use_relationship_model = bool(request.get("use_relationship_model", False))
+        artifact_metadata = None
+        if use_relationship_model or retrieval_model == "trained":
+            manifest_path = configured_artifact(self.root) / "manifest.json"
+            if not manifest_path.is_file():
+                raise ValueError(
+                    "No trained artifact registered. Set TRIALIGN_MODEL_PATH after training."
+                )
+            manifest = json.loads(manifest_path.read_text())
+            if not runtime_artifact_permitted(manifest):
+                raise ValueError(
+                    "A registered trained artifact is required; draft pilots need "
+                    "the backend serve --pilot-model test command. Synthetic fixtures are disabled."
+                )
+            artifact_metadata = {
+                "artifact_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+                "draft_labels": bool(manifest.get("draft_labels")),
+                "testing_only": bool(manifest.get("draft_labels")),
+            }
         pricing = pricing_settings(request.get("pricing"))
         requested_pairs = int(request.get("max_pairs", 0))
         max_pairs = requested_pairs
@@ -246,10 +294,46 @@ class ComparisonService:
                 raise ValueError("A comparison is already running. Finish or cancel it first.")
             retrieval_started = time.perf_counter()
             retrieval_cpu_started = time.thread_time()
-            candidates = alignment_candidates(a, b, encoder=self.encoder_factory())
+            deferred = not synchronous
+            if deferred:
+                candidates = []
+                encoder_metadata = {
+                    "id": retrieval_model,
+                    "options": options.model_dump(),
+                    "revision": BASELINES[retrieval_model][1]
+                    if retrieval_model in BASELINES
+                    else None,
+                    "artifact_sha256": artifact_metadata["artifact_sha256"]
+                    if retrieval_model == "trained"
+                    else None,
+                    "draft_labels": bool(artifact_metadata and artifact_metadata["draft_labels"])
+                    if retrieval_model == "trained"
+                    else False,
+                    "testing_only": bool(artifact_metadata and artifact_metadata["testing_only"])
+                    if retrieval_model == "trained"
+                    else False,
+                }
+            else:
+                encoder = (
+                    self.encoder_factory()
+                    if self._injected_encoder and retrieval_model == "tfidf"
+                    else self.encoder_pool.get(retrieval_model, options)
+                )
+                candidates = alignment_candidates(
+                    a, b, encoder=encoder, min_score=options.min_score
+                )
+                encoder_metadata = (
+                    encoder.metadata()
+                    if hasattr(encoder, "metadata")
+                    else {"id": retrieval_model, "options": options.model_dump()}
+                )
             retrieval_seconds = time.perf_counter() - retrieval_started
             retrieval_cpu_seconds = time.thread_time() - retrieval_cpu_started
-            max_pairs = min(5000, len(candidates)) if requested_pairs == 0 else requested_pairs
+            max_pairs = (
+                (5000 if deferred else min(5000, len(candidates)))
+                if requested_pairs == 0
+                else requested_pairs
+            )
             max_pairs = max(1, max_pairs)
             run_id = "run-" + uuid4().hex
             inputs = [r.model_dump(mode="json") for r in [*a, *b]]
@@ -261,6 +345,7 @@ class ComparisonService:
                 "created_at": now(),
                 "updated_at": now(),
                 "status": "queued",
+                "retrieval_pending": deferred,
                 "owner_pid": os.getpid(),
                 "trial_a": trial_a,
                 "trial_b": trial_b,
@@ -280,7 +365,11 @@ class ComparisonService:
                     "provider": "openai",
                     "judge_model": judge_model.strip(),
                     "critic_model": critic_model.strip(),
-                    "retrieval_model": "tfidf",
+                    "retrieval_model": retrieval_model,
+                    "encoder_options": options.model_dump(),
+                    "encoder_metadata": encoder_metadata,
+                    "use_relationship_model": use_relationship_model,
+                    "relationship_artifact": artifact_metadata if use_relationship_model else None,
                     "use_llm": bool(request.get("use_llm", True)),
                     "max_model_calls": calls,
                     "max_seconds": seconds,
@@ -299,7 +388,8 @@ class ComparisonService:
                 },
                 "runtime_version": VERSION,
                 "runtime_source_sha256": self.source_fingerprint,
-                "encoder": "TF-IDF baseline; trained encoder not available",
+                "encoder": retrieval_model,
+                "encoder_metadata": encoder_metadata,
                 "max_pairs": max_pairs,
                 "max_model_calls": calls,
                 "max_seconds": seconds,
@@ -333,17 +423,76 @@ class ComparisonService:
         budget = RuntimeBudget(
             max_model_calls=job["max_model_calls"],
             max_seconds=job["max_seconds"],
-            max_tool_calls=job["max_pairs"] * 3,
+            max_tool_calls=job["max_pairs"]
+            * (4 if job["provider_settings"].get("use_relationship_model") else 3),
             cancelled=self.cancel_events[run_id],
+            started=time.monotonic() - job["metrics"]["retrieval_seconds"],
         )
         provider = provider_override
         try:
+            budget.check()
+            if job.get("retrieval_pending"):
+                from trialign.schemas import CriterionRecord
+
+                settings = job["provider_settings"]
+                options = EncoderOptions.model_validate(settings["encoder_options"])
+                job["message"] = (
+                    "Preparing candidate pairs; first dense use may load/download the model."
+                )
+                with self.lock:
+                    self._save(job)
+                started, cpu = time.perf_counter(), time.thread_time()
+                try:
+                    encoder = (
+                        self.encoder_factory()
+                        if self._injected_encoder and settings["retrieval_model"] == "tfidf"
+                        else self.encoder_pool.get(settings["retrieval_model"], options)
+                    )
+                    if (
+                        settings["retrieval_model"] == "trained"
+                        and encoder.artifact_digest != job["encoder_metadata"]["artifact_sha256"]
+                    ):
+                        raise ValueError("Registered trained encoder changed after queuing.")
+                    job["candidates"] = alignment_candidates(
+                        [CriterionRecord.model_validate(r) for r in job["criteria_a"]],
+                        [CriterionRecord.model_validate(r) for r in job["criteria_b"]],
+                        encoder=encoder,
+                        min_score=options.min_score,
+                    )
+                    job["encoder_metadata"] = (
+                        encoder.metadata()
+                        if hasattr(encoder, "metadata")
+                        else job["encoder_metadata"]
+                    )
+                    settings["encoder_metadata"] = job["encoder_metadata"]
+                    job["retrieval_pending"] = False
+                finally:
+                    job["metrics"]["retrieval_seconds"] = round(time.perf_counter() - started, 6)
+                    job["metrics"]["retrieval_cpu_seconds"] = round(time.thread_time() - cpu, 6)
+                    execution_started, execution_cpu_started = (
+                        time.perf_counter(),
+                        time.thread_time(),
+                    )
+                with self.lock:
+                    self._save(job)
+                budget.check()
             configuration = local_configuration(self.root)
             configuration["model"] = job["provider_settings"]["judge_model"]
             configuration["critic_model"] = job["provider_settings"]["critic_model"]
             if provider is None and job["use_llm"] and configuration["api_key"]:
                 provider = OpenAIProvider(configuration)
-            runner = AgentOrchestrator(provider if job["use_llm"] else None)
+            model = None
+            settings = job["provider_settings"]
+            if settings.get("use_relationship_model"):
+                encoder = self.encoder_pool.get(
+                    "trained", EncoderOptions.model_validate(settings.get("encoder_options", {}))
+                )
+                if encoder.artifact_digest != settings["relationship_artifact"]["artifact_sha256"]:
+                    raise ValueError("Registered model changed after this run was queued.")
+                model = encoder.backend
+            runner = AgentOrchestrator(
+                provider if job["use_llm"] else None, relationship_model=model
+            )
             job["model"] = getattr(provider, "model", None) if job["use_llm"] else None
             job["critic_model"] = (
                 getattr(provider, "critic_model", job["model"]) if job["use_llm"] else None
@@ -478,6 +627,12 @@ class ComparisonService:
         ]:
             for row in rows:
                 identifier = row["criterion_id"]
+                if job.get("retrieval_pending"):
+                    row["alignment_status"] = "not_examined"
+                    row["alignment_reason"] = (
+                        "Candidate retrieval has not finished; no matching conclusion is available."
+                    )
+                    continue
                 row["alignment_status"] = (
                     "supported_candidate"
                     if identifier in matched
@@ -544,7 +699,8 @@ class ComparisonService:
                 job["status"] = "cancelling"
                 job["message"] = (
                     "Stop requested; completed results are preserved. "
-                    "An in-flight model request may take up to 35 seconds to return."
+                    "An in-flight local encoding batch must return before stopping; "
+                    "a remote request may take up to 35 seconds."
                 )
                 self._save(job)
         return self.get(run_id)

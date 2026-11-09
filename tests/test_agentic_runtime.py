@@ -60,7 +60,7 @@ class ScriptedProvider:
 
 def test_constructed_harness():
     report = run_harness(ROOT)
-    assert report["passed"] == report["cases"] == 12
+    assert report["passed"] == report["cases"] == 15
 
 
 def test_exact_role_inversion_has_executed_tools_and_critic():
