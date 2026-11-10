@@ -387,6 +387,22 @@ weights are Git-ignored. Omitting the training output argument defaults to
 `docs/logging/<label-release-name>/model`; omitting the fit-report argument
 defaults to `docs/logging/<run-name>/fit.json` for `--split train`.
 
+To watch a background training job with automatic exit on completion or pause:
+
+```bash
+python scripts/trialign.py train-watch docs/logging/full_data_pilot_v1/model
+```
+
+Training itself exits after model export. A plain `tail -f` viewer keeps waiting
+for future lines after training finishes; Control+C stops that viewer and leaves
+the saved model intact. Control+C in `train-watch` also stops only the viewer.
+Evaluation is a separate command: it logs input checks, model loading, each batch
+of original/reversed comparisons, metric computation and final report saving.
+For `fit.json`, its readable log is `fit.evaluation/evaluation.log` beside the
+report, with matching `events.jsonl` and `progress.json`. Evaluation reports
+`completed` only after the report is atomically saved, then exits; interruption
+records `cancelled` and preserves an existing report.
+
 Press **Control+C once** in the training terminal to request a graceful pause,
 or run this from another terminal:
 

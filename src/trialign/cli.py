@@ -159,6 +159,19 @@ def train_pause(output: Path):
         raise typer.BadParameter(str(exc)) from exc
 
 
+@app.command("train-watch")
+def train_watch(output: Path):
+    """Follow training progress; exit automatically when the worker finishes or pauses."""
+    from trialign.training_control import watch_training
+
+    try:
+        state = watch_training(output)
+    except (OSError, ValueError, KeyError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    if state["status"] in {"failed", "cancelled"}:
+        raise typer.Exit(1)
+
+
 @app.command("annotations-pilot")
 def annotations_pilot(workbook: Path, output: Path):
     """Snapshot all eligible workbook drafts for provisional, family-separated training."""
@@ -218,21 +231,28 @@ def evaluate_model_command(
 ):
     """Evaluate relationship predictions and pair discrimination separately."""
     from trialign.evaluation.learned import evaluate_model
+    from trialign.training_control import ProgressLog
 
     output = output or Path("docs/logging") / (
         artifact.parent.name if artifact.name == "model" else artifact.name
     ) / ("fit.json" if split == "train" else split + ".json")
     try:
-        report = evaluate_model(
-            artifact,
-            release,
-            split=split,
-            test_lock=test_lock,
-            allow_draft_labels=allow_draft_labels,
-        )
+        with ProgressLog(output.parent / (output.stem + ".evaluation")) as progress:
+            report = evaluate_model(
+                artifact,
+                release,
+                split=split,
+                test_lock=test_lock,
+                allow_draft_labels=allow_draft_labels,
+                progress=progress.progress,
+            )
+            progress.progress(phase="saving fit report", output=str(output))
+            temporary = output.with_name(output.name + ".tmp")
+            _write_json(temporary, report)
+            temporary.replace(output)
+            progress.progress(status="completed", phase="fit report saved", output=str(output))
     except ValueError as exc:
         raise typer.BadParameter(str(exc)) from exc
-    _write_json(output, report)
     console.print({"output": str(output), **report})
 
 

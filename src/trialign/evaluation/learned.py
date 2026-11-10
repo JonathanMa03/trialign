@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import itertools
 import json
+import math
+import time
 from pathlib import Path
 
 import numpy as np
@@ -11,7 +13,7 @@ import numpy as np
 from trialign.data.partitions import sha
 
 
-def pair_metrics(model, rows, *, batch_size=16):
+def pair_metrics(model, rows, *, batch_size=16, progress=None):
     import torch
     from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
 
@@ -19,6 +21,7 @@ def pair_metrics(model, rows, *, batch_size=16):
     from trialign.training import batch_inputs
 
     similarities, truth, predicted, swapped, relevance_truth = [], [], [], [], []
+    started = time.perf_counter()
     model.eval()
     with torch.inference_mode():
         for i in range(0, len(rows), batch_size):
@@ -40,6 +43,20 @@ def pair_metrics(model, rows, *, batch_size=16):
                     truth.append(row["relationship_label"])
                     predicted.append(LABELS[y])
                     swapped.append(LABELS[rev])
+            if progress:
+                processed = min(i + batch_size, len(rows))
+                progress(
+                    phase="evaluating pairs and A/B reversal",
+                    batch=i // batch_size + 1,
+                    batches=math.ceil(len(rows) / batch_size),
+                    processed_pairs=processed,
+                    total_pairs=len(rows),
+                    eta_seconds=(time.perf_counter() - started)
+                    / processed
+                    * (len(rows) - processed),
+                )
+    if progress:
+        progress(phase="computing metrics", processed_pairs=len(rows), total_pairs=len(rows))
     reverse_label = {
         "a_more_restrictive": "b_more_restrictive",
         "b_more_restrictive": "a_more_restrictive",
@@ -101,10 +118,13 @@ def evaluate_model(
     test_lock=None,
     allow_synthetic=False,
     allow_draft_labels=False,
+    progress=None,
 ):
     from trialign.data.annotations import load_label_split
     from trialign.models.joint import TrainedModel
 
+    if progress:
+        progress(phase="validating evaluation inputs", split=split)
     if split == "test":
         if not test_lock:
             raise ValueError(
@@ -127,6 +147,8 @@ def evaluate_model(
     )
     if not rows:
         raise ValueError("Selected label partition is empty; no evaluation can be reported.")
+    if progress:
+        progress(phase="loading saved model", split=split, total_pairs=len(rows))
     trained = TrainedModel(artifact)
     if trained.manifest["label_release_sha256"] != sha(Path(release) / "manifest.json"):
         raise ValueError("Model was trained against a different label release.")
@@ -141,7 +163,9 @@ def evaluate_model(
         else "Performance against released reference labels.",
         "artifact_sha256": trained.artifact_digest,
         "label_release_sha256": sha(Path(release) / "manifest.json"),
-        **pair_metrics(trained.model, rows, batch_size=trained.config.batch_size),
+        **pair_metrics(
+            trained.model, rows, batch_size=trained.config.batch_size, progress=progress
+        ),
     }
 
 

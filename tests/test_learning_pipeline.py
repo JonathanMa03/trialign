@@ -380,8 +380,21 @@ def test_training_checkpoint_reload_and_sealed_test(tmp_path, monkeypatch):
         evaluate_model(output, release, split="test", allow_synthetic=True)
     lock = tmp_path / "lock.json"
     lock_evaluation(output, release, lock)
-    result = evaluate_model(output, release, split="test", test_lock=lock, allow_synthetic=True)
+    progress = []
+    result = evaluate_model(
+        output,
+        release,
+        split="test",
+        test_lock=lock,
+        allow_synthetic=True,
+        progress=lambda **event: progress.append(event),
+    )
     assert result["synthetic"] and result["rows"] == 12
+    assert progress[0]["phase"] == "validating evaluation inputs"
+    assert progress[-1]["phase"] == "computing metrics"
+    batches = [e for e in progress if "batch" in e]
+    assert [e["processed_pairs"] for e in batches] == [4, 8, 12]
+    assert batches[-1]["eta_seconds"] == 0
     with (output / "model.safetensors").open("ab") as f:
         f.write(b"tampered")
     with pytest.raises(ValueError, match="checksum"):
@@ -699,3 +712,52 @@ def test_annotation_import_uses_tracked_workbook_without_local_jsonl(synthetic_w
     wb.save(source)
     report = inspect_annotations(tmp_path, source)
     assert report["errors"] and not report["records"]
+
+
+def test_training_watcher_exits_after_completion_without_interrupting_worker(tmp_path):
+    from typer.testing import CliRunner
+
+    from trialign.cli import app
+    from trialign.training_control import TrainingRun
+
+    output = tmp_path / "model"
+    with TrainingRun(output) as run:
+        run.progress(status="completed", phase="model exported")
+    result = CliRunner().invoke(app, ["train-watch", str(output)])
+    assert result.exit_code == 0
+    assert "Training completed; log viewer exited." in result.output
+
+
+def test_evaluation_logs_final_report_and_cancellation_preserves_existing_report(
+    tmp_path, monkeypatch
+):
+    from typer.testing import CliRunner
+
+    import trialign.evaluation.learned as learned
+    from trialign.cli import app
+
+    report = tmp_path / "fit.json"
+    logdir = tmp_path / "fit.evaluation"
+
+    def evaluation(*args, progress, **kwargs):
+        progress(phase="evaluating pairs and A/B reversal", batch=1, batches=1)
+        return {"rows": 1}
+
+    monkeypatch.setattr(learned, "evaluate_model", evaluation)
+    result = CliRunner().invoke(app, ["evaluate-model", "model", "labels", str(report)])
+    assert result.exit_code == 0, result.output
+    assert json.loads(report.read_text()) == {"rows": 1}
+    events = [json.loads(x) for x in (logdir / "events.jsonl").read_text().splitlines()]
+    assert [e["phase"] for e in events][-2:] == ["saving fit report", "fit report saved"]
+    assert events[-1]["status"] == "completed"
+    assert (logdir / "evaluation.log").is_file()
+
+    def interrupted(*args, progress, **kwargs):
+        progress(phase="loading saved model")
+        raise KeyboardInterrupt()
+
+    monkeypatch.setattr(learned, "evaluate_model", interrupted)
+    result = CliRunner().invoke(app, ["evaluate-model", "model", "labels", str(report)])
+    assert result.exit_code != 0
+    assert json.loads(report.read_text()) == {"rows": 1}
+    assert json.loads((logdir / "progress.json").read_text())["status"] == "cancelled"

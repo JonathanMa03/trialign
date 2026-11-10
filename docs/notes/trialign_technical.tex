@@ -1058,6 +1058,18 @@ For a training-split report, the default evaluation output is
 \pathcode{docs/logging/<run-name>/fit.json}. Existing jobs started before this
 implementation do not acquire resumable state retroactively.
 
+The \pathcode{train-watch <model-output>} command follows the worker log and
+exits automatically on completion, pause, failure or cancellation. Interrupting
+that viewer does not signal the worker. A plain \pathcode{tail -f} viewer waits
+indefinitely after training has exited and can be stopped with Control+C.
+Evaluation separately reports and logs input verification, saved-model loading,
+every batch of original/reversed comparisons with ETA, metric computation and
+atomic report saving. For \pathcode{fit.json}, the adjacent
+\pathcode{fit.evaluation} directory retains \pathcode{evaluation.log}, detailed
+events and latest status. Completion is recorded only after the report is saved;
+interruption records cancellation and preserves a previous report. These
+progress callbacks do not change the metric definitions or the saved model.
+
 \paragraph{Runtime integration and source checks.}
 Provider settings select TF--IDF, MPNet, BioLORD or a registered trained encoder.
 The raw baseline CLI benchmarks and the UI remain distinct: the UI retains the
