@@ -36,60 +36,34 @@ Jonathan Ma \qquad Jiatong Gao\par
 {\color{muted}November 2026}
 \end{frame}
 
-\begin{frame}{The Two Main Objectives}
-We compare extracted eligibility criteria in two steps:
-\gap
-\begin{columns}[T,onlytextwidth]
-\column{.48\textwidth}
-\textbf{1. Pair Identification}
-\gap
-Which criteria could be compared?
-\begin{itemize}
-\item Extract atomic criteria from Trial A and Trial B.
-\item Search for candidate pairs by embedding (TF--IDF, MPNet or BioLORD)
-\item Human review to polish pairs
-\end{itemize}
-\column{.48\textwidth}
-\textbf{2. Relationship Comparison}
-\gap
-How do those criteria relate clinically?
-\begin{itemize}
-\item Judge equivalence, restrictiveness, overlap and other relationships.
-\item Exact tools and LLM judge/critic, with an implemented learned relationship head.
-\item Output: relationship, evidence or review.
-\end{itemize}
-\end{columns}
-\gap
-\textbf{Example (rule summaries):} A allows treated brain metastases without
-neurologic symptoms. B excludes all known brain metastases.
-\textbf{B is more restrictive}, despite high embedding similarity.
-\end{frame}
-
-\begin{frame}{End-to-end Workflow}
+\begin{frame}{Current workflow: compare two trials}
 \centering
-\resizebox{.98\textwidth}{!}{%
+\resizebox{.95\textwidth}{!}{%
   \IfFileExists{docs/figures/trial_comparison_workflow.tex}
     {\input{docs/figures/trial_comparison_workflow.tex}}
     {\input{figures/trial_comparison_workflow.tex}}%
 }
-\par\vspace{.5em}
-{\small \textbf{Current:} Use criteria from Modern AutoCrit.\\[3pt]
-\textbf{Planned:} Atomic extraction directly within TriAlign, while retaining file import.}
+\par\vspace{.55em}
+\raggedright
+\textbf{Now working:} load the frozen corpus or import extracted criteria,
+compare two trials, inspect evidence and save a review.
+\gap
+{\small TriAlign runs independently of Modern AutoCrit. Direct extraction
+inside TriAlign remains future work.}
 \end{frame}
 
-\begin{frame}{Current Dataset: Frozen and Reviewed}
-\begin{tabularx}{\textwidth}{@{}p{.28\textwidth}Y@{}}
+\begin{frame}{Data progress: the reviewed corpus is frozen}
+\begin{tabularx}{\textwidth}{@{}p{.29\textwidth}Y@{}}
 \toprule
-Data Source & Oncology and Cardiovascular Criteria via NCT API\\\midrule
-Extraction & Modern AutoCrit produces atomic criteria with structured fields, 3100 criteria total\\
-Validation & Reviewed and finalized in \texttt{trial100\_v1.xlsx}\\
-Frozen corpus & 3,537 criteria across 100 trials, stored as Parquet\\
-Evidence retained & original text, parent statements, trial IDs and source context\\\bottomrule
+Artifact & Current state\\\midrule
+Criterion corpus & \textbf{3,537 criteria across 100 trials}, replacing the proposal's preliminary extraction count.\\
+Reviewed source & \texttt{trial100\_v1.xlsx}; criterion-level review completed by the project owner.\\
+Frozen snapshot & Parquet plus a checksum manifest for reproducible inputs.\\
+Preserved evidence & Source text, parent statement, trial ID, clinical fields and context.\\\bottomrule
 \end{tabularx}
 \gap
-\textbf{What the demo loads:} select two trials from this frozen corpus, or import other extracted criterion records.
-\gap
-The demo compares existing extracted criteria. Direct extraction within TriAlign is planned. Criteria-from-protocol not added yet.
+\textbf{Important distinction:} the extraction review is complete.
+Human validation of criterion-pair labels remains in progress.
 \end{frame}
 
 \begin{frame}{Dataset Preview}
@@ -103,30 +77,50 @@ Each row retains the criterion text and parent statement alongside its role,
 clinical concept, numeric bounds, timing, qualifiers and review status.
 \end{frame}
 
-\begin{frame}{Task 1: pair identification baselines}
-\begin{columns}[T,onlytextwidth]
-\column{.48\textwidth}
-\textbf{Jiatong: baseline pair ranking}
-\begin{itemize}
-\item TF--IDF, MPNet and BioLORD score and rank candidate pairs.
-\item Cross-trial ranking with a shared neighbor format.
-\item Use the same frozen corpus of 3,537 criteria across 100 trials.
-\end{itemize}
-\column{.48\textwidth}
-\textbf{Current local demo}
-\begin{itemize}
-\item Select TF--IDF, MPNet or BioLORD in the local interface.
-\item A clinical-concept gate and one-to-one assignment select candidate pairs.
-\item Selected candidate pairs pass to Task 2 for clinical relationship comparison.
-\end{itemize}
-\end{columns}
+
+\begin{frame}{How we keep related trials out of the test set}
+\begingroup\small
+\begin{tabularx}{\textwidth}{@{}p{.20\textwidth}Y@{}}
+\toprule
+Term & Meaning in our dataset\\\midrule
+Trial family & Related registrations, such as a main study and its extension. Keep related records together to avoid learning from a near-copy of a test case.\\
+Partition & A dataset split: \textbf{68 trials for training}, \textbf{15 for validation} and \textbf{15 for testing}. Families stay in one split.\\
+Quarantine & \textbf{Two trials} have unresolved parent-study links. Exclude them from training, validation and testing until those links are resolved.\\
+Exposure log & Records cases already inspected during development or demos. The reservation list keeps 39 trials in training and two in quarantine, protecting held-out evaluation.\\\bottomrule
+\end{tabularx}
+\endgroup
 \gap
-\textbf{TriAlign model:} a shared criterion encoder supports pair identification and feeds an ordered relationship head.
+\textbf{Pair review:} 75 initial pairs plus 300 new candidates = 375 pairs.
+Of these, 370 are eligible training pairs and five historical pairs are excluded.
 \gap
-Evaluate the two tasks separately: finding the right counterparts and assigning the right relationships.
+{\small Validation/test \emph{trials} are assigned; their pair labels still need review.}
 \end{frame}
 
-\begin{frame}{TriAlign encoder architecture}
+
+
+\begin{frame}{Why these three retrieval baselines?}
+\begingroup\small
+\begin{tabularx}{\textwidth}{@{}p{.16\textwidth}p{.18\textwidth}Y@{}}
+\toprule
+Method & Representation & Why we chose it\\\midrule
+TF--IDF & \textbf{Lexical}\newline word weights & A word-overlap reference: does shared wording already find useful counterparts?\\
+\href{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}{MPNet} & \textbf{General}\newline embeddings & A general sentence-similarity model. Tests matching beyond exact words and provides our initial encoder backbone.\\
+\href{https://huggingface.co/FremyCompany/BioLORD-2023}{BioLORD} & \textbf{Biomedical}\newline embeddings & Builds on MPNet using biomedical definitions and ontology knowledge. Tests the value of clinical terminology and concept training.\\\bottomrule
+\end{tabularx}
+\endgroup
+\gap
+The two embedding models give a general-versus-biomedical comparison on a
+related backbone. Neither was chosen because it has proved best on our pairs.
+\gap
+\textbf{Saved MPNet example:} A permits treated, asymptomatic brain metastases;
+B excludes known brain metastases. High similarity finds the pair, while
+\textbf{B's blanket exclusion is more restrictive}.
+\end{frame}
+% MPNet saved neighbors: criterion-06ab6d26f6dc246c / criterion-3ec1d9bac2ed09af.
+% Clinical rules above are summaries; no trained-model quality is claimed.
+
+
+\begin{frame}{One shared model supports both tasks}
 \centering
 \begin{tikzpicture}[
  font=\footnotesize,
@@ -138,7 +132,7 @@ Evaluate the two tasks separately: finding the right counterparts and assigning 
 \node[modelbox,text width=1.7cm] (b) at (0,-.8) {Criterion B\\text + fields};
 \node[modelbox,text width=2.2cm] (encoder) at (3.1,0)
  {\textbf{Shared encoder}\\MPNet / BioLORD};
-\node[modelbox,text width=1.5cm] (vectors) at (6,0)
+\node[modelbox,text width=1.55cm] (vectors) at (6,0)
  {Normalized\\vectors\\$z_A$, $z_B$};
 \node[modelbox,text width=3cm] (rank) at (9.65,.95)
  {\textbf{1. Pair identification}\\Cosine similarity\\ranks counterparts};
@@ -150,151 +144,163 @@ Evaluate the two tasks separately: finding the right counterparts and assigning 
 \draw[flow] (vectors.east) -- (7.35,0) -- (7.35,.95) -- (rank.west);
 \draw[flow] (vectors.east) -- (7.35,0) -- (7.35,-.95) -- (head.west);
 \end{tikzpicture}
-\par\vspace{.65em}
+\par\vspace{.6em}
 \raggedright
-\textbf{Relationship input:}
-$[z_A,\ z_B,\ z_A-z_B,\ |z_A-z_B|,\ z_A\odot z_B]$.
-Keeping A/B order supports directional labels.
+\textbf{Shared encoder:} the same model reads A and B, turning each criterion
+into a numerical description that can be compared with other criteria.
 \gap
-{\small \textbf{Head:} layer normalization, 256 hidden units by default, GELU,
-dropout and scores over eight configured labels.}
+\textbf{Relationship head:} a small classifier compares those descriptions
+and their differences to propose a clinical relationship. Keeping A and B
+separate lets it identify which rule is more restrictive.
 \gap
-\textbf{Joint learning:} counterpart similarity and relationship classification.
-\gap
-{\color{wine}\textbf{Future work:} train and evaluate on human-validated pair labels.}
+{\color{wine}\textbf{Future work:} train and evaluate using human-validated pair labels.}
 \end{frame}
 
-% Completed observed run: run-1bf9d5f3619147168b389ebf77f618d4, agent-runtime-4.
-% Pregnancy pair: pair-candidate IDs and full traces retained in the saved run.
-\begin{frame}{Task 2: observed relationship comparison}
-\textbf{16/16 pairs examined: 9 supported proposals; 7 need review}
-\gap
-\begin{columns}[T,onlytextwidth]
-\column{.48\textwidth}
-\textbf{NCT01841736 · 104 criteria}
-\gap
-``Women must not be pregnant or nursing''
-\column{.48\textwidth}
-\textbf{NCT04310007 · 136 criteria}
-\gap
-``Patients must not be pregnant or breast-feeding''
-\end{columns}
-\gap
-{\Large\color{wine}\textbf{Pregnancy restrictions: proposed equivalent}}
-\gap
-Both trials exclude pregnant participants. Equivalence assumes comparable assessment at enrollment. Breastfeeding is compared separately.
-\gap
-\textbf{Unresolved example: platelets.} The critic rejected a directional label because Trial A's measurement timing was unspecified. Omitted timing does not establish a less restrictive rule.
-\gap
-{\small One demonstration run. Agent acceptance is not clinical validation; accepted labels still require review.}
-\end{frame}
 
-\begin{frame}{The two tasks in the agentic workflow}
+
+
+\begin{frame}{How the orchestrator chooses a comparison route}
 \centering
 \begin{tikzpicture}[
- font=\footnotesize,
- agentbox/.style={draw=wine!75,fill=white,rounded corners=2pt,align=center,
- text width=4.4cm,minimum height=1cm,inner sep=5pt},
+ font=\small,
+ routebox/.style={draw=wine!75,fill=white,rounded corners=2pt,align=center,
+ minimum height=1.1cm,inner sep=6pt},
  flow/.style={-{Latex[length=2mm]},draw=wine,line width=.8pt}
 ]
-\node[agentbox] (retrieve) at (0,0) {\textbf{1. Pair identification}\\Selectable baseline / TriAlign encoder};
-\node[agentbox] (plan) at (6,0) {\textbf{2. Relationship comparison}\\Planner / orchestrator};
-\node[agentbox] (exact) at (0,-1.55) {\textbf{Exact tool}\\Numeric or identical rules};
-\node[agentbox] (judge) at (6,-1.55) {\textbf{LLM judge}\\Contextual interpretation};
-\node[agentbox] (rulecritic) at (0,-3.1) {\textbf{Rule audit}\\Source and frame checks};
-\node[agentbox] (critic) at (6,-3.1) {\textbf{LLM critic}\\Blind assessment, then review};
-\draw[flow] (retrieve) -- (plan);
-\draw[flow] (plan.south) -- (6,-.78) -- (0,-.78) -- (exact.north);
-\draw[flow] (plan) -- (judge);
-\draw[flow] (exact) -- (rulecritic);
-\draw[flow] (judge) -- (critic);
+\node[routebox,text width=2.6cm] (input) at (0,0)
+ {\textbf{Candidate pair}\\A/B text\\and context};
+\node[routebox,text width=2.8cm] (check) at (4,0)
+ {\textbf{Orchestrator}\\Check sources\\Choose a route};
+\node[routebox,text width=4.6cm] (stop) at (9.1,1.6)
+ {\textbf{Source problem}\\Send for human review};
+\node[routebox,text width=4.6cm] (exact) at (9.1,0)
+ {\textbf{Supported numeric rule}\\Compare allowed values};
+\node[routebox,text width=4.6cm] (context) at (9.1,-1.6)
+ {\textbf{Context needs interpretation}\\Judge proposes; critic checks};
+\draw[flow] (input) -- (check);
+\draw[draw=wine,line width=.8pt] (check.east) -- (6.1,0);
+\draw[flow] (6.1,0) |- (stop.west);
+\draw[flow] (6.1,0) -- (exact.west);
+\draw[flow] (6.1,0) |- (context.west);
 \end{tikzpicture}
-\par\vspace{.6em}
-\textbf{Outcome:} an evidence-supported proposal or an unresolved case for human review.
-\par\vspace{.4em}
-{\small The orchestrator can request a learned relationship proposal before judge/critic review. It allows one revision, then finalizes or escalates.}
+\par\vspace{.7em}
+\raggedright
+A trained model may suggest a label for contextual review. Its suggestion
+still needs source evidence and critic review.
 \end{frame}
 
-\begin{frame}{Skills, tools and hooks give the agents boundaries}
-\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}Y@{}}
-\toprule
-Component & Role in the working system\\\midrule
-Skills & Versioned instructions for numeric comparison, clinical context and source problems. The planner selects a skill.\\
-Tools & Inspect the comparison frame, compare supported constraints and collect source citations. Only permitted tools run.\\
-Hooks & Validate inputs and exact source quotes, check limits and cancellation, and gate the final result.\\
-Orchestrator & Coordinates tool calls, judge, critic and revision within pair, call and time limits.\\\bottomrule
-\end{tabularx}
+
+
+
+
+\begin{frame}{Independent judge and critic assessments}
+\centering
+\begin{tikzpicture}[
+ font=\small,
+ rolebox/.style={draw=wine!75,fill=white,rounded corners=2pt,align=center,
+ minimum height=1.1cm,inner sep=6pt},
+ flow/.style={-{Latex[length=2mm]},draw=wine,line width=.8pt}
+]
+\node[rolebox,text width=2.6cm] (source) at (0,0)
+ {\textbf{Same sources}\\Original A/B text\\and context};
+\node[rolebox,text width=3.8cm] (judge) at (4.1,1.15)
+ {\textbf{Judge}\\Proposes a label\\with reasons and quotes};
+\node[rolebox,text width=3.8cm] (blind) at (4.1,-1.15)
+ {\textbf{Critic (blind)}\\Makes its own assessment\\No judge answer shown};
+\node[rolebox,text width=4.1cm] (review) at (9.55,0)
+ {\textbf{Critic review}\\Check both assessments\\against source evidence\\[3pt]
+ Accept, request one\\correction, or escalate};
+\draw[draw=wine,line width=.8pt] (source.east) -- (1.8,0);
+\draw[flow] (1.8,0) |- (judge.west);
+\draw[flow] (1.8,0) |- (blind.west);
+\draw[flow] (judge.east) -- (6.55,1.15) |- (review.west);
+\draw[flow] (blind.east) -- (6.55,-1.15) |- (review.west);
+\end{tikzpicture}
+\par\vspace{.65em}
+\raggedright
+\textbf{Independent first assessments:} separate requests. The critic's assessment
+is fixed before it reviews the judge's proposal.
 \gap
-\textbf{Clinician-facing output:} source excerpts, rationale, critic feedback, executed trace and saved reviewer decisions.
-\gap
-{\small The critic first assesses sources blind, then reviews the judge. Models are separately configurable; agreement is not clinical validation.}
+{\small They may use the same model and make the same mistake.
+Human review remains necessary.}
 \end{frame}
 
-\begin{frame}{Closest related methods and benchmarks}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{.19\textwidth}>{\raggedright\arraybackslash}p{.32\textwidth}Y@{}}
-\toprule
-Related work & Overlap with TriAlign & Planned comparison\\\midrule
-\href{https://aclanthology.org/2024.findings-eacl.149/}{CReSE} & Criterion embeddings and clinical relevance & Task 1: rank counterpart criteria.\\
-\href{https://arxiv.org/html/2604.02678v1}{EligMeta} & Eligibility alignment to a target trial & Task 2: compare supported criterion differences.\\
-\href{https://arxiv.org/abs/2404.04963}{NLI4CT}\newline (benchmark) & Clinical-trial entailment and contradiction & Task 2: stress-test reasoning and consistency.\\
-\href{https://arxiv.org/abs/2601.06300}{AMEND++}\newline (benchmark) & Eligibility amendment prediction and version histories & Adapt substantive edits for semantic-change tests.\\\bottomrule
-\end{tabularx}
-\gap
-{\small Planned comparisons, subject to artifact access. Native outputs differ from TriAlign's relationship labels, so matched cases or explicit adaptations are required.}
-\end{frame}
 
-\begin{frame}{Current challenges and limitations}
-\begin{itemize}
-\item Observed failures include source-quotation mismatches and unsupported timing assumptions, including in some accepted overlap proposals.
-\item Judge and critic can share mistakes. Human review remains necessary.
-\item No retrieved candidate does not prove that a requirement is absent.
-\item Family-aware partitions are frozen. Human-validated pair labels and held-out clinical evaluation remain pending.
-\item The encoder and relationship head are implemented. Validated training, baseline comparisons and uncertainty calibration are future work.
-\end{itemize}
-\gap
-The UI runs locally. Contextual model calls still need network access and have API costs and latency.
-\end{frame}
 
-\begin{frame}{Next steps before the final presentation}
-\begin{tabularx}{\textwidth}{@{}p{.25\textwidth}Y@{}}
-\toprule
-Task & Deliverable\\\midrule
-Human ground truth & Finish pair review, resolve disagreements and obtain independent second reviews.\\
-Held-out pair data & Construct and label validation/test pairs within the frozen trial-family partitions.\\
-Model training & Fine-tune the shared encoder and relationship head using human-validated training labels.\\
-Clinical evaluation & Compare pair identification and relationship prediction separately against baselines. Report class errors and abstention.\\
-Local demonstration & Refine import/review flows, measure latency and rehearse locally.\\\bottomrule
-\end{tabularx}
-\end{frame}
 
-\begin{frame}{Pair construction and family-aware sampling}
+% Saved run: run-1bf9d5f3619147168b389ebf77f618d4, November 8, agent-runtime-4.
+
+
+
+
+\begin{frame}{November 8 case: matching platelets, unresolved timing}
 \begin{columns}[T,onlytextwidth]
-\column{.46\textwidth}
-\textbf{Initial pilot: 75 cross-trial pairs}
+\column{.48\textwidth}
+\textbf{Trial A rule summary}
 \gap
-{\small
-\begin{tabularx}{\linewidth}{@{}Y r@{}}
-\toprule
-Sampling stratum & Pairs\\\midrule
-Same entity, structured differences & 25\\
-Other same-entity pairs & 25\\
-Lexical neighbors & 15\\
-Random controls & 10\\\bottomrule
-\end{tabularx}
-}
-\column{.50\textwidth}
-\textbf{Frozen family-aware partitions}
-\begin{itemize}
-\item Audited trial identity, lineage and copied criteria across 100 trials.
-\item Reserved pilot trials for development; 21 trials excluded from held-out testing.
-\item Keep linked trials together: 68 training, 15 validation, 15 test and 2 quarantined trials.
-\end{itemize}
+Platelets $\geq100{,}000$/mcL.\\
+No assessment window stated.
+\column{.48\textwidth}
+\textbf{Trial B rule summary}
+\gap
+Platelets $\geq100{,}000$/mcL, measured within two weeks before Step 1 randomization.
 \end{columns}
 \gap
-\textbf{Current review:} 375 pairs in the workbook, including the initial pilot.
-Human validation remains in progress.
+\begin{enumerate}
+\item The judge proposed \textbf{B more restrictive}.
+\item The blind critic initially agreed with that label.
+\item Final critic review rejected their shared assumption: missing timing in
+A does not prove that A permits a result from any time.
+\end{enumerate}
 \gap
-{\small \textbf{Next sampling:} build separate validation/test review packets using same-concept and baseline-ranked candidates, difficult scope/negation cases and random controls.}
+\textbf{Final outcome: human review.} Source evidence must establish a shared
+assessment frame before claiming one allowed population contains the other.
+\gap
+{\small Limitation: a critic-accepted bilirubin explanation in the same run also
+used unstated timing assumptions. Accepted explanations still need adjudication.}
 \end{frame}
+
+
+
+
+
+
+\begin{frame}{Public benchmarks: what each would actually test}
+\begingroup\small
+\begin{tabularx}{\textwidth}{@{}p{.18\textwidth}p{.30\textwidth}Y@{}}
+\toprule
+Resource & Native task & Planned comparison\\\midrule
+\href{https://aclanthology.org/2024.semeval-1.271/}{NLI4CT-P}\newline SemEval 2024 & Does clinical-trial evidence support or contradict a statement? & Auxiliary judge/critic test on eligibility cases, using native NLI labels and F1. An adapter is still needed.\\
+\href{https://aclanthology.org/2024.findings-eacl.149/}{CReSE} & Recommend eligibility criteria from trial information. & Potential eligibility-specific embedding baseline on our retrieval pool, if its artifacts are reproducible.\\
+\href{https://arxiv.org/abs/2604.02678}{EligMeta} & Eligibility-aware trial discovery and meta-analysis. & Compare alignment and exception handling on matched cases. Requires an adapter to our task.\\\bottomrule
+\end{tabularx}
+\endgroup
+\gap
+\textbf{AMEND++ is deferred:} it predicts future amendments rather than pair relationships.
+\gap
+{\small These resources do not directly provide our eight-class labels. Compare
+published scores only when tasks, inputs and splits match.}
+\end{frame}
+
+\begin{frame}{Future work after the labeling gate}
+\begin{itemize}
+\item Train the shared encoder and relationship head on approved labels;
+select settings using validation data.
+\item Run matched retrieval, relationship and agent comparisons on held-out cases.
+\item Tune abstention or calibration on validation data and report class errors,
+missed counterparts and reviewer corrections.
+\item Rehearse source-backed cases in the working local UI.
+\end{itemize}
+\gap
+\textbf{Longer term:} direct extraction within TriAlign and comparison of
+whole requirement groups when extractors split the same rule differently.
+\gap
+{\small These extensions remain research work, rather than demonstrated contributions.}
+\end{frame}
+
+
+
+
+
 
 \end{document}

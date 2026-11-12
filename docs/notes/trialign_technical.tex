@@ -35,7 +35,7 @@
   \large An Agent for Clinically Meaningful Comparison of Eligibility Criteria\\
   \normalsize Architecture, Dataset, Pair Semantics, Interface Concepts, and Research Notes}
 \author{Jonathan Ma \and Jiatong Gao}
-\date{Revised November 9, 2026}
+\date{Revised November 12, 2026}
 
 \begin{document}
 \maketitle
@@ -46,9 +46,14 @@ representations and contextual reasoning. This document defines what constitutes
 how source evidence and normalization are retained, how an agent selects and
 reconciles comparison tools, and how a clinician could inspect and correct a
 result. The frozen criterion release contains 3,537 records from 100 trials.
-The first development pair-review release preserves 75 decisions, including
-67 clean comparisons and eight queued cases. A functional local comparison interface and bounded agent runtime are implemented.
-Fine-tuned models and independent clinical evaluation remain subsequent deliverables.
+The current labeling workbook contains 375 candidate pairs, including the
+initial 75-pair development pilot. Criterion review does not approve pair
+labels. A functional local interface, bounded agent runtime, shared encoder
+and ordered relationship head are implemented. An unvalidated draft-label
+training pilot exercised the model pipeline. Human-validated training,
+held-out clinical evaluation and uncertainty calibration remain future work.
+Section~\ref{sec:finalizedworkflow} states the finalized workflow to implement
+and the status distinctions that govern the rest of this document.
 \end{abstract}
 
 \newpage
@@ -57,6 +62,42 @@ Fine-tuned models and independent clinical evaluation remain subsequent delivera
 
 \section{Motivation}
 \label{sec:motivation}
+
+\subsection{Finalized workflow to implement}
+\label{sec:finalizedworkflow}
+\textbf{Finalized workflow, November 10, 2026.} This table is the governing
+specification for implementation and subsequent presentation revisions.
+``Finalized'' selects the workflow and terminology; it does not claim that
+future functionality or clinical validation is complete. The final column
+records presentation conflicts and the alignment required when the slides
+are edited. This revision reconciles the technical text below. The subsequent November 10
+progress-deck revision applies the presentation alignment; slide numbers in
+the conflict log refer to the pre-revision deck. Dated pilot records and
+immutable annotation contracts retain their historical context.
+
+\begingroup\small
+\begin{longtable}{L{.15\linewidth}L{.40\linewidth}L{.36\linewidth}}
+\toprule Topic & Current interpretation & Conflict to address later\\\midrule
+\endhead
+Extraction & TriAlign currently accepts extracted criteria. Modern AutoCrit is one upstream source; direct extraction within TriAlign is future work. & Progress slide 2 lists extracting atomic criteria under pair identification. This contradicts its workflow slide and the finalized extraction boundary.\\
+Pair identification & TF--IDF provides lexical ranking; MPNet and BioLORD provide embedding-based ranking. & Calling all three ``embeddings'' is inaccurate. Human pair labeling is an offline training activity, distinct from automated candidate identification.\\
+Model architecture & \textbf{One shared encoder with two objectives:} cosine similarity supports candidate ranking, and an ordered relationship head predicts relationships. & Avoid describing two independently trained models or implying a separate learned retrieval-classification head already exists.\\
+Orchestrator & Candidate identification supplies pairs. The orchestrator then coordinates exact tools, optional learned proposals, judge/critic review and escalation. & The proposal's three-route diagram can make retrieval appear interchangeable with relationship reasoning.\\
+Data & \textbf{3,537 reviewed criteria across 100 trials.} Pair-label review is a separate process. & The proposal's 3,145 and progress slide 4's ``3,100 criteria total'' are historical counts, not the current corpus size.\\
+Training and uncertainty & Architecture and training infrastructure are implemented. Human-validated training, held-out evaluation and calibration remain future work. & The proposal promises calibrated uncertainty; that capability has not been established. Earlier blanket statements that no custom model had been trained are superseded by the explicitly unvalidated pilot.\\
+Partitions & \textbf{68 training, 15 validation, 15 test and 2 quarantined trials.} Held-out pair labels still need construction and review. & Progress slide 14's ``21 trials excluded'' describes an earlier audit stage. The current exposure ledger records 41 reserved trials: 39 forced into training and 2 quarantined.\\
+Evaluation & Evaluate candidate retrieval and relationship prediction separately. The frozen retrieval contract prioritizes pooled Precision@5 and nDCG@5. & The proposal's broad recall/MRR plan must not imply that reviewing retrieved candidates alone establishes corpus-wide recall.\\\bottomrule
+\end{longtable}
+\endgroup
+
+The online sequence is imported criterion records, candidate identification,
+then relationship comparison with source checks and orchestrated review.
+Offline reviewers label candidate pairs, release approved supervision and
+train/evaluate versioned models. Review does not silently retrain the running
+application. High-similarity counterparts can be stricter or disjoint:
+retrieval should surface useful comparisons while Task 2 explains their
+different eligibility meaning. No draft-label pilot metric establishes
+clinical performance.
 
 \subsection{The Clinical Problem}
 An eligibility criterion determines what characteristics a patient must have to be included in a clinical trial.
@@ -84,9 +125,10 @@ sites, ascertainment practices, and treatment settings may differ.
 
 \subsection{Trial comparison workflow}
 \label{sec:trialworkflow}
-The clinician selects two trials, uses Modern AutoCrit to extract and
-structure their eligibility criteria, reviews the extracted records, and
-imports the resulting criteria files into TriAlign. TriAlign is intended to
+The clinician selects two trials and imports their extracted criterion
+records into TriAlign. Modern AutoCrit is one supported upstream source;
+another compatible extractor or prepared file can supply the same handoff.
+TriAlign requires no Modern AutoCrit installation. TriAlign is intended to
 align comparable requirements and display their relationships, differences,
 source evidence, unresolved cases and requirements without a supported
 match. Figure~\ref{fig:trialworkflow} is the same diagram used in the progress
@@ -104,8 +146,9 @@ presentation.
 \caption{Intended workflow: a clinician compares two trials through
 source-grounded criterion comparisons. A relationship between two rules
 does not establish a relationship between the complete trial populations.
-Candidate-pair identification and the local comparison interface are implemented;
-trained components and direct extraction integration remain planned.}
+Candidate identification, the local interface and learned-model integration
+are implemented. Training on human-validated labels and direct extraction
+integration remain future work.}
 \label{fig:trialworkflow}
 \end{figure}
 
@@ -129,10 +172,10 @@ demo; TriAlign also runs independently on imported criterion records. Extraction
 pair identification and relationship comparison are distinct operations.
 
 \begin{longtable}{L{.20\linewidth}L{.36\linewidth}L{.35\linewidth}}
-\toprule Task & Question and output & Current and planned methods\\\midrule
+\toprule Task & Question and output & Implemented methods and validation status\\\midrule
 \endhead
-1. Pair identification & Which criteria across Trial A and Trial B should be compared? Output ranked candidate pairs with source IDs. & TF--IDF plus entity priority in the current demo; Jiatong's TF--IDF, MPNet and BioLORD backends establish baseline pair-similarity rankings. A trained clinical encoder is planned.\\
-2. Relationship comparison & How do a selected pair's allowed populations relate? Output a directional/categorical relationship, evidence and uncertainty or an unresolved review disposition. & Exact tools and contextual LLM judge/critic in the current demo. An ordered relationship head attached to the trained encoder is planned.\\\bottomrule
+1. Pair identification & Which criteria across Trial A and Trial B should be compared? Output ranked candidate pairs with source IDs. & Selectable TF--IDF, MPNet and BioLORD baselines. The UI adds a clinical-concept gate and one-to-one assignment. The shared TriAlign encoder is implemented; a draft artifact is available only through backend test mode.\\
+2. Relationship comparison & How do a selected pair's allowed populations relate? Output a directional/categorical relationship, evidence and uncertainty or an unresolved review disposition. & Exact tools, contextual judge/critic and optional ordered-head proposals are implemented. Human-validated model training and independent clinical evaluation remain future work.\\\bottomrule
 \end{longtable}
 
 For example, Task 1 identifies ``age at least 18'' and ``age at least 21'' as
@@ -162,24 +205,25 @@ work is part of Task 1 and remains required for evaluating an improved encoder.
 When a user supplies exactly two criteria, Task 1 is already supplied and only
 Task 2 needs to run; the trial-versus-trial interface requires both tasks.
 
-\paragraph{Planned model and orchestrator responsibilities.}
-The intended trained TriAlign model supports \textbf{both pair identification
+\paragraph{Finalized model and orchestrator responsibilities.}
+The implemented TriAlign model supports \textbf{both pair identification
 and relationship comparison}. A shared encoder embeds individual criteria so
 candidate counterparts can be ranked. An ordered relationship head consumes
-the two criterion representations and approved input features to predict their
+the two criterion representations and their ordered interactions to predict their
 relationship. These are two learning objectives within one model system;
-they do not require two independently trained encoders. Training may begin
-with a frozen encoder and a trained head, followed by joint encoder/head
-fine-tuning if the labeled data support it. No custom model has been trained yet.
+they do not require two independently trained encoders. The training path
+supports joint encoder/head fine-tuning and an optional frozen-encoder
+ablation. A draft-label pilot has run; it does not replace approved human
+supervision, validation-based selection or held-out evaluation.
 
 The orchestrator coordinates these capabilities as tools. It requests candidate
 pairs, routes supported comparisons to exact tools, invokes learned relationship
 predictions and contextual judge/critic review when appropriate, and reconciles
 evidence or escalates unresolved cases. It does not itself learn the embedding
 space or replace the relationship classifier. Candidate generation precedes
-pair-specific routing in the proposal. A second explicit relevance-classification
-head is an optional experiment; the planned pair-identification output already
-comes from encoder similarity and ranking. A pair classifier alone would still
+pair-specific routing. The finalized pair-identification output comes from
+encoder similarity and ranking; no separate learned relevance-classification
+head is required or implemented. A pair classifier alone would still
 need candidate generation for efficient large-corpus search.
 
 The same reviewed pair supplies separate supervision: its relevance judgment
@@ -211,13 +255,14 @@ cosine score therefore cannot, by itself, select a directional label or prove
 equivalence.
 
 \subsection{Research questions and hypotheses}
-Three questions we.re interested in are:
+The current research questions are:
 \begin{enumerate}
-\item Which phenomena produce false-high similarity for clinically different
-rules, or false-low similarity for equivalent rules, in general and biomedical
-encoders?
-\item Does supervision from reviewed positives, ordinary negatives, hard
-negatives, and ordered anchors improve held-out retrieval and relationship
+\item Which phenomena cause missed counterparts or misleading equivalence
+interpretations in general and biomedical encoders? A highly similar stricter
+or conflicting counterpart is a useful retrieval result, not automatically a
+retrieval error.
+\item Does supervision from reviewed counterpart relevance and clinical
+relationships improve held-out retrieval and relationship
 prediction?
 \item Does selective tool routing improve evidence support, calibration,
 reviewer effort, latency, or cost relative to an LLM-only judge and an
@@ -456,10 +501,9 @@ Evaluation control & Family/group IDs, split, annotation-guide version, duplicat
 
 JM owns pair definitions, construction, labeling, adjudication, and evaluation
 changes. JG consumes the approved development records for software and model
-work and does not redefine gold labels to fit outputs. Independent second
-annotation of a documented subset is desirable; if a second reviewer is
-available, preserve the initial disagreement and JM's adjudication rather
-than reporting only the consensus. The guide should be piloted and revised
+work and does not redefine gold labels to fit outputs. Independent human second review is required for at least 20\% of released
+training pairs and every held-out judgment. Preserve initial disagreements
+and final adjudication rather than reporting only consensus. The guide should be piloted and revised
 before the held-out benchmark is locked. Model suggestions and similarity
 scores should be hidden during an independent gold-labeling round where
 feasible, reducing anchoring on the method being evaluated.
@@ -467,10 +511,11 @@ feasible, reducing anchoring on the method being evaluated.
 \subsection{Family splits and pair sampling}
 Map trials to families before candidate generation. Related protocols,
 amendments, template-derived duplicates, and constructed variants must stay
-in one partition. A 70/15/15 family allocation is a starting configuration,
-not a guarantee of balanced criteria or relationship classes. Audit the
-actual family counts, oncology/cardiovascular composition, domains, and
-pair opportunities; record a fixed seed and the complete mapping.
+in one partition. The frozen v1 allocation is 68 training, 15 validation,
+15 test and 2 quarantined trials/groups, using seed 20261011. These group
+allocations do not guarantee balanced criterion counts or relationship
+classes. Section~\ref{sec:partitionrelease} governs the mapping, exposures
+and cohort counts; do not resplit after inspecting outcomes.
 Missing split assignments must cause a pair-generation failure or explicit
 rejection, not silent inclusion in the known side's partition.
 
@@ -498,7 +543,7 @@ restrictive labels. Predictions, random-control membership and structured
 differences never supply gold labels.
 
 \textbf{Development reservation before final splitting.} Family mappings
-had not yet been audited when the pilot was constructed. The initial pilot therefore reserves twenty
+had not yet been audited when the pilot was constructed. The initial pilot therefore reserved twenty
 seed-selected trials for development rather than claiming a leakage-resistant
 train/test split. All reserved trials, and any related families discovered
 later, must be excluded from the final held-out test set. Merely inspecting
@@ -512,8 +557,9 @@ it is not the source of this pilot or an approved final split contract.
 \begin{verbatim}
 python scripts/build_pair_pilot.py
 \end{verbatim}
-That builder is absent from the current checkout and must be restored before
-resampling. At construction it verified the frozen Parquet hash and checked unique
+That original builder is absent from the current checkout. Its description
+here is historical; current review expansion uses the sampling workflow in
+Section~\ref{sec:reviewsampling}. At construction it verified the frozen Parquet hash and checked unique
 IDs and reviewed statuses. Seed 20261104 selects the development pool and
 presentation order. The output is
 \pathcode{data/processed/pair_pilot_v1/}; an existing directory is rejected
@@ -575,16 +621,13 @@ Clinical-family membership and participant-overlap split groups are recorded
 separately. Full methods and source evidence are in
 Appendix~\ref{sec:familyaudit}.
 
-Unnamed linked studies for the master-screening trial NCT05419375 and
-rollover trial NCT07172919 remain unresolved. Retaining their conservative
-exclusions together with the pilot reservations excludes 21 current trials
-and 841 criteria from final held-out testing. No final partition assignments
-have been created. A scale-up split artifact must consume both
-\pathcode{split_group_by_trial} and
-\pathcode{holdout_excluded_trial_ids} from
-\pathcode{data/processed/family_audit_v1/family_mapping.json}.
-The current generic split CLI does not enforce this map or reservations;
-integrate and validate that contract before mining a larger benchmark.
+The two unresolved-parent studies NCT05419375 and NCT07172919 are
+quarantined. The initial audit's 21-trial exclusion count is historical.
+The finalized exposure ledger reserves 41 current trials: 39 forced into
+training and 2 quarantined. Final family-aware partitions are frozen in
+Section~\ref{sec:partitionrelease}. Candidate construction and approved
+training consume that release; the generic random-split utility does not
+replace it.
 
 \section{Agentic Architecture}
 \label{sec:agent}
@@ -606,7 +649,7 @@ release rather than silently changing a running model.
 \node[box](gate) at (4,0) {Validation, context\\and comparability gates};
 \node[box](router) at (8,0) {2. Relationship\\comparison: route};
 \node[box](exact) at (0,-2.1) {Exact comparison\\supported fragment};
-\node[box](encoder) at (4,-2.1) {Relationship head\\(planned)};
+\node[box](encoder) at (4,-2.1) {Optional learned\\relationship proposal};
 \node[box](llm) at (8,-2.1) {Contextual judge\\and independent critic};
 \node[box,text width=46mm](reconcile) at (4,-4.2) {Reconcile evidence, conflicts,\\uncertainty and stopping rules};
 \node[box,text width=46mm](output) at (4,-5.9) {Relationship + evidence + trace\\or review / abstention};
@@ -615,12 +658,13 @@ release rather than silently changing a running model.
 \draw[arrow](router.south)--++(0,-.45)-|(encoder.north);
 \draw[arrow](router)--(llm);
 \draw[arrow](exact.south)|-(reconcile.west);
-\draw[arrow](encoder)--(reconcile);\draw[arrow](llm.south)|-(reconcile.east);
+\draw[arrow](encoder)--(llm);\draw[arrow](llm.south)|-(reconcile.east);
 \draw[arrow](reconcile)--(output);
 \end{tikzpicture}
-\caption{Proposed runtime. Task 1 supplies candidate pairs; the remaining
-routes perform Task 2, relationship comparison. Routing selects the required reasoning. A route can use several tools without
-making every request execute the same fixed chain.}
+\caption{Finalized runtime workflow. Task 1 supplies candidate pairs before
+pair-specific routing. Exact comparisons can produce supported proposals;
+optional learned proposals feed contextual judge/critic review. Source checks
+and reconciliation determine a supported result or human review.}
 \end{figure}
 
 The input contract contains the two records, necessary parent evidence,
@@ -631,10 +675,11 @@ requires-context flag. Scores must identify their meaning: cosine similarity,
 uncalibrated classifier score, calibrated probability, or a deterministic
 logical result are different objects.
 
-The initial router can be a transparent rule policy. Numerical records with
-matching supported quantity/context signatures may enter the exact route;
-large candidate searches use the encoder; exceptions, ambiguous history,
-measurement incompatibility, and unresolved scope invoke contextual review.
+The implemented router is a transparent rule policy. Candidate ranking
+already precedes pair routing. Numerical records with supported matching
+quantity/context signatures may enter the exact route. Other eligible cases
+can receive an optional learned proposal and contextual judge/critic review;
+source problems and unsupported scope trigger escalation.
 A learned routing policy is a later experiment requiring its own labels and
 cost/quality evaluation, not a prerequisite for an auditable prototype.
 
@@ -710,14 +755,14 @@ Encoding E as an independent exclusion reverses its role. Internal negation,
 categorical absence, and exclusion type must be reconciled once, explicitly.
 
 \subsubsection{Current implementation boundary}
-The repository contains a starter interval comparator and deterministic-first
-orchestrator. They are scaffolding for this specification. The current
-comparator does not implement proper-subset direction, complete
-inclusion/exclusion set semantics, or all of the context/reference gates
-above. Its hard-coded confidence values are not calibrated probabilities.
-The exact-route acceptance suite should therefore include boundary,
-containment, complement, scope, unit, reference, and temporal cases before
-the route is described as clinically reliable.
+The active exact path is \pathcode{src/trialign/tools/structured.py}, invoked
+through the closed tool registry and deterministic-first orchestrator. It
+implements supported interval containment/disjointness, inclusion/exclusion
+set handling, source/frame gates and selected categorical checks. It does
+not establish arbitrary clinical ontology, Boolean or temporal equivalence.
+The source-scope checks and constructed harness exercise implemented guards;
+they are not independent clinical validation. An exact-route indicator is a
+logical tool disposition, not a calibrated probability.
 
 \subsection{The Encoder Model}
 \label{sec:encoder}
@@ -738,7 +783,7 @@ comparators, units, negation, timing, reference basis, eligibility role, and
 necessary qualifiers in a structured rendering. Never include gold labels,
 reviewer rationales that reveal them, or held-out annotation metadata.
 
-The planned general baseline is
+The current general baseline is
 \pathcode{sentence-transformers/all-mpnet-base-v2}; its model card describes
 a 768-dimensional sentence representation and default truncation beyond 384
 word pieces \cite{mpnet}. The biomedical baseline is
@@ -753,46 +798,62 @@ Every experiment declares its permitted candidate partition. Cache keys
 include corpus hash, serializer version, model revision, and inference
 configuration. A cached embedding matrix is invalid when any of these changes.
 
+\paragraph{Why MPNet and BioLORD are the embedding baselines.}
+MPNet provides a general sentence-similarity reference trained on broad
+sentence-pair data. BioLORD-2023 builds on that MPNet model and adds biomedical
+definitions and ontology-derived descriptions \cite{mpnet,biolord}. This
+provides a useful general-versus-biomedical comparison on a related backbone;
+it does not isolate domain training as the only difference between releases.
+TF--IDF remains the lexical word-overlap reference. None of these choices
+establishes a winner on the project's criterion pairs before relevance
+annotation and matched evaluation.
+
 \subsubsection{Directional relationship head}
-A shared encoder with cosine similarity cannot distinguish A-more-restrictive
-from B-more-restrictive. A proposed ordered head uses
+Cosine similarity is symmetric and cannot distinguish A-more-restrictive
+from B-more-restrictive. The implemented ordered head uses
 \[
- h_{AB}=[z_A;z_B;z_A-z_B;|z_A-z_B|;z_A\odot z_B;\phi(A,B)],\qquad
- p(y\mid A,B)=\operatorname{softmax}(g_{\psi}(h_{AB})),
+ h_{AB}=[z_A;z_B;z_A-z_B;|z_A-z_B|;z_A\odot z_B],\qquad
+ p(y\mid A,B)=\operatorname{softmax}(g_{\psi}(h_{AB})).
 \]
-where $\phi$ contains approved structured differences and missingness flags.
-This is a proposed feature design, not a selected final architecture.
-Compare a simple frozen-embedding classifier against encoder fine-tuning
-before adding complexity. Structural features must be derived from the input,
-not gold adjudications. A high classifier score does not authorize ignoring
-failed comparability gates.
+The head applies layer normalization, a configurable hidden layer (256 units
+by default), GELU, dropout and eight label logits. Structured clinical fields
+enter the versioned criterion serializer, not an additional pair-feature
+vector. A separately engineered structured-difference vector is outside the
+finalized current architecture. Model scores remain uncalibrated proposals;
+source failures or failed comparability gates cannot be overridden by a high
+classifier score. Frozen-encoder/head-only training is a supported ablation.
 
 \subsubsection{Supervision and training objectives}
-Training data may contain equivalences, ordinary negatives, hard negatives,
-and ordered anchors. For pair identification, a hard negative is a reviewed
-superficially similar pair addressing different eligibility questions.
-Same-question differences in polarity, boundaries, timing or exceptions are
-relationship contrasts; they are not automatically retrieval negatives.
-Never declare an unlabeled pair negative. Restrictive, overlapping and
-conflicting counterparts can remain retrieval positives; treating every
-non-equivalent pair as maximally distant would damage useful retrieval geometry.
+Each approved pair has separate relevance and relationship supervision.
+Direct counterparts are relevance positives even when their relationship is
+stricter, overlapping or conflicting. Explicitly unrelated pairs are negatives.
+Related-topic pairs receive zero negative weight by default; an alternative
+weight is a declared training experiment. Uncertain relevance and
+source-blocked judgments are masked, never silently made negative.
 
-One training option is a supervised contrastive loss on justified positives,
-an ordered classification loss, and a diagnostic ordering loss:
+The implemented shared-encoder objective combines a masked cosine-margin
+loss and masked relationship cross-entropy:
 \[
- \mathcal L=\lambda_{\rm con}\mathcal L_{\rm con}
- +\lambda_{\rm cls}\mathcal L_{\rm CE}
- +\lambda_{\rm ord}\max\{0,m-s(a,p)+s(a,n)\}
- +\lambda_{\rm swap}\mathcal L_{\rm swap}.
+ \mathcal L=\lambda_{\rm pair}\mathcal L_{\rm margin}
+          +\lambda_{\rm cls}\mathcal L_{\rm CE},
+ \qquad
+ \mathcal L_{\rm margin}=
+ \frac{\sum_i\left[m_i^+(\tau_+-s_i)_+^2+
+                       m_i^-(s_i-\tau_-)_+^2\right]}
+      {\max\{1,\sum_i(m_i^++m_i^-)\}}.
 \]
-Here $(a,p,n)$ is an explicitly reviewed relative-similarity triple, not an
-ordering inferred from restrictiveness alone. The swap term penalizes a
-failure to reverse directional labels while preserving symmetric ones.
-Loss weights, margin, negative sampling, early stopping, and class weighting
-are selected on development data. Report learning curves and at least three
-training seeds for the final trained comparison. If supervision is inadequate
-or no improvement is observed, retain the strongest frozen model and report
-the result.
+Here $s_i$ is cosine similarity, $m_i^+$ and $m_i^-$ are the applicable
+positive/negative masks or weights, and $(x)_+=\max(0,x)$. Default margins
+are $\tau_+=1$ and $\tau_-=0.2$. Relationship loss uses only supported,
+source-clean labels; ambiguous source meaning is masked. Training-only A/B
+swap augmentation reverses the two restrictive labels and preserves
+symmetric labels. Dedicated triplet/anchor and swap-consistency losses are
+not implemented requirements of this workflow.
+
+Select loss weights, margins, encoder freezing and stopping policies on
+human-validated development data. Final model comparisons should include
+multiple declared seeds and the frozen-encoder baseline. The draft-label
+pilot is an execution experiment, not evidence of clinical improvement.
 
 \subsubsection{Retraining procedure and release checklist}
 \label{sec:retraining}
@@ -862,10 +923,11 @@ before selecting it as the default. Publication credentials stay outside
 the configuration and model package.
 \end{enumerate}
 
-Training duration is not yet measured. Estimate it from the smoke run's
-steps per epoch, planned epochs and validation cost; report actual elapsed
-time and peak memory with the resulting release. Model training and demo
-inference may use different machines without requiring a hosted website.
+The draft-label pilot completed locally; its active runtime and configuration
+are recorded in \pathcode{docs/logging/full_data_pilot_v1}. This is not a
+training-time guarantee for another dataset or machine. Estimate resources
+for each approved experiment from a short run, then retain actual elapsed
+time, hardware and effective settings.
 
 \subsubsection{Implemented model pipeline and tunable parameters: November 9}
 \label{sec:implementedlearning}
@@ -881,8 +943,8 @@ clinical results.
 and an ordered eight-logit relationship head. Pair identification ranks unit
 embeddings by cosine similarity. The head consumes
 \( [z_A;z_B;z_A-z_B;|z_A-z_B|;z_A\odot z_B] \), followed by layer normalization,
-a configurable hidden layer, GELU, dropout and the label layer. The additional
-structured-difference vector proposed earlier is not yet implemented. The
+a configurable hidden layer, GELU, dropout and the label layer. No additional
+structured-difference vector is part of the implemented head. The
 \pathcode{criterion-v1} input rendering includes the selected entity, role,
 comparator/value, bounds and inclusivity, reference basis, atom position,
 source, parent/context, negation, time, qualifier, Boolean operator and unit;
@@ -897,8 +959,8 @@ default, configurable as an experiment. Uncertain/source-blocked targets have
 zero weight. A separately weighted cross-entropy loss trains supported
 relationship labels; ambiguous source meaning is masked rather than forced
 into a semantic target. Optional training-only A/B swapping reverses directional
-labels and retains symmetric labels. This is augmentation, not the dedicated
-swap-consistency or anchor-triple losses proposed above.
+labels and retains symmetric labels. This augmentation is the implemented direction-consistency training
+mechanism; no dedicated swap-consistency or anchor-triple loss is claimed.
 
 \paragraph{Human labels and immutable releases.}
 \pathcode{annotations-check} reads the workbook without changing it. It verifies
@@ -918,9 +980,10 @@ pairs requires at least 74 independently double-reviewed training pairs; the
 60 preselected slots cover the new batch only. This is a release requirement,
 not a claim that the assistant second pass satisfies it.
 
-The present working workbook has zero approved release rows while its reviewer
-identities remain assistant drafts. Reviewed validation labels must also be
-prepared before real model training. Additional immutable construction packets
+The current draft workbook is not an approved human-label release. Actual
+human review and a versioned release are required for validated training.
+Held-out validation/test pair labels still need construction and review; the
+present 370 eligible pairs are training-only. Additional immutable construction packets
 can be registered through repeatable \pathcode{--packet} options. The importer
 does not silently create evaluation pairs or relabel uncertain evidence negative.
 
@@ -1379,7 +1442,7 @@ storage, and replay mode. Check credentials and connectivity only for the
 optional online route; stored source excerpts remain available locally even
 when registry links cannot be opened. The current local browser application implements the comparison workspace described below; larger visual analytics remain exploratory.
 
-\subsection{Implemented local agent runtime: November 7 update}
+\subsection{Implemented local agent runtime}
 \label{sec:workingruntime}
 \textbf{Operational prototype.} The application now compares two selected trials
 from the checksum-verified frozen corpus, or reviewed imported criterion files.
@@ -1389,9 +1452,10 @@ Each criterion ID can occur in at most one selected pair per run; unmatched
 criteria are permitted. TF--IDF scores use the selected entity and source,
 excluding shared parent paragraphs, and rank only eligible counterparts.
 Rankings and assignments propose comparisons; they do not determine clinical
-relationships. The temporary encoder is explicitly identified as
-TF--IDF. A compatible encoder factory can replace it later; no trained
-relationship head is fabricated. MPNet/BioLORD baseline CLI commands are merged into main.
+relationships. TF--IDF is the lexical default. MPNet and BioLORD are selectable pinned
+baselines, and the shared TriAlign encoder/head interface is implemented.
+A draft-trained artifact requires explicit backend test mode; it is not
+a validated clinical model. All three baseline CLI backends are integrated.
 The November 9 integration also exposes those pinned dense encoders in Provider
 settings, retaining the same clinical gate and one-to-one assignment. A registered
 trained artifact can supply embeddings and an ordered relationship tool.
@@ -1623,9 +1687,9 @@ Both roles' requested model IDs are logged, and the settings dialog displays
 them separately. Isolation of initial input contexts prevents direct anchoring
 on the judge's answer; it does not guarantee statistically independent errors
 or correct clinical interpretation. Using different models is possible but
-also does not establish independent clinical validation. A fresh live run of
-this updated workflow is pending; earlier saved examples remain historical
-results and must not be presented as outputs of the blind-critic workflow.
+also does not establish independent clinical validation. Saved run/version
+metadata determine which workflow produced each example. Older runs must not
+be presented as blind-critic outputs when their recorded version predates it.
 The earlier pregnancy judgment cited unresolved equivalence of nursing and
 lactation and the negation scope in the compressed OR phrase; the displayed
 lactation judgment used a synonym interpretation. This discrepancy requires
@@ -1772,8 +1836,10 @@ Pool candidate judgments across the proposed baselines so one encoder does
 not determine the entire benchmark. Report judgment coverage, label counts,
 sampling strata, and the number of queries with known relevant candidates.
 Unjudged items are not automatically negatives. If the candidate pool is
-incompletely judged, call recall relative to that judged pool and disclose
-that it is not exhaustive corpus-wide recall.
+incompletely judged, report coverage and supported bounds under
+Section~\ref{sec:relevancecontract}. The finalized primary metrics are pooled
+Precision@5 and graded pooled nDCG@5. Reviewing only retrieved candidates
+does not establish an exhaustive relevant set or corpus-wide recall.
 
 \Needspace{12\baselineskip}
 \subsection{Task 1: Baseline Pair Identification and Embedding Comparisons}
@@ -1828,6 +1894,21 @@ data access and license, and possible source-trial overlap. Determine whether
 rephrasing preserves strict comparators, exclusion roles, and exceptions.
 Exit artifact: an availability/reproduction note and, only if feasible, a
 matched retrieval result.
+
+\subsubsection{NLI4CT-P: auxiliary public reasoning benchmark}
+\research\ The SemEval-2024 task provides clinical-trial reports and statements
+labeled for entailment or contradiction, including an eligibility section
+and perturbed cases \cite{nli4ct2024}. This is a proposed auxiliary evaluation
+of judge/critic reasoning using native NLI labels. A task-specific adapter
+and an eligibility-subset protocol are still needed. Compare judge-only and
+judge/critic on the same inputs and report native-task F1; any published
+headline score requires the same task, split and denominator for a fair
+comparison. The dataset does not directly provide TriAlign's eight relationship
+labels, so its native results cannot substitute for the primary human-adjudicated
+TriAlign pair benchmark. CReSE remains a conditional representation comparator
+on our retrieval pool, and EligMeta requires matched-case adaptation.
+AMEND++ predicts future amendments and is deferred to later change-analysis
+research rather than treated as a direct pair-relationship benchmark.
 
 \subsubsection{TrialGPT: patient-to-trial matching}
 \research\ The official repository describes retrieval, criterion-level
@@ -1952,7 +2033,7 @@ resolved subset and compare that number to full-coverage models.
 \begin{longtable}{L{.22\linewidth}L{.40\linewidth}L{.29\linewidth}}
 \toprule Evaluation target & Measures & Interpretation controls\\\midrule
 \endhead
-Retrieval & Precision/recall@$k$, MRR, equivalence-specific retrieval, reviewed anchor ordering. & State relevance definition, candidate/judgment pool, query denominator and judgment coverage.\\
+Retrieval & Primary pooled Precision@5 and secondary pooled nDCG@5, with coverage/bounds and paired group-bootstrap intervals. & Use the frozen relevance contract, shared queries and judged candidate union. Recall/MRR require a separately justified relevant-set design.\\
 Pair relationships & Eight-class macro-F1, per-class precision/recall, confusion matrix, directional F1 and swap consistency. & Keep class imbalance and asymmetric labels visible; report abstentions separately.\\
 Clinical phenomena & Error counts/rates for thresholds, negation, units/references, timing, repetition, history, exceptions and compounds. & Give numerator/denominator and account for multi-tag cases.\\
 Uncertainty & Calibration diagrams, Brier score where probabilities are defined, risk--coverage, inappropriate automatic acceptance, escalation/abstention errors. & Calibrate on development data; model self-report is not validated probability.\\
@@ -1983,15 +2064,15 @@ failure, and a necessary abstention alongside successes.
 \label{sec:delivery}
 
 \subsection{Repository boundary and work ownership}
-The repository currently provides criterion/pair schemas, workbook and
-Parquet adapters, candidate generation, family-splitting utilities, a TF--IDF
-runner, a lazy Sentence Transformers wrapper, a starter exact comparator, a
-deterministic-first orchestrator, and a functional local browser review application (runtime update below).
-These interfaces do not establish that fine-tuning, contextual judging,
-calibration, full family-aware command-line splitting, or the proposed UI
-have been implemented. The pair generator's unordered ID and the
-split/comparator integration must be reconciled with this specification
-before benchmark production.
+The repository implements criterion/pair schemas, reviewed workbook and
+Parquet adapters, frozen family-aware partitions, TF--IDF/MPNet/BioLORD
+ranking, the shared encoder and ordered relationship head, source-gated exact
+tools, judge/critic orchestration, a local review UI and offline training with
+progress, pause/resume and evaluation reports. A draft-label pilot has run.
+Approved-label model training, calibrated uncertainty and held-out clinical
+comparison remain future work. Section~\ref{sec:finalizedworkflow} governs
+status and scope; legacy utilities and archived construction steps do not
+replace the frozen release contracts.
 
 \begin{longtable}{L{.20\linewidth}L{.35\linewidth}L{.36\linewidth}}
 \toprule Workstream & Jonathan Ma (JM) & Jiatong Gao (JG)\\\midrule
@@ -2005,8 +2086,10 @@ Submission & Data/evaluation documentation, test-case index, provenance and cont
 Shared work includes reviewing changes, agreeing on contracts, inspecting
 successes and failures, rehearsing demonstrations, integrating the report,
 and recording contributions by artifacts and commits. JM retains authority
-over gold labels and evaluation-set changes; JG owns baseline and orchestrator
-implementation. Proposed independent second annotation should be arranged
+over gold labels and evaluation-set changes. JG's completed retrieval
+contribution comprises TF--IDF, MPNet and BioLORD baselines, shared cross-trial
+ranking and tests. Further ownership should be agreed explicitly. Required
+independent second annotation should be arranged
 without confusing an annotator's input with final adjudication authority.
 
 \subsection{Milestone 1: October 20 presentation, completed}
@@ -2021,26 +2104,17 @@ source provenance, intended use, and evaluation-label separation.
 The format is 15 minutes plus 5 minutes of Q\&A. The presentation must cover
 objective, dataset, workflow, preliminary positive and negative results, a
 live UI, limitations, and next steps.
-\begin{enumerate}
-\item JM delivers the frozen criterion release and data dictionary, approves
-the pair-labeling contract, establishes family splits before pairing, and
-provides a versioned pilot with evidence and directional consistency checks.
-\item JG runs the three required frozen baselines on common inputs, prepares
-TrialGPT/EligMeta capability and adaptation notes, implements an auditable
-prototype router, and compares it with LLM-only/fixed-chain execution on
-the supplied development pairs.
-\item Together, integrate ranked candidates, source/context, aligned
-constraints, supported numerical plots, real route traces, and cached replay.
-Save at least one success and one meaningful failure; demonstrate abstention
-when needed. Launch the application locally using
-Section~\ref{sec:localdemo}, with all required model and index assets prepared
-in advance. Verify startup and replay without an internet connection.
-\end{enumerate}
-The v1 criterion freeze is complete. Pair labels and implementation/evaluation
-artifacts remain subsequent deliverables. An approximately 200--300-pair pilot
-is an optional planning target, not an existing benchmark or a guaranteed
-class-balanced sample. If fine-tuning is not ready, report frozen baselines
-rather than an unvalidated training run.
+The implemented progress artifacts are the 3,537-criterion freeze, family-aware
+partitions, baseline backends and local UI, evidence/critic workflow, shared
+model architecture, and 375-pair review workbook. Human-validated labels,
+separate held-out pair packets and clinical evaluation are outstanding.
+Keep the objective and proposal background brief; focus on what now runs,
+observed prototype limitations and the next evidence gate. Every group member
+must present. Demonstration and questions share the scheduled 20 minutes.
+Do not report draft-label fit as model-performance evidence. Related-method
+adapters remain conditional research work, not completed comparisons.
+Rehearse local startup and prepared evidence; optional live judge/critic
+requests require network access and configured credentials.
 
 \subsection{Milestone 3: December 8 final presentation}
 The format is 20 minutes total for presentation, demonstration, and Q\&A.
@@ -2050,8 +2124,8 @@ results if justified; comparative evaluation, ablations and uncertainty
 analysis; documented positive/negative cases; and stable local live/replay demos.
 
 JM finalizes and validates the benchmark and all denominators. JG completes
-baseline runs, agent routing/reconciliation/critic/escalation, feasible
-external-system adapters, and UI integration. Freeze dataset, model, prompt,
+baseline evaluation and integration with the existing agent/UI workflow;
+external-system adapters remain conditional on matched tasks and artifacts. Freeze dataset, model, prompt,
 normalization, routing and calibration versions before the untouched test
 run. Do not change gold labels to accommodate method errors; genuine source
 corrections require a transparent versioned amendment.
@@ -2358,7 +2432,14 @@ Before scaling: validate the pilot, settle material guide changes, version the f
 
 When adding future trials, rerun the family audit against the union of old and new trials before assigning splits. External parent IDs recorded today must propagate development exclusions if those parents enter the corpus later. For repeated criteria across otherwise distinct families, report overlap and apply an explicit deduplication/purging policy. Common age or consent phrases must not collapse the entire corpus into a single clinical family.
 
-\section{Pair pilot freeze v1}\label{sec:pairfreeze}
+\section{Historical pair pilot freeze v1}\label{sec:pairfreeze}
+
+This section preserves the November 7 development review and its artifact
+counts. It is not the current 375-pair workbook or an approved training-label
+release. Local historical evidence files are Git-ignored; a clean checkout
+retains only the frozen provenance manifests. Current review and release
+instructions are in Sections~\ref{sec:implementedlearning} and
+\ref{sec:reviewsampling}.
 
 \subsection{Release boundary and review outcome}
 Release \pathcode{trial100_v1_pair_review_v1} freezes the November 7, 2026
@@ -2430,7 +2511,7 @@ current labels and exact reasons preserved.
 The selected corpus snapshot, original pilot files, workbook, decision
 history, primary-source snapshots and family-audit artifacts are explicitly
 tracked in Git. Other generated data and Excel lock files remain ignored.
-The new release lives under
+The historical development release lives locally under
 \pathcode{data/processed/pair_pilot_v1/release_v1/}:
 \begin{itemize}
 \item \pathcode{annotations.jsonl}: all 75 decisions, source links, scope,
@@ -2445,7 +2526,8 @@ The original sampling manifest remains unchanged, including its historical
 checksum for the retired Markdown review packet. The freeze command verifies the actual retained sampling JSONL;
 it does not pretend that the absent original sampler can be regenerated.
 
-From a checkout with project dependencies installed:
+For an archived checkout with the original matching workbook and all local
+historical evidence files, the original verification command is:
 \begin{Verbatim}[breaklines=true,fontsize=\small]
 python scripts/freeze_pair_pilot.py --verify
 \end{Verbatim}
@@ -2459,20 +2541,22 @@ changed dispositions fail verification. The original freeze command without
 \pathcode{--verify} refuses to overwrite an existing release; revisions
 require a new \pathcode{--output} directory and a documented version.
 
-All twenty exposed pilot trials and the audit's additional quarantined trial
-remain excluded from held-out testing: 21 current trials and 841 criteria.
-At that historical release checkpoint, family grouping was proposed and no
-final train/validation/test assignment was claimed. The later partition freeze
-is recorded separately in Section~\ref{sec:partitionrelease}. The historical generic CLI did not enforce this map; the current CLI uses
-the separate frozen partition release described below.
-Before scaling into a training or evaluation release, validate the pilot's
-clinical decisions, settle the guide and source migrations, and freeze an
-explicit family-aware partition policy. A Git push publishes this development
-review snapshot and its evidence; it does not change those scientific gates.
+At that historical checkpoint, the reservation covered 21 trials and 841
+criteria; no final partition assignment was then claimed. These counts are
+superseded by the frozen exposure ledger and partitions in
+Section~\ref{sec:partitionrelease}. The mutable working workbook no longer
+matches the original release checksum, so this historical verifier is not
+the current workbook-readiness command. Use \pathcode{annotations-check}
+and the approved-label release process for current work. The partitions are
+already frozen; the remaining gates are human review, release approval and
+separate held-out pair annotation.
 
-\section{Trial-family audit v1}\label{audit-trial-family-audit-v1}\label{sec:familyaudit}
+\section{Trial-family audit v1: retained evidence}\label{audit-trial-family-audit-v1}\label{sec:familyaudit}
 
-Prepared November 7, 2026. Evidence audit by Codex; grouping is proposed, not a human-approved split release. Your ongoing workbook validation is untouched.
+Prepared November 7, 2026. This audit is retained evidence for the later
+frozen family-aware split release in Section~\ref{sec:partitionrelease}.
+Its initial reservation count does not replace the expanded exposure ledger.
+Neither evidence screening nor split assignment approves clinical pair labels.
 
 \subsection{Outcome}\label{audit-outcome}
 
@@ -2488,11 +2572,11 @@ All 100 frozen trials were reconciled to the upstream cohort and archived eligib
 \item
   Three source-supported links to external trials were recorded, including one participant-follow-up link that constrains splits without establishing identity of the underlying clinical protocols.
 \item
-  Two trials have unnamed linked/parent protocols and remain quarantined from final held-out testing until resolved or conservatively excluded.
+  Two trials have unnamed linked/parent protocols and are quarantined from training, validation and test pending resolution in a new release.
 \item
   Current map: 100 provisional clinical families and 100 split groups among the current 100 trials. These are not 100 proven independent families.
 \item
-  Preserve the 20 pilot-development trial exclusions. Adding the unresolved rollover study excludes 21 current trials / 841 criteria from final held-out testing. Exclusions propagate through known family/participant links.
+  Honor the original pilot reservations and the later expanded development-exposure ledger. The finalized count is 41 reserved current trials: 39 assigned to training and two quarantined. Exclusions propagate through known family/participant links.
 \end{itemize}
 
 The current corpus has one observed registration per proposed family. The external anchors matter when related records enter the corpus later.
@@ -2964,112 +3048,59 @@ validation/test labels never become prompt demonstrations or retrieval memory.
 
 \clearpage
 \section{Progress presentation and demonstration plan}\label{demo-progress-presentation-and-demonstration-plan}\label{sec:demoworkingnotes}
-
-Prepared November 6 and updated November 7, 2026. The deck separates implemented prototype behavior from training and clinical evaluation. The local runtime is implemented; presentation-machine rehearsal remains required.
-
 \subsection{Speaking and timing}\label{demo-speaking-and-timing}
+The session allows approximately 15 minutes for presentation/demonstration
+and 5 minutes for questions. Every group member speaks. Final speaking
+allocations follow the slide revision.
+Keep at most one brief reminder of the proposal's objective and input/output
+workflow, then emphasize completed artifacts, the current UI, blockers and
+specific next work. The encoder architecture is an implementation update;
+validated training and evaluation are future work. Slide edits are separate
+from this technical-document revision.
 
-\begin{longtable}{L{.40\linewidth}L{.36\linewidth}L{.12\linewidth}}
-\toprule\noalign{}
-Slides & Speaker & Time \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-1--5: objective, trial workflow, corpus and relationships & Jonathan & 4:00 \\
-6--7: agent routing, skills, tools and hooks & Jiatong & 2:00 \\
-8--10: retrieval, related systems and prototype cases & Jiatong & 2:30 \\
-Live walkthrough outside the slides & Jiatong, with Jonathan explaining one label decision & 3:00 \\
-11: limitations & Jonathan & 1:00 \\
-12: next steps & Both & 1:30 \\
-Application switching and handoffs & Both & 1:00 \\
-13: questions and feedback & Both & 5:00 \\
-\end{longtable}
+\subsection{Local TriAlign demonstration}\label{demo-recommended-demonstration-a-small-local-trialign-review-ui}
+The existing application selects two trials from the frozen corpus or imports
+compatible extracted criteria. It identifies candidate pairs and displays
+sources, context, tool/judge/critic proposals, traces and saved reviewer
+responses. Demonstrate a supported comparison and a meaningful unresolved
+case, then export the readable report. Use the startup and provider settings
+in Section~\ref{sec:localdemo}; use the backend pilot launch option only when
+explicitly showing an unvalidated model test. Practice decisions remain
+separate from the approved annotation release.
 
-Total: 20 minutes. The current deck has 13 slides, including the shared trial-comparison diagram and related-system positioning, with no pair-construction, demo-plan or backup slides. The demonstration happens outside the slide deck. Speaker notes, source footers and engineering-check counts were removed from the deck. Speaking allocations and timing remain in this document. The editable shared diagram is \pathcode{docs/figures/trial_comparison_workflow.tex}; both documents include that file directly.
-
-\subsection{Recommended demonstration: a small local TriAlign review UI}\label{demo-recommended-demonstration-a-small-local-trialign-review-ui}
-
-Historical design proposal, retained for context: build a narrow workflow around the existing 75-pair pilot. The implemented trial-comparison runtime is described in Section~\ref{sec:workingruntime}. A trained model is not required to demonstrate evidence inspection and durable human annotation.
-
-Minimum behavior:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  Load the frozen pilot JSONL and identify the selected pair by its stable ID.
-\item
-  Display A/B source text, eligibility role and negation side by side.
-\item
-  Expand parent statements, context, units, temporal qualifiers and provenance.
-\item
-  Let a reviewer enter a label, common frame, rationale, evidence, uncertainty and status. Preserve unresolved cases as needs\_adjudication.
-\item
-  Validate required fields before accepting an adjudicated label.
-\item
-  Save to a separate local annotation store. Restart and reload the decision.
-\end{enumerate}
-
-Keep source records and the original sampling release immutable. Record guide and corpus versions alongside each decision. Practice in a separate demo annotation store so rehearsal entries never become gold labels accidentally. Do not connect the current exact comparator to final automatic decisions until the documented polarity/context defect is fixed and validated.
-
-Three-minute sequence:
-
-\begin{itemize}
-\item
-  0:00--0:30: choose a prepared pilot pair and show its identity.
-\item
-  0:30--1:15: inspect source and parent context, explain the common frame.
-\item
-  1:15--2:00: record a human decision with evidence, or explain why it remains unresolved.
-\item
-  2:00--2:30: save and reload to show persistence.
-\item
-  2:30--3:00: open a second context-sensitive case and show escalation.
-\end{itemize}
-
-Select cases after clinical review. Do not preassign a label solely from sampling method or lexical score. If no pilot decision is ready, demonstrate saving an unresolved review rather than inventing adjudication.
-
-The local browser implementation now supports trial selection, criterion imports, evidence inspection, bounded agent execution and durable review history. Use the launch command in Section~\ref{sec:localdemo}. The earlier narrow pilot-UI proposal above is retained as design history; the current runtime compares trials using frozen criterion inputs.
-
-\subsection{Alternative demonstration: Modern AutoCrit}\label{demo-alternative-demonstration-modern-autocrit}
-
-Use the existing upstream application to explain how the reviewed corpus was produced. Its documented workflow accepts NCT IDs, pasted text or PDFs, extracts structured criteria, supports correction, and exports reviewed rows. The README documents local access at \url{http://127.0.0.1:8765}.
-
-Suggested sequence: open a prepared job, inspect one source-backed row, make a clearly identified practice correction, then show reviewed export. Use a disposable/demo job and avoid changing validated corpus records. Live extraction is optional and introduces API/network uncertainty. Rehearse startup, credentials and a failed-call case before deciding to use it. Never display credentials or unrelated local records on the projector.
-
-This demonstrates upstream extraction, not completed TriAlign relationship prediction. Explain that distinction explicitly. It is the lower-build option only if the actual app runs reliably in rehearsal; that has not been verified as part of this deck task.
+\subsection{Optional upstream extraction context}\label{demo-alternative-demonstration-modern-autocrit}
+Modern AutoCrit can briefly illustrate how the source criteria were produced,
+but TriAlign's demonstration must work without that installation. Direct
+extraction within TriAlign is future work. Both applications may run locally
+on distinct ports when desired; no new website deployment is required.
 
 \subsection{Presentation scope}\label{demo-presentation-scope}
-
-The owner removed the demo-plan slide and all backup slides. Do not add them back without a new request. The existing workbook image assets remain source artifacts, not evidence of a functioning runtime UI. Runtime implementation is complete at prototype scope; rehearsal and clinical acceptance remain pending. Keep these planning notes in this technical document, not in an additional Markdown plan or in the deck.
+The owner requested no demo-plan or backup slides. Keep demonstration planning
+here and leave the presentations unchanged until their separate edit pass.
+Summarize proposal background briefly. Focus remaining time on new artifacts,
+implemented model/agent behavior, current challenges and next steps. Related
+work should explain changed comparison choices rather than repeat the proposal
+literature review. Do not add model-quality numbers from draft-label training.
 
 \subsection{Evidence and reporting boundaries}\label{demo-evidence-and-reporting-boundaries}
-
-\begin{itemize}
-\item
-  Dataset count: the frozen manifest records 3,537 criteria, 100 trials, 3,537 corrected rows and zero recorded issues/blockers. Review authority comes from the owner\textquotesingle s manual validation statement, not independent annotation.
-\item
-  Pilot: manifest records 75 unlabeled natural pairs from a reserved pool of 815 criteria across 20 trials. An initial family audit was completed November 7; its proposed groups and unresolved-parentage exclusions are documented in the audit appendix. The inspected labeling workbook had zero entered labels on November 6.
-\item
-  Baselines: local teammate branch feature/comparisons-agent-ui at d30c71e contains shared retrieval code and dense wrappers. The 200-criterion sample, 20 passing tests and saved-output checks come from her report. Saved dense outputs are absent here, and this deck does not claim full reproduction.
-\item
-  Failure case: a constructed pair with identical age \textgreater=18 intervals and opposite inclusion/exclusion role returned equivalent with confidence 1.0 from the current exact tool. That is a diagnostic failure, not an error rate.
-\item
-  Runtime UI and bounded LLM judge/critic are implemented. The trained encoder, calibrated uncertainty and clinical evaluation remain pending. No clinical accuracy or latency benchmark is claimed.
-\end{itemize}
-
-Her branch was inspected read-only using git show. The working checkout remained on main, with no edits to her implementation and no branch switch.
+The frozen corpus has 3,537 reviewed criteria from 100 trials. The mutable
+review workbook contains 375 pairs; five historical pairs are quarantined
+and 370 are in training. Neither the workbook nor the assistant second pass
+establishes approved human supervision. Family partitions are fixed at
+68/15/15 trials with two quarantined trials. Baselines are integrated and
+full-corpus exploratory outputs exist; their repeatability checks do not
+establish clinical retrieval quality. UI and critic outputs are prototype
+observations, not reference labels. The shared model pipeline has been exercised
+on draft labels, while approved-label training, held-out evaluation and
+calibration remain future work.
 
 \subsection{Build}\label{demo-build}
-
-From the repository root:
-
+The presentation build command is:
 \begin{Verbatim}[breaklines=true,fontsize=\small]
 latexmk -pdf -interaction=nonstopmode -halt-on-error \
   -outdir=/private/tmp/trialign-progress-build docs/progress_presentation.tex
 \end{Verbatim}
-
-Run the presentation build command from the repository root. To display presenter notes, change hide notes to show notes in a separate temporary build. Keep the ordinary audience PDF free of notes.
+Keep audience PDFs free of speaker notes, source footers and engineering-check counts.
 
 \section{Historical pair labeling contract 0.1}\label{contract01-historical-pair-labeling-contract-01}\label{sec:labelingcontract01}
 
@@ -3157,10 +3188,11 @@ methodology, implementation decisions and detailed workflow notes here.
 Presentation sources remain separate deliverables. JSON, Parquet, workbooks,
 source code and machine-readable audit ledgers remain data/code artifacts.
 
-Use the retained pilot JSONL and workbook for source evidence and review.
-Historical manifests retain their original checksums; the current validators
-check the retained data artifacts. Keep substantive notes here and experiment
-outputs in their versioned data/code locations.
+Use the authoritative labeling workbook for current review; local JSONL
+packets provide optional provenance. Historical manifests keep their original
+checksums and do not describe the mutable workbook as an unchanged release.
+Keep substantive notes here, local training/fit outputs in \pathcode{docs/logging},
+and generated data snapshots in their Git-ignored versioned locations.
 
 \clearpage
 \begin{thebibliography}{99}
@@ -3175,6 +3207,10 @@ Accessed November 4, 2026.
 \url{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}.
 \bibitem{biolord} FremyCompany / F. Remy et al. \emph{BioLORD-2023 model card}.
 \url{https://huggingface.co/FremyCompany/BioLORD-2023}.
+\bibitem{nli4ct2024} M. Jullien, M. Valentino, and A. Freitas.
+\emph{SemEval-2024 Task 2: Safe Biomedical Natural Language Inference for Clinical Trials}.
+\url{https://aclanthology.org/2024.semeval-1.271/}.
+Official task data and code: \url{https://github.com/ai-systems/Task-2-SemEval-2024}.
 \bibitem{amendpp} \emph{AMEND++: Benchmarking Eligibility Criteria Amendments in Clinical Trials}.
 2026. \url{https://arxiv.org/abs/2601.06300}.
 \bibitem{crese} S. Kim et al. \emph{CReSE: Benchmark Data and Automatic Evaluation Framework for Recommending Eligibility Criteria from Clinical Trial Information}.
